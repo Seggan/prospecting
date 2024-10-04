@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "io.github.seggan"
-version = "1.0-SNAPSHOT"
+version = "MODIFIED"
 
 repositories {
     mavenCentral()
@@ -21,10 +21,12 @@ dependencies {
     paperLibrary(kotlin("stdlib"))
     paperLibrary("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC2")
 
+    paperLibrary(kotlin("reflect"))
+
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("com.github.Slimefun:Slimefun4:e02a0f61d1")
 
-    implementation("io.github.seggan:sf4k:0.6.0")
+    implementation("io.github.seggan:sf4k:0.7.1")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
@@ -36,7 +38,10 @@ tasks.test {
 
 kotlin {
     jvmToolchain(21)
-    compilerOptions.javaParameters = true
+    compilerOptions {
+        javaParameters = true
+        freeCompilerArgs = listOf("-Xjvm-default=all")
+    }
 }
 
 tasks.shadowJar {
@@ -49,7 +54,7 @@ tasks.shadowJar {
     // Relocate if true or not set, always relocate bstats
     doRelocate("org.bstats")
     if (System.getenv("RELOCATE") != "false") {
-        doRelocate("io.github.seggan.kfun")
+        doRelocate("io.github.seggan.sf4k")
         doRelocate("co.aikar.commands")
         doRelocate("co.aikar.locales")
     } else {
@@ -61,6 +66,7 @@ tasks.shadowJar {
         exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
         exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
         exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib-common"))
+        exclude(dependency("org.jetbrains.kotlin:kotlin-reflect"))
     }
 
     archiveBaseName = "Prospecting"
@@ -69,7 +75,7 @@ tasks.shadowJar {
 paper {
     name = rootProject.name
     main = "io.github.seggan.prospecting.Prospecting"
-    loader = "io.github.seggan.prospecting.PluginYmlLoader"
+    loader = "io.github.seggan.prospecting.shadowlibs.sf4k.PluginYmlLoader"
     bootstrapper = "io.github.seggan.prospecting.ProspectingBootstrapper"
     version = project.version.toString()
     author = "Seggan"
