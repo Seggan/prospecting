@@ -1,3 +1,4 @@
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
@@ -26,7 +27,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("com.github.Slimefun:Slimefun4:e02a0f61d1")
 
-    implementation("io.github.seggan:sf4k:0.7.1")
+    implementation("io.github.seggan:sf4k:0.7.2")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
@@ -40,7 +41,7 @@ kotlin {
     jvmToolchain(21)
     compilerOptions {
         javaParameters = true
-        freeCompilerArgs = listOf("-Xjvm-default=all")
+        freeCompilerArgs = listOf("-Xjvm-default=all", "-Xcontext-receivers")
     }
 }
 
@@ -67,9 +68,10 @@ tasks.shadowJar {
         exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
         exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib-common"))
         exclude(dependency("org.jetbrains.kotlin:kotlin-reflect"))
+        exclude(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core"))
     }
 
-    archiveBaseName = "Prospecting"
+    archiveBaseName = rootProject.name
 }
 
 paper {
@@ -88,19 +90,19 @@ paper {
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
             joinClasspath = true
         }
+        register("Multiverse-Core") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.AFTER
+        }
     }
 }
 
 tasks.runServer {
-    javaLauncher = javaToolchains.launcherFor {
-        @Suppress("UnstableApiUsage")
-        vendor = JvmVendorSpec.JETBRAINS
-        languageVersion = JavaLanguageVersion.of(21)
+    downloadPlugins {
+        url("https://blob.build/dl/Slimefun4/Dev/1156")
+        url("https://blob.build/dl/SlimeHUD/Dev/3")
+        hangar("Multiverse-Core", "4.3.13")
     }
-    jvmArgs("-XX:+AllowEnhancedClassRedefinition", "-XX:+AllowRedefinitionToAddDeleteMethods")
-//    downloadPlugins {
-//        url("https://blob.build/dl/Slimefun4/Dev/1154")
-//    }
     maxHeapSize = "4G"
     minecraftVersion("1.20.6")
 }
