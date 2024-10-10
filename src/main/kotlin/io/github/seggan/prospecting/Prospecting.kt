@@ -25,7 +25,7 @@ object Prospecting : AbstractAddon(), Listener {
         manager.enableUnstableAPI("help")
         manager.registerCommand(PropsectingCommand)
 
-        ProspectingItems // Initialize the items
+        ProspectingItems.initExtra()
 
         launch {
             Bukkit.getConsoleSender().sendMessage(

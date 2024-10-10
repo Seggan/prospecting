@@ -8,12 +8,9 @@ import io.github.seggan.sf4k.item.builder.ItemRegistry
 import io.github.seggan.sf4k.item.builder.asMaterialType
 import io.github.seggan.sf4k.item.builder.buildSlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.inventory.CraftingRecipe
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.Recipe
 import org.bukkit.inventory.ShapedRecipe
 
 object ProspectingItems : ItemRegistry(Prospecting) {
@@ -38,7 +35,7 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         +"FeO"
     }
 
-    init {
+    fun initExtra() {
         for (ore in Ore.entries) {
             SlimefunItem(
                 ProspectingCategories.ORES,

@@ -1,4 +1,4 @@
-package io.github.seggan.prospecting.gen
+package io.github.seggan.prospecting.gen.distribution
 
 interface Distribution {
     operator fun get(x: Double): Double

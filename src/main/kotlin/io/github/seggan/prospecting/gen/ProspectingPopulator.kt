@@ -1,16 +1,20 @@
 package io.github.seggan.prospecting.gen
 
-import io.github.seggan.prospecting.Prospecting
+import io.github.seggan.prospecting.registries.Ore
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.BrushableBlock
 import org.bukkit.generator.BlockPopulator
 import org.bukkit.generator.LimitedRegion
 import org.bukkit.generator.WorldInfo
+import org.bukkit.util.noise.OctaveGenerator
+import java.util.EnumSet
 import java.util.Random
-import java.util.logging.Level
-import kotlin.system.measureTimeMillis
 
-object ProspectingPopulator : BlockPopulator() {
+class ProspectingPopulator(private val generator: OreGenerator) : BlockPopulator() {
+
+    private lateinit var noise: Map<Ore, OctaveGenerator>
+
     override fun populate(
         worldInfo: WorldInfo,
         random: Random,
@@ -20,20 +24,35 @@ object ProspectingPopulator : BlockPopulator() {
     ) {
         val xc = chunkX shl 4
         val zc = chunkZ shl 4
-        for (cx in 0 until 17) {
+        val oreChunk = generator.getChunk(ChunkPosition(chunkX, chunkZ))
+        for (cx in 0 until 16) {
             val x = xc + cx
-            for (cz in 0 until 17) {
+            for (cz in 0 until 16) {
                 val z = zc + cz
                 for (y in worldInfo.minHeight until worldInfo.maxHeight) {
                     val location = Location(region.world, x.toDouble(), y.toDouble(), z.toDouble())
-                    val originalType = region.getType(location)
-                    if (!originalType.isSolid) continue // ignore air n stuff
-                    region.setType(location, originalType.replaceOre())
+                    val oldType = region.getType(location)
+                    if (!oldType.isSolid) continue // ignore air n stuff
+                    val type = oldType.replaceOre()
+                    region.setType(location, type)
+
+                    val ore = oreChunk.getGravelOre(cx, y, cz)
+                    if (ore != null && type in gravelReplaceable) {
+                        val biomeWeight = ore.biomeDistribution.getFloat(region.getBiome(location))
+                        if (random.nextFloat() > biomeWeight) continue
+                        region.setType(location, Material.SUSPICIOUS_GRAVEL)
+                        val state = region.getBlockState(location) as BrushableBlock
+                        state.setItem(ore.oreItem.clone())
+                        state.update(true, false)
+                        continue
+                    }
                 }
             }
         }
     }
 }
+
+private val gravelReplaceable = EnumSet.of(Material.GRAVEL, Material.DIRT)
 
 private fun Material.replaceOre(): Material {
     return when (this) {

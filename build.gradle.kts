@@ -1,4 +1,3 @@
-import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
@@ -20,7 +19,7 @@ repositories {
 
 dependencies {
     paperLibrary(kotlin("stdlib"))
-    paperLibrary("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC2")
+    paperLibrary("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
 
     paperLibrary(kotlin("reflect"))
 
@@ -68,7 +67,7 @@ tasks.shadowJar {
         exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
         exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib-common"))
         exclude(dependency("org.jetbrains.kotlin:kotlin-reflect"))
-        exclude(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core"))
+        //exclude(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core"))
     }
 
     archiveBaseName = rootProject.name

@@ -5,7 +5,7 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Randomized
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Entity
-import kotlin.math.exp
+import kotlin.reflect.KProperty
 
 fun String.key() = NamespacedKey(Prospecting, this)
 
@@ -50,3 +50,7 @@ fun <T : Any> randomizedSetOf(vararg pairs: Pair<T, Double>): RandomizedSet<T> {
     }
     return set
 }
+
+operator fun <T> ThreadLocal<T>.getValue(thisRef: Any?, property: KProperty<*>): T = get()
+
+val IntRange.size get() = last - first + 1
