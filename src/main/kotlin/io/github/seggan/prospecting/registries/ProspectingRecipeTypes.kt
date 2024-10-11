@@ -1,17 +1,24 @@
 package io.github.seggan.prospecting.registries
 
+import io.github.seggan.prospecting.Prospecting
 import io.github.seggan.prospecting.items.Mallet
 import io.github.seggan.prospecting.util.key
-import io.github.seggan.sf4k.extensions.getSlimefun
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.inventory.PrepareItemCraftEvent
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.ShapedRecipe
 
-object ProspectingRecipeTypes {
+object ProspectingRecipeTypes : Listener {
+
+    init {
+        Bukkit.getPluginManager().registerEvents(this, Prospecting)
+    }
+
     val NATURALLY_GENERATED = RecipeType(
         "naturally_generated".key(),
         CustomItemStack(
@@ -30,29 +37,7 @@ object ProspectingRecipeTypes {
             "",
             "&7This its is crafted in a vanilla crafting table"
         ),
-        { inputs, output ->
-            val item = output.getSlimefun<SlimefunItem>()
-            checkNotNull(item) { "Output must be a Slimefun item, got $output" }
-            val key = item.id.lowercase().key()
-            if (Bukkit.getRecipe(key) != null) {
-                Bukkit.removeRecipe(key)
-            }
-            val shape = ('a'..'i').toMutableList()
-            val ingredients = mutableMapOf<Char, ItemStack>()
-            for ((index, input) in inputs.withIndex()) {
-                if (input == null) {
-                    shape[index] = ' '
-                } else {
-                    ingredients['a' + index] = input
-                }
-            }
-            val recipe = ShapedRecipe(item.id.lowercase().key(), output)
-            recipe.shape(*shape.chunked(3) { it.joinToString("") }.toTypedArray())
-            for ((char, ingredient) in ingredients) {
-                recipe.setIngredient(char, ingredient)
-            }
-            Bukkit.addRecipe(recipe)
-        }
+        { inputs, output -> vanillaRecipes.add(inputs to output) }
     )
 
     val MALLET by lazy {
@@ -61,5 +46,19 @@ object ProspectingRecipeTypes {
             ProspectingItems.MALLET,
             { inputs, output -> Mallet.registerRecipe(inputs.filterNotNull(), output) }
         )
+    }
+
+    private val vanillaRecipes = mutableSetOf<Pair<Array<out ItemStack?>, ItemStack>>()
+
+    @EventHandler
+    private fun onCraft(e: PrepareItemCraftEvent) {
+        val inv = e.inventory
+        val items = inv.matrix
+        for ((inputs, output) in vanillaRecipes) {
+            if (inputs.zip(items).all { (input, needed) -> SlimefunUtils.isItemSimilar(input, needed, false, false) }) {
+                inv.result = output
+                break
+            }
+        }
     }
 }

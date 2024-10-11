@@ -3,13 +3,10 @@ package io.github.seggan.prospecting.registries
 import io.github.seggan.prospecting.Prospecting
 import io.github.seggan.prospecting.items.Mallet
 import io.github.seggan.prospecting.items.Pebble
-import io.github.seggan.prospecting.util.key
 import io.github.seggan.sf4k.item.builder.*
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.ShapedRecipe
 
 object ProspectingItems : ItemRegistry(Prospecting) {
 
@@ -19,14 +16,12 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         material = Material.WOODEN_PICKAXE.asMaterialType()
         recipeType = ProspectingRecipeTypes.VANILLA_CRAFTING_TABLE
         recipe = buildRecipe {
-            +"loz"
+            +"lol"
             +" s "
-            +" t "
+            +" s "
             'l' means Material.LEATHER
             'o' means Material.STRIPPED_OAK_LOG
             's' means Material.STICK
-            't' means Material.BLAZE_ROD
-            'z' means Material.COBBLESTONE
         }
         +""
         +"A mallet used to crush stuff"
@@ -65,9 +60,9 @@ object ProspectingItems : ItemRegistry(Prospecting) {
             ).register(addon)
         }
 
-        val recipe = ShapedRecipe("pobble".key(), ItemStack(Material.COBBLESTONE))
-        recipe.shape("xxx", "xxx", "xxx")
-        recipe.setIngredient('x', STONE_PEBBLE.clone())
-        Bukkit.addRecipe(recipe)
+        ProspectingRecipeTypes.VANILLA_CRAFTING_TABLE.register(
+            Array(9) { STONE_PEBBLE },
+            ItemStack(Material.COBBLESTONE)
+        )
     }
 }

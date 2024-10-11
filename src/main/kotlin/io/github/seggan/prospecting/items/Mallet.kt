@@ -15,6 +15,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.block.BlockFace
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Item
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -46,7 +47,8 @@ class Mallet(
     @EventHandler
     private fun onMalletUse(e: PlayerInteractEvent) {
         val block = e.clickedBlock ?: return
-        if (e.item.getSlimefun<Mallet>() == null) return
+        val mallet = e.item
+        if (mallet == null || mallet.getSlimefun<Mallet>() == null) return
         e.setUseItemInHand(Event.Result.DENY)
         e.setUseInteractedBlock(Event.Result.DENY)
         if (e.blockFace != BlockFace.UP) return
@@ -80,7 +82,10 @@ class Mallet(
                         item.itemStack = stack
                     }
                 }
-                block.world.dropItem(top, output)
+                val dropped = output.clone()
+                dropped.amount = (1..mallet.getEnchantmentLevel(Enchantment.FORTUNE) + 1).random()
+                mallet.damage(1, e.player)
+                block.world.dropItem(top, dropped)
                 ParticleBuilder(Particle.BLOCK)
                     .location(top)
                     .data(block.blockData)
