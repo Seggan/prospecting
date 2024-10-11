@@ -3,11 +3,9 @@ package io.github.seggan.prospecting.registries
 import io.github.seggan.prospecting.gen.distribution.Distribution
 import io.github.seggan.prospecting.gen.distribution.NormalDistribution
 import io.github.seggan.prospecting.gen.distribution.div
-import io.github.seggan.prospecting.util.randomizedSetOf
 import io.github.seggan.prospecting.util.size
 import io.github.seggan.prospecting.util.subscript
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
-import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet
 import io.github.thebusybiscuit.slimefun4.utils.ChatUtils
 import it.unimi.dsi.fastutil.objects.Object2FloatMap
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap
@@ -16,16 +14,11 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.RegionAccessor
 import org.bukkit.block.Biome
-import org.bukkit.inventory.ItemStack
-import java.util.Random
-import kotlin.random.asKotlinRandom
 
 enum class Ore(
     private val metal: Metal,
     private val pebbleMaterial: Material,
-    formula: String,
-    private val crushResult: RandomizedSet<ItemStack>,
-    private val crushTries: IntRange,
+    asciiFormula: String,
     blockDistribution: Distribution,
     sandDistribution: Distribution,
     gravelDistribution: Distribution,
@@ -35,33 +28,51 @@ enum class Ore(
     LIMONITE(
         metal = Metal.IRON,
         pebbleMaterial = Material.SPRUCE_BUTTON,
-        formula = "FeO(OH)",
-        crushResult = randomizedSetOf(ProspectingItems.IRON_OXIDE),
-        crushTries = 1..1,
+        asciiFormula = "FeO(OH)",
         blockDistribution = Distribution.NONE,
         sandDistribution = Distribution.NONE,
         gravelDistribution = NormalDistribution(66.0, 1.0) / 100.0,
-        biomeDistribution = object2FloatMapOf(Biome.SWAMP to 1f, Biome.MANGROVE_SWAMP to 1f)
+        biomeDistribution = object2FloatMapOf(
+            Biome.SWAMP to 1f,
+            Biome.MANGROVE_SWAMP to 1f,
+            Biome.RIVER to 0.7f,
+            Biome.FROZEN_RIVER to 0.7f,
+            Biome.OCEAN to 0.5f,
+            Biome.COLD_OCEAN to 0.7f,
+            Biome.WARM_OCEAN to 0.5f,
+        )
     ),
     ;
+
+    val oreName = ChatUtils.humanize(name)
+    val formula = asciiFormula.subscript()
 
     private val oreId = "PROSPECTING_ORE_$name"
     val oreItem = SlimefunItemStack(
         oreId,
         metal.vanillaOre,
-        "&4${ChatUtils.humanize(name)}",
+        "&4$oreName",
         "",
-        "&aFormula: " + formula.subscript()
+        "&aFormula: $formula"
     )
 
     private val pebbleId = "PROSPECTING_PEBBLE_$name"
     val pebbleItem = SlimefunItemStack(
         pebbleId,
         pebbleMaterial,
-        "&f${ChatUtils.humanize(name)} pebble",
+        "&f$oreName pebble",
         "",
-        "&7A pebble of ${ChatUtils.humanize(name).lowercase()}",
-        "&aFormula: " + formula.subscript()
+        "&7A pebble of ${oreName.lowercase()}",
+        "&aFormula: $formula"
+    )
+
+    private val crushedId = "PROSPECTING_CRUSHED_ORE_$name"
+    val crushedItem = SlimefunItemStack(
+        crushedId,
+        Material.GUNPOWDER,
+        "&fCrushed $oreName",
+        "",
+        "&aFormula: $formula"
     )
 
     val blockDistribution = blockDistribution.precalculate(WORLD_HEIGHT_RANGE)
@@ -76,10 +87,6 @@ enum class Ore(
     fun placePebble(region: RegionAccessor, location: Location) {
         region.setType(location, pebbleMaterial)
         BlockStorage.addBlockInfo(location, "id", pebbleId)
-    }
-
-    fun getCrushResult(random: Random, fortune: Int): Set<ItemStack> {
-        return crushResult.getRandomSubset(random, crushTries.random(random.asKotlinRandom()) + fortune)
     }
 }
 

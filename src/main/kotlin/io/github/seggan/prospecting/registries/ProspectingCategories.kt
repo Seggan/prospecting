@@ -18,4 +18,10 @@ object ProspectingCategories {
         MAIN,
         CustomItemStack(Material.COPPER_ORE, "&7Ores")
     )
+
+    val TOOLS = SubItemGroup(
+        "tools".key(),
+        MAIN,
+        CustomItemStack(Material.IRON_PICKAXE, "&fTools")
+    )
 }
