@@ -75,7 +75,7 @@ class Mallet(
             }
             if (matching.size == inputs.size) {
                 for (item in matching) {
-                    val stack = item.itemStack.add(-1)
+                    val stack = item.itemStack.subtract()
                     if (stack.amount == 0) {
                         item.remove()
                     } else {

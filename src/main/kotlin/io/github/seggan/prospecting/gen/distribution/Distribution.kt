@@ -1,5 +1,7 @@
 package io.github.seggan.prospecting.gen.distribution
 
+import io.github.seggan.prospecting.util.size
+
 interface Distribution {
     operator fun get(x: Double): Double
 
@@ -27,4 +29,20 @@ operator fun Distribution.times(scalar: Double) = object : Distribution {
 
 operator fun Distribution.div(scalar: Double) = object : Distribution {
     override fun get(x: Double): Double = this@div[x] * scalar
+}
+
+fun Distribution.precalculate(range: IntRange) = object : Distribution {
+
+    private val precalculated = DoubleArray(range.size)
+
+    init {
+        for ((i, x) in range.withIndex()) {
+            precalculated[i] = this@precalculate[x.toDouble()]
+        }
+    }
+
+    override fun get(x: Double): Double {
+        val index = x.toInt() - range.first
+        return if (index in precalculated.indices) precalculated[index] else this@precalculate[x]
+    }
 }

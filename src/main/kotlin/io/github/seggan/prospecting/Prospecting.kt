@@ -2,7 +2,7 @@ package io.github.seggan.prospecting
 
 import co.aikar.commands.PaperCommandManager
 import com.github.shynixn.mccoroutine.bukkit.launch
-import io.github.seggan.prospecting.gen.ProspectingGenerator
+import io.github.seggan.prospecting.gen.OreGenerator
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.sf4k.AbstractAddon
 import io.github.seggan.sf4k.extensions.plus
@@ -15,11 +15,8 @@ import org.bukkit.plugin.java.JavaPlugin
 object Prospecting : AbstractAddon(), Listener {
 
     override suspend fun onEnableAsync() {
-        WorldCreator("a")
-            .generator(ProspectingGenerator)
-            .createWorld()
-
-        Bukkit.getPluginManager().registerEvents(this, this)
+        OreGenerator(setOf("a"))
+        WorldCreator("a").createWorld()
 
         val manager = PaperCommandManager(this)
         manager.enableUnstableAPI("help")
