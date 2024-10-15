@@ -15,14 +15,14 @@ import org.bukkit.plugin.java.JavaPlugin
 object Prospecting : AbstractAddon(), Listener {
 
     override suspend fun onEnableAsync() {
+        ProspectingItems.initExtra()
+
         OreGenerator(setOf("a"))
         WorldCreator("a").createWorld()
 
         val manager = PaperCommandManager(this)
         manager.enableUnstableAPI("help")
         manager.registerCommand(PropsectingCommand)
-
-        ProspectingItems.initExtra()
 
         launch {
             Bukkit.getConsoleSender().sendMessage(

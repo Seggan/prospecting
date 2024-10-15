@@ -2,7 +2,10 @@ package io.github.seggan.prospecting.gen
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import io.github.seggan.prospecting.Prospecting
+import io.github.seggan.prospecting.items.Pebble
 import io.github.seggan.prospecting.registries.Ore
+import io.github.seggan.prospecting.registries.ProspectingItems
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -74,6 +77,8 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                     areaChances.put(ore, value.coerceAtLeast(0.0).pow(9))
                 }
 
+                val pebbles = mutableMapOf<Ore, Float>()
+
                 for (y in minHeight..snapshot.getHighestBlockYAt(x, z)) {
                     val type = snapshot.getBlockType(x, y, z)
                     if (!type.isOccluding) continue
@@ -85,6 +90,7 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                             Prospecting.launch {
                                 ore.placeOre(chunk.getBlock(x, y, z), type == Material.DEEPSLATE)
                             }
+                            pebbles.merge(ore, 0.01f, Float::plus)
                             replaceVanilla = false
                             break
                         }
@@ -116,9 +122,34 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                         }
                     }
                 }
+
+                if (random.nextFloat() < 0.003) {
+                    val y = snapshot.getHighestOpaqueBlockY(x, z, snapshot.getHighestBlockYAt(x, z)) + 1
+                    if (!snapshot.getBlockType(x, y, z).isLiquid) {
+                        Prospecting.launch {
+                            stonePebble.place(chunk.getBlock(x, y, z))
+                        }
+                    }
+                }
+
+                for ((ore, chance) in pebbles) {
+                    if (random.nextFloat() < chance) {
+                        val y = snapshot.getHighestOpaqueBlockY(x, z, snapshot.getHighestBlockYAt(x, z)) + 1
+                        if (!snapshot.getBlockType(x, y, z).isLiquid) {
+                            Prospecting.launch {
+                                ore.pebble.place(chunk.getBlock(x, y, z))
+                            }
+                            break
+                        }
+                    }
+                }
             }
         }
     }
+}
+
+private tailrec fun ChunkSnapshot.getHighestOpaqueBlockY(x: Int, z: Int, y: Int): Int {
+    return if (y < -64 || getBlockType(x, y, z).isOccluding) y else getHighestOpaqueBlockY(x, z, y - 1)
 }
 
 private val gravelReplaceable = EnumSet.of(Material.GRAVEL, Material.DIRT)
@@ -141,3 +172,8 @@ private val replaceOres = EnumMap<Material, Material>(Material::class.java).appl
     put(Material.COAL_ORE, Material.STONE)
     put(Material.DEEPSLATE_COAL_ORE, Material.DEEPSLATE)
 }
+
+private val Material.isLiquid: Boolean
+    get() = this == Material.WATER || this == Material.LAVA
+
+private val stonePebble by lazy { SlimefunItem.getById(ProspectingItems.STONE_PEBBLE.itemId) as Pebble }

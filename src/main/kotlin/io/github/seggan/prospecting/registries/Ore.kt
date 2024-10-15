@@ -3,7 +3,9 @@ package io.github.seggan.prospecting.registries
 import io.github.seggan.prospecting.gen.distribution.Distribution
 import io.github.seggan.prospecting.gen.distribution.NormalDistribution
 import io.github.seggan.prospecting.gen.distribution.precalculate
+import io.github.seggan.prospecting.items.Pebble
 import io.github.seggan.prospecting.util.subscript
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import io.github.thebusybiscuit.slimefun4.utils.ChatUtils
 import it.unimi.dsi.fastutil.objects.Object2FloatMap
@@ -76,7 +78,7 @@ enum class Ore(
     val oreId = "PROSPECTING_ORE_$name"
     val oreItem = SlimefunItemStack(
         oreId,
-        metal.vanillaOre,
+        vanillaOre,
         "&4$oreName",
         "",
         "&aFormula: $formula"
@@ -91,6 +93,8 @@ enum class Ore(
         "&7A pebble of ${oreName.lowercase()}",
         "&aFormula: $formula"
     )
+
+    val pebble by lazy { SlimefunItem.getById(pebbleId) as Pebble }
 
     private val crushedId = "PROSPECTING_CRUSHED_ORE_$name"
     val crushedItem = SlimefunItemStack(
@@ -107,11 +111,6 @@ enum class Ore(
     fun placeOre(block: Block, deepslate: Boolean) {
         block.setType(if (deepslate) deepslateVanillaOre else vanillaOre, false)
         BlockStorage.addBlockInfo(block, "id", oreId)
-    }
-
-    fun placePebble(block: Block) {
-        block.setType(pebbleMaterial, false)
-        BlockStorage.addBlockInfo(block, "id", pebbleId)
     }
 }
 
