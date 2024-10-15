@@ -32,7 +32,7 @@ class Pebble(
     fun place(block: Block) {
         val data = Bukkit.createBlockData(item.type) as Switch
         data.attachedFace = FaceAttachable.AttachedFace.FLOOR
-        block.setBlockData(data, false)
+        block.blockData = data
         BlockStorage.addBlockInfo(block, "id", id)
     }
 }
