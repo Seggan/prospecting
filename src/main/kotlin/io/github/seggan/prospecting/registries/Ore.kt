@@ -37,6 +37,7 @@ enum class Ore(
             put(Biome.OCEAN, 0.5f)
             put(Biome.COLD_OCEAN, 0.7f)
             put(Biome.WARM_OCEAN, 0.5f)
+            put(Biome.FROZEN_OCEAN, 0.7f)
         }
     ),
 

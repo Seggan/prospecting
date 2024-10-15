@@ -31,6 +31,7 @@ object PropsectingCommand : BaseCommand() {
                         for (z in 0..15) {
                             for (y in chunk.world.minHeight until chunk.world.maxHeight) {
                                 val block = chunk.getBlock(x, y, z)
+                                if (block.isEmpty) continue
                                 if (BlockStorage.checkID(block) !in ores && block.type !in keepBlocks) {
                                     block.setType(Material.AIR, false)
                                 }

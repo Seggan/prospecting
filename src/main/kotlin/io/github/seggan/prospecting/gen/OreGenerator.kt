@@ -21,6 +21,7 @@ import java.util.EnumSet
 import java.util.Random
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
+import kotlin.math.pow
 
 class OreGenerator(private val worlds: Set<String>) : Listener {
 
@@ -41,7 +42,7 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                 random = Random(e.world.seed)
                 noise = Ore.entries.associateWithTo(ConcurrentHashMap()) {
                     val noise = SimplexOctaveGenerator(random.nextLong(), 8)
-                    noise.setScale(1.0 / 128.0)
+                    noise.setScale(1 / 64.0)
                     noise
                 }
             }
@@ -63,15 +64,14 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                 val areaChances = Object2DoubleOpenHashMap<Ore>()
                 for (ore in Ore.entries) {
                     val noise = noise[ore]!!
-                    var value = noise.noise(
+                    val value = noise.noise(
                         (chunkX + x).toDouble(),
                         (chunkZ + z).toDouble(),
+                        1.0,
                         0.01,
-                        0.5,
                         true
                     )
-                    value *= value
-                    areaChances.put(ore, value.coerceAtLeast(0.0) / 2)
+                    areaChances.put(ore, value.coerceAtLeast(0.0).pow(9))
                 }
 
                 for (y in minHeight..snapshot.getHighestBlockYAt(x, z)) {
