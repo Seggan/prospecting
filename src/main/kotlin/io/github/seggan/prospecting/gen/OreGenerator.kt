@@ -77,7 +77,7 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                     areaChances.put(ore, value.coerceAtLeast(0.0).pow(9))
                 }
 
-                val pebbles = mutableMapOf<Ore, Float>()
+                val markers = mutableMapOf<Ore, Float>()
 
                 for (y in minHeight..snapshot.getHighestBlockYAt(x, z)) {
                     val type = snapshot.getBlockType(x, y, z)
@@ -85,32 +85,16 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                     val biome = snapshot.getBiome(x, y, z)
                     var replaceVanilla = true
                     for (ore in Ore.entries) {
-                        val chance = areaChances.getDouble(ore).toFloat() * ore.biomeDistribution.getFloat(biome)
-                        if (type in stoneReplaceable && random.nextFloat() < chance * ore.blockDistribution[y.toDouble()]) {
+                        val chance = areaChances.getDouble(ore).toFloat() *
+                                ore.biomeDistribution.getFloat(biome) *
+                                ore.distribution[y.toDouble()]
+                        if (type in stoneReplaceable && random.nextFloat() < chance ) {
                             Prospecting.launch {
                                 ore.placeOre(chunk.getBlock(x, y, z), type == Material.DEEPSLATE)
                             }
-                            pebbles.merge(ore, 0.01f, Float::plus)
+                            markers.merge(ore, 0.01f, Float::plus)
                             replaceVanilla = false
                             break
-                        }
-                        if (random.nextFloat() < chance * ore.surfaceDistribution[y.toDouble()]) {
-                            val material = when (type) {
-                                in sandReplaceable -> Material.SUSPICIOUS_SAND
-                                in gravelReplaceable -> Material.SUSPICIOUS_GRAVEL
-                                else -> null
-                            }
-                            if (material != null) {
-                                Prospecting.launch {
-                                    val block = chunk.getBlock(x, y, z)
-                                    block.setType(material, false)
-                                    val state = block.state as BrushableBlock
-                                    state.setItem(ore.oreItem.clone())
-                                    state.update(true, false)
-                                }
-                                replaceVanilla = false
-                                break
-                            }
                         }
                     }
                     if (replaceVanilla) {
@@ -132,14 +116,32 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                     }
                 }
 
-                for ((ore, chance) in pebbles) {
+                for ((ore, chance) in markers) {
                     if (random.nextFloat() < chance) {
-                        val y = snapshot.getHighestOpaqueBlockY(x, z, snapshot.getHighestBlockYAt(x, z)) + 1
+                        val yBelow = snapshot.getHighestOpaqueBlockY(x, z, snapshot.getHighestBlockYAt(x, z))
+                        val y = yBelow + 1
                         if (!snapshot.getBlockType(x, y, z).isLiquid) {
                             Prospecting.launch {
                                 ore.pebble.place(chunk.getBlock(x, y, z))
                             }
                             break
+                        } else if (snapshot.getBlockType(x, y, z) == Material.WATER) {
+                            val belowType = snapshot.getBlockType(x, yBelow, z)
+                            val replaceType = when (belowType) {
+                                in sandReplaceable -> Material.SUSPICIOUS_SAND
+                                in gravelReplaceable -> Material.SUSPICIOUS_GRAVEL
+                                else -> null
+                            }
+                            if (replaceType != null) {
+                                Prospecting.launch {
+                                    val block = chunk.getBlock(x, yBelow, z)
+                                    block.setType(replaceType, false)
+                                    val state = block.state as BrushableBlock
+                                    state.setItem(ore.oreItem.clone())
+                                    state.update(true, false)
+                                }
+                                break
+                            }
                         }
                     }
                 }

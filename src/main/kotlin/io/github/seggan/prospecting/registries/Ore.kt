@@ -3,6 +3,7 @@ package io.github.seggan.prospecting.registries
 import io.github.seggan.prospecting.gen.distribution.Distribution
 import io.github.seggan.prospecting.gen.distribution.NormalDistribution
 import io.github.seggan.prospecting.gen.distribution.precalculate
+import io.github.seggan.prospecting.gen.distribution.times
 import io.github.seggan.prospecting.items.Pebble
 import io.github.seggan.prospecting.util.subscript
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
@@ -19,9 +20,8 @@ enum class Ore(
     private val metal: Metal,
     private val pebbleMaterial: Material,
     asciiFormula: String,
-    blockDistribution: Distribution,
+    distribution: Distribution,
     val biomeDistribution: Object2FloatMap<Biome>,
-    surfaceDistribution: Distribution = Distribution.NONE,
     private val vanillaOre: Material = metal.vanillaOre
 ) {
     // Iron ores
@@ -29,8 +29,7 @@ enum class Ore(
         metal = Metal.IRON,
         pebbleMaterial = Material.SPRUCE_BUTTON,
         asciiFormula = "FeO(OH)",
-        blockDistribution = NormalDistribution(50.0, 1.0),
-        surfaceDistribution = NormalDistribution(66.0, 3.0),
+        distribution = NormalDistribution(50.0, 1.0) * 2.0,
         biomeDistribution = biomeDistribution {
             put(Biome.SWAMP, 1f)
             put(Biome.MANGROVE_SWAMP, 1f)
@@ -47,10 +46,9 @@ enum class Ore(
     // Copper ores
     AZURITE(
         metal = Metal.COPPER,
-        vanillaOre = Material.LAPIS_ORE,
         pebbleMaterial = Material.WARPED_BUTTON,
         asciiFormula = "Cu3(CO3)2(OH)2",
-        blockDistribution = NormalDistribution(30.0, 1.5),
+        distribution = NormalDistribution(30.0, 1.5),
         biomeDistribution = biomeDistribution {
             for (biome in Biome.entries) {
                 put(biome, 1f)
@@ -61,7 +59,8 @@ enum class Ore(
             put(Biome.STONY_PEAKS, 0.3f)
             put(Biome.STONY_SHORE, 0.3f)
             put(Biome.DRIPSTONE_CAVES, 1.8f)
-        }
+        },
+        vanillaOre = Material.LAPIS_ORE
     )
     ;
 
@@ -106,8 +105,7 @@ enum class Ore(
         "&aFormula: $formula"
     )
 
-    val blockDistribution = blockDistribution.precalculate(WORLD_HEIGHT_RANGE)
-    val surfaceDistribution = surfaceDistribution.precalculate(WORLD_HEIGHT_RANGE)
+    val distribution = distribution.precalculate(WORLD_HEIGHT_RANGE)
 
     fun placeOre(block: Block, deepslate: Boolean) {
         block.setType(if (deepslate) deepslateVanillaOre else vanillaOre, false)
