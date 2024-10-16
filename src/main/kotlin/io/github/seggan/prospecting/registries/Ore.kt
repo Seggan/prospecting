@@ -34,6 +34,7 @@ enum class Ore(
         biomeDistribution = biomeDistribution {
             put(Biome.SWAMP, 1f)
             put(Biome.MANGROVE_SWAMP, 1f)
+            put(Biome.BEACH, 0.7f)
             put(Biome.RIVER, 0.7f)
             put(Biome.FROZEN_RIVER, 0.7f)
             put(Biome.OCEAN, 0.5f)
