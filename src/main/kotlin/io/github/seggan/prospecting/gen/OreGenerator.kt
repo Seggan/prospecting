@@ -9,6 +9,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import me.mrCookieSlime.Slimefun.api.BlockStorage
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.ChunkSnapshot
@@ -90,7 +91,12 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                                 ore.distribution[y.toDouble()]
                         if (type in stoneReplaceable && random.nextFloat() < chance ) {
                             Prospecting.launch {
-                                ore.placeOre(chunk.getBlock(x, y, z), type == Material.DEEPSLATE)
+                                val block = chunk.getBlock(x, y, z)
+                                block.setType(
+                                    if (type == Material.DEEPSLATE) ore.deepslateVanillaOre else ore.vanillaOre,
+                                    false
+                                )
+                                BlockStorage.addBlockInfo(block, "id", ore.oreId)
                             }
                             markers.merge(ore, 0.01f, Float::plus)
                             replaceVanilla = false

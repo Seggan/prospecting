@@ -1,7 +1,6 @@
 package io.github.seggan.prospecting.registries
 
 import io.github.seggan.prospecting.Prospecting
-import io.github.seggan.prospecting.items.Mallet
 import io.github.seggan.prospecting.util.key
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
@@ -40,13 +39,7 @@ object ProspectingRecipeTypes : Listener {
         { inputs, output -> vanillaRecipes.add(inputs to output) }
     )
 
-    val MALLET by lazy {
-        RecipeType(
-            "mallet".key(),
-            ProspectingItems.MALLET,
-            { inputs, output -> Mallet.registerRecipe(inputs.filterNotNull(), output) }
-        )
-    }
+    val MALLET by lazy { RecipeType("mallet".key(), ProspectingItems.MALLET) }
 
     private val vanillaRecipes = mutableSetOf<Pair<Array<out ItemStack?>, ItemStack>>()
 

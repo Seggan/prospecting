@@ -19,6 +19,12 @@ object ProspectingCategories {
         CustomItemStack(Material.COPPER_ORE, "&7Ores")
     )
 
+    val RAW_MATERIALS = SubItemGroup(
+        "raw_materials".key(),
+        MAIN,
+        CustomItemStack(Material.GUNPOWDER, "&fRaw Materials")
+    )
+
     val TOOLS = SubItemGroup(
         "tools".key(),
         MAIN,

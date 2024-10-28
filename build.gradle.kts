@@ -2,6 +2,7 @@ import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
     kotlin("jvm") version "2.0.0"
+    kotlin("plugin.serialization") version "2.0.0"
     id("com.gradleup.shadow") version "8.3.2"
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
     id("xyz.jpenilla.run-paper") version "2.3.0"
@@ -15,6 +16,7 @@ repositories {
     maven("https://jitpack.io/")
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.aikar.co/content/groups/aikar/")
+    maven("https://repo.metamechanists.org/releases/")
 }
 
 dependencies {
@@ -29,7 +31,7 @@ dependencies {
     implementation("io.github.seggan:sf4k:0.7.2")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
+    paperLibrary("co.aikar:acf-paper:0.5.1-SNAPSHOT")
 }
 
 tasks.test {
@@ -53,13 +55,7 @@ tasks.shadowJar {
     mergeServiceFiles()
     // Relocate if true or not set, always relocate bstats
     doRelocate("org.bstats")
-    if (System.getenv("RELOCATE") != "false") {
-        doRelocate("io.github.seggan.sf4k")
-        doRelocate("co.aikar.commands")
-        doRelocate("co.aikar.locales")
-    } else {
-        archiveClassifier = "unrelocated"
-    }
+    doRelocate("io.github.seggan.sf4k")
 
     dependencies {
         exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib"))
@@ -67,7 +63,7 @@ tasks.shadowJar {
         exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
         exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib-common"))
         exclude(dependency("org.jetbrains.kotlin:kotlin-reflect"))
-        //exclude(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core"))
+        exclude(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core"))
     }
 
     archiveBaseName = rootProject.name

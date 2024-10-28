@@ -5,31 +5,37 @@ import io.github.seggan.prospecting.gen.distribution.NormalDistribution
 import io.github.seggan.prospecting.gen.distribution.precalculate
 import io.github.seggan.prospecting.gen.distribution.times
 import io.github.seggan.prospecting.items.Pebble
+import io.github.seggan.prospecting.util.randomizedSetOf
 import io.github.seggan.prospecting.util.subscript
+import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
+import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet
 import io.github.thebusybiscuit.slimefun4.utils.ChatUtils
 import it.unimi.dsi.fastutil.objects.Object2FloatMap
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap
-import me.mrCookieSlime.Slimefun.api.BlockStorage
 import org.bukkit.Material
 import org.bukkit.block.Biome
-import org.bukkit.block.Block
+import org.bukkit.inventory.ItemStack
 
 enum class Ore(
     private val metal: Metal,
     private val pebbleMaterial: Material,
     asciiFormula: String,
+    val crushResult: RandomizedSet<ItemStack>,
+    val crushAmount: IntRange,
     distribution: Distribution,
     val biomeDistribution: Object2FloatMap<Biome>,
-    private val vanillaOre: Material = metal.vanillaOre
+    val vanillaOre: Material = metal.vanillaOre
 ) {
     // Iron ores
     LIMONITE(
         metal = Metal.IRON,
         pebbleMaterial = Material.SPRUCE_BUTTON,
-        asciiFormula = "FeO(OH)",
-        distribution = NormalDistribution(50.0, 1.0) * 2.0,
+        asciiFormula = "(Fe,Ni)O(OH)",
+        crushResult = randomizedSetOf(ProspectingItems.IRON_OXIDE to 3f, ProspectingItems.NICKEL_OXIDE to 1f),
+        crushAmount = 2..3,
+        distribution = NormalDistribution(50.0, 2.0) * 2.0,
         biomeDistribution = biomeDistribution {
             put(Biome.SWAMP, 1f)
             put(Biome.MANGROVE_SWAMP, 1f)
@@ -49,6 +55,8 @@ enum class Ore(
         pebbleMaterial = Material.WARPED_BUTTON,
         asciiFormula = "Cu3(CO3)2(OH)2",
         distribution = NormalDistribution(30.0, 1.5),
+        crushResult = randomizedSetOf(ProspectingItems.COPPER_CARBONATE to 1f),
+        crushAmount = 2..3,
         biomeDistribution = biomeDistribution {
             for (biome in Biome.entries) {
                 put(biome, 1f)
@@ -73,7 +81,7 @@ enum class Ore(
     val oreName = ChatUtils.humanize(name)
     val formula = asciiFormula.subscript()
 
-    private val deepslateVanillaOre = Material.getMaterial("DEEPSLATE_" + vanillaOre.name)!!
+    val deepslateVanillaOre = Material.getMaterial("DEEPSLATE_" + vanillaOre.name)!!
 
     val oreId = "PROSPECTING_ORE_$name"
     val oreItem = SlimefunItemStack(
@@ -96,20 +104,29 @@ enum class Ore(
 
     val pebble by lazy { SlimefunItem.getById(pebbleId) as Pebble }
 
-    private val crushedId = "PROSPECTING_CRUSHED_ORE_$name"
-    val crushedItem = SlimefunItemStack(
-        crushedId,
-        Material.GUNPOWDER,
-        "&fCrushed $oreName",
-        "",
-        "&aFormula: $formula"
-    )
-
     val distribution = distribution.precalculate(WORLD_HEIGHT_RANGE)
 
-    fun placeOre(block: Block, deepslate: Boolean) {
-        block.setType(if (deepslate) deepslateVanillaOre else vanillaOre, false)
-        BlockStorage.addBlockInfo(block, "id", oreId)
+    companion object {
+        private val byId = entries.associateBy { it.oreId } + entries.associateBy { it.pebbleId }
+
+        fun getById(id: String): Ore {
+            return byId[id] ?: error("Unknown ore id: $id")
+        }
+    }
+
+    fun register(addon: SlimefunAddon) {
+        SlimefunItem(
+            ProspectingCategories.ORES,
+            oreItem,
+            ProspectingRecipeTypes.NATURALLY_GENERATED,
+            emptyArray()
+        ).register(addon)
+        Pebble(
+            ProspectingCategories.ORES,
+            pebbleItem,
+            ProspectingRecipeTypes.NATURALLY_GENERATED,
+            emptyArray()
+        ).register(addon)
     }
 }
 
