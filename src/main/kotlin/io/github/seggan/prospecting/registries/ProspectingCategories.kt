@@ -30,4 +30,10 @@ object ProspectingCategories {
         MAIN,
         CustomItemStack(Material.IRON_PICKAXE, "&fTools")
     )
+
+    val SMELTING = SubItemGroup(
+        "smelting".key(),
+        MAIN,
+        CustomItemStack(Material.FURNACE, "&fSmelting")
+    )
 }

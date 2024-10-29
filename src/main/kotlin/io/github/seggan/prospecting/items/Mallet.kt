@@ -22,12 +22,13 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.BoundingBox
+import java.util.concurrent.ThreadLocalRandom
 
 class Mallet(
     itemGroup: ItemGroup,
     item: SlimefunItemStack,
     recipeType: RecipeType,
-    recipe: Array<out ItemStack>
+    recipe: Array<out ItemStack?>
 ) : SlimefunItem(itemGroup, item, recipeType, recipe), RecipeDisplayItem, Listener {
 
     init {
@@ -56,11 +57,13 @@ class Mallet(
             val stack = item.itemStack
             val id = getByItem(stack)?.id
             val newStack = when {
-                stack.type == Material.COPPER_INGOT -> setOf(SlimefunItems.COPPER_INGOT.clone())
-                id == SlimefunItems.COPPER_INGOT.itemId -> setOf(ItemStack(Material.COPPER_INGOT))
+                stack.type == Material.COPPER_INGOT -> listOf(SlimefunItems.COPPER_INGOT.clone())
+                id == SlimefunItems.COPPER_INGOT.itemId -> listOf(ItemStack(Material.COPPER_INGOT))
                 else -> {
                     val ore = id?.let(Ore::getById) ?: continue
-                    ore.crushResult.getRandomSubset(ore.crushAmount.random() + fortune)
+                    (1..ore.crushAmount.random() + fortune).map {
+                        ore.crushResult.getRandom(ThreadLocalRandom.current())
+                    }
                 }
             }
             stack.subtract()

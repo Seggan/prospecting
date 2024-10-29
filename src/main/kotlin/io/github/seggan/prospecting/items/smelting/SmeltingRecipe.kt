@@ -7,7 +7,7 @@ data class SmeltingRecipe(
     val requiredState: Smeltable.State? = null
 ) {
 
-    fun canSmelt(temperature: Int): Boolean {
+    fun canSmelt(temperature: Double): Boolean {
         return temperature >= this.temperature
                 && (requiredState == null || inputs.all { it.first.getState(temperature) == requiredState })
     }

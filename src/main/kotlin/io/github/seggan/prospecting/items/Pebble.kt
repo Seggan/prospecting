@@ -17,7 +17,7 @@ class Pebble(
     itemGroup: ItemGroup,
     item: SlimefunItemStack,
     recipeType: RecipeType,
-    recipe: Array<out ItemStack>
+    recipe: Array<out ItemStack?>
 ) : SlimefunItem(itemGroup, item, recipeType, recipe) {
     override fun preRegister() {
         addItemHandler(BlockUseHandler {

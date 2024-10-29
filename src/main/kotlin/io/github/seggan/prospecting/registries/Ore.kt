@@ -109,9 +109,7 @@ enum class Ore(
     companion object {
         private val byId = entries.associateBy { it.oreId } + entries.associateBy { it.pebbleId }
 
-        fun getById(id: String): Ore {
-            return byId[id] ?: error("Unknown ore id: $id")
-        }
+        fun getById(id: String): Ore? = byId[id]
     }
 
     fun register(addon: SlimefunAddon) {

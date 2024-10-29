@@ -10,10 +10,13 @@ class Chemical(
     itemGroup: ItemGroup,
     item: SlimefunItemStack,
     recipeType: RecipeType,
-    recipe: Array<out ItemStack>
+    recipe: Array<out ItemStack?>
 ) : SlimefunItem(itemGroup, item, recipeType, recipe) {
     init {
         useableInWorkbench = true
+    }
+
+    override fun postRegister() {
         Smeltable.register(item)
     }
 }

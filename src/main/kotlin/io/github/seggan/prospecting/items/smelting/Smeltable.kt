@@ -1,10 +1,13 @@
 package io.github.seggan.prospecting.items.smelting
 
 import io.github.seggan.prospecting.util.itemKey
-import io.github.seggan.sf4k.serial.serializers.DelegatingSerializer
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
@@ -24,7 +27,7 @@ class Smeltable private constructor(
         GAS
     }
 
-    fun getState(temperature: Int): State {
+    fun getState(temperature: Double): State {
         return when {
             boilingPoint != null && temperature >= boilingPoint -> State.GAS
             meltingPoint != null && temperature >= meltingPoint -> State.LIQUID
@@ -37,7 +40,7 @@ class Smeltable private constructor(
     }
 
     override fun hashCode(): Int = ingot.hashCode()
-    
+
     companion object {
 
         private val registry = mutableMapOf<NamespacedKey, Smeltable>()
@@ -145,9 +148,23 @@ class Smeltable private constructor(
             meltingPoint = 1400
         )
     }
+
+    override fun toString(): String {
+        return id.toString()
+    }
 }
 
-private object SmeltableSerializer : DelegatingSerializer<Smeltable, String>(serializer()) {
-    override fun toData(value: Smeltable): String = value.id.toString()
-    override fun fromData(value: String): Smeltable = Smeltable[NamespacedKey.fromString(value)!!]!!
+private object SmeltableSerializer : KSerializer<Smeltable> {
+    override val descriptor = PrimitiveSerialDescriptor("Smeltable", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Smeltable) {
+        encoder.encodeString(value.id.toString())
+    }
+
+    override fun deserialize(decoder: Decoder): Smeltable {
+        val s = decoder.decodeString()
+        return Smeltable[
+            NamespacedKey.fromString(s) ?: throw IllegalArgumentException("Invalid NamespacedKey $s")
+        ]!!
+    }
 }

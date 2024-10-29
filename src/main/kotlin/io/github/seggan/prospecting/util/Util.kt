@@ -1,23 +1,17 @@
 package io.github.seggan.prospecting.util
 
 import io.github.seggan.prospecting.Prospecting
-import io.github.seggan.sf4k.serial.blockstorage.getBlockStorage
-import io.github.seggan.sf4k.serial.blockstorage.setBlockStorage
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet
-import org.bukkit.Location
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.NamespacedKey
-import org.bukkit.block.Block
-import org.bukkit.entity.Entity
 import org.bukkit.inventory.ItemStack
-import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 fun String.key() = NamespacedKey(Prospecting, this)
 
-inline fun <reified T : Entity> Location.spawn(): T {
-    return world!!.spawn(this, T::class.java)
-}
+val Component.text: String get() = PlainTextComponentSerializer.plainText().serialize(this)
 
 fun String.subscript(): String {
     val sb = StringBuilder()
@@ -53,16 +47,6 @@ operator fun <T> ThreadLocal<T>.getValue(thisRef: Any?, property: KProperty<*>):
 
 val IntRange.size get() = last - first + 1
 
-inline fun <reified T> blockStorage(block: Block, default: T) = object :  ReadWriteProperty<Any?, T> {
-    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return block.getBlockStorage<T>(property.name) ?: default
-    }
-
-    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        block.setBlockStorage<T>(property.name, value)
-    }
-}
-
 fun itemKey(item: ItemStack): NamespacedKey {
     val sfi = SlimefunItem.getByItem(item)
     if (sfi != null) {
@@ -72,4 +56,8 @@ fun itemKey(item: ItemStack): NamespacedKey {
     } else {
         return item.type.key
     }
+}
+
+fun Double.moveAsymptoticallyTo(target: Double, rate: Double): Double {
+    return this + (target - this) * rate
 }

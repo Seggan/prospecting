@@ -4,9 +4,13 @@ import io.github.seggan.prospecting.Prospecting
 import io.github.seggan.prospecting.items.Mallet
 import io.github.seggan.prospecting.items.Pebble
 import io.github.seggan.prospecting.items.smelting.Chemical
+import io.github.seggan.prospecting.items.smelting.Crucible
+import io.github.seggan.prospecting.items.smelting.Kiln
+import io.github.seggan.prospecting.items.smelting.Thermometer
 import io.github.seggan.prospecting.util.subscript
 import io.github.seggan.sf4k.item.builder.*
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
@@ -29,6 +33,17 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         +"A mallet used to crush stuff"
     }
 
+    val THERMOMETER by buildSlimefunItemDefaultId<Thermometer> {
+        category = ProspectingCategories.TOOLS
+        name = "Thermometer"
+        material = Material.POTION.asMaterialType()
+        recipeType = RecipeType.NULL
+        recipe = emptyArray()
+
+        +""
+        +"Right click on a crucible to check its temperature"
+    }
+
     val STONE_PEBBLE = buildSlimefunItem<Pebble> {
         category = ProspectingCategories.ORES
         name = "Stone pebble"
@@ -40,6 +55,7 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         +"A normal stone pebble"
     }
 
+    //<editor-fold desc="Ores" defaultstate="collapsed">
     val IRON_OXIDE by buildSlimefunItemDefaultId<Chemical> {
         category = ProspectingCategories.RAW_MATERIALS
         name = "<red>Iron Oxide"
@@ -78,6 +94,39 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         recipe = emptyArray()
         +""
         +"<green>Formula: CuO".subscript()
+    }
+    //</editor-fold>
+
+    val CRUCIBLE by buildSlimefunItemDefaultId<Crucible>(10) {
+        category = ProspectingCategories.SMELTING
+        name = "Crucible"
+        material = Material.CAULDRON.asMaterialType()
+        recipeType = ProspectingRecipeTypes.VANILLA_CRAFTING_TABLE
+        recipe = buildRecipe {
+            +"c c"
+            +"c c"
+            +"ccc"
+            'c' means Material.CLAY_BALL
+        }
+
+        +""
+        +"A crucible used to smelt ores"
+    }
+
+    val KILN by buildSlimefunItemDefaultId<Kiln> {
+        category = ProspectingCategories.SMELTING
+        name = "Kiln"
+        material = Material.FURNACE.asMaterialType()
+        recipeType = ProspectingRecipeTypes.VANILLA_CRAFTING_TABLE
+        recipe = buildRecipe {
+            +"ccc"
+            +"c c"
+            +"ccc"
+            'c' means Material.CLAY_BALL
+        }
+
+        +""
+        +"A kiln used to heat crucibles"
     }
 
     fun initExtra() {
