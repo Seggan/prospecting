@@ -1,6 +1,7 @@
 package io.github.seggan.prospecting.items.smelting
 
 import io.github.seggan.prospecting.util.itemKey
+import io.github.seggan.prospecting.util.text
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemStack
 @Serializable(with = SmeltableSerializer::class)
 class Smeltable private constructor(
     val id: NamespacedKey,
+    val name: String,
     val ingot: ItemStack,
     val dust: ItemStack = ingot,
     val meltingPoint: Int?,
@@ -47,6 +49,7 @@ class Smeltable private constructor(
 
         fun register(
             ingot: ItemStack,
+            name: String = ingot.itemMeta.displayName()?.text?.lowercase() ?: ingot.type.name.lowercase(),
             id: NamespacedKey = itemKey(ingot),
             dust: ItemStack = ingot,
             meltingPoint: Int? = null,
@@ -54,6 +57,7 @@ class Smeltable private constructor(
         ): Smeltable {
             val smeltable = Smeltable(
                 id = id,
+                name = name,
                 ingot = ingot,
                 dust = dust,
                 meltingPoint = meltingPoint,
@@ -76,74 +80,87 @@ class Smeltable private constructor(
         }
 
         val IRON = register(
+            name = "iron",
             ingot = ItemStack(Material.IRON_INGOT),
             dust = SlimefunItems.IRON_DUST,
             meltingPoint = 1538
         )
 
         val GOLD = register(
+            name = "gold",
             ingot = ItemStack(Material.GOLD_INGOT),
             dust = SlimefunItems.GOLD_DUST,
             meltingPoint = 1064
         )
 
         val COPPER = register(
+            name = "copper",
             ingot = SlimefunItems.COPPER_INGOT,
             dust = SlimefunItems.COPPER_DUST,
             meltingPoint = 1085
         )
 
         val TIN = register(
+            name = "tin",
             ingot = SlimefunItems.TIN_INGOT,
             dust = SlimefunItems.TIN_DUST,
             meltingPoint = 231
         )
 
         val SILVER = register(
+            name = "silver",
             ingot = SlimefunItems.SILVER_INGOT,
             dust = SlimefunItems.SILVER_DUST,
             meltingPoint = 962
         )
 
         val LEAD = register(
+            name = "lead",
             ingot = SlimefunItems.LEAD_INGOT,
             dust = SlimefunItems.LEAD_DUST,
             meltingPoint = 327
         )
 
         val ALUMINUM = register(
+            name = "aluminum",
             ingot = SlimefunItems.ALUMINUM_INGOT,
             dust = SlimefunItems.ALUMINUM_DUST,
             meltingPoint = 660
         )
 
         val ZINC = register(
+            name = "zinc",
             ingot = SlimefunItems.ZINC_INGOT,
             dust = SlimefunItems.ZINC_DUST,
             meltingPoint = 419
         )
 
         val NICKEL = register(
+            name = "nickel",
             ingot = SlimefunItems.NICKEL_INGOT,
             meltingPoint = 1455
         )
 
         val COBALT = register(
+            name = "cobalt",
             ingot = SlimefunItems.COBALT_INGOT,
             meltingPoint = 1495
         )
 
         val BRONZE = register(
+            name = "bronze",
             ingot = SlimefunItems.BRONZE_INGOT,
             meltingPoint = 950
         )
 
         val BRASS = register(
+            name = "brass",
             ingot = SlimefunItems.BRASS_INGOT,
             meltingPoint = 900
         )
 
         val STEEL = register(
+            name = "steel",
             ingot = SlimefunItems.STEEL_INGOT,
             meltingPoint = 1400
         )

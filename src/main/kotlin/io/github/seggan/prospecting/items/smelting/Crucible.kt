@@ -6,7 +6,6 @@ import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.SlimefunBlock
 import io.github.seggan.prospecting.util.SlimefunBlock.Companion.applySlimefunBlock
 import io.github.seggan.prospecting.util.moveAsymptoticallyTo
-import io.github.seggan.prospecting.util.text
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
@@ -143,11 +142,15 @@ class Crucible(
                 }
             } else if (item.type == Material.TINTED_GLASS) {
                 e.setUseItem(Event.Result.DENY)
-                val sorted = contents.toList().sortedByDescending { it.first.meltingPoint ?: 0 }
-                for ((smeltable, amount) in sorted) {
-                    val unit = if (amount == 1) "unit" else "units"
-                    val state = smeltable.getState(temperature).name.lowercase()
-                    p.sendMessage("$amount $unit of $state ${smeltable.ingot.displayName().text}")
+                if (contents.isEmpty()) {
+                    p.sendMessage("The crucible is empty")
+                } else {
+                    val sorted = contents.toList().sortedByDescending { it.first.meltingPoint ?: 0 }
+                    for ((smeltable, amount) in sorted) {
+                        val unit = if (amount == 1) "unit" else "units"
+                        val state = smeltable.getState(temperature).name.lowercase()
+                        p.sendMessage("$amount $unit of $state ${smeltable.name}")
+                    }
                 }
             } else if (getByItem(item) is Thermometer) {
                 p.sendActionBar(
