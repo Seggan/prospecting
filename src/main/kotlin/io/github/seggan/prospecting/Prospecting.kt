@@ -10,6 +10,7 @@ import io.github.seggan.sf4k.extensions.plus
 import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
+import org.bukkit.WorldCreator
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.collections.ArrayDeque
@@ -23,11 +24,16 @@ object Prospecting : AbstractAddon(), Listener {
     }
 
     override suspend fun onEnableAsync() {
+        saveDefaultConfig()
+
         ProspectingItems.initExtra()
 
-//        OreGenerator(setOf("a"))
-//        WorldCreator("a").createWorld()
-        OreGenerator(setOf("world"))
+        val oregenWorlds = config.getStringList("oregen.worlds").toSet()
+        for (world in oregenWorlds) {
+            WorldCreator(world).createWorld()
+        }
+
+        OreGenerator(oregenWorlds)
 
         val manager = PaperCommandManager(this)
         manager.enableUnstableAPI("help")
