@@ -73,12 +73,8 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
 
         fun save() {
             if (value != EMPTY) {
-                val encoded = if (value != null) {
-                    @Suppress("UNCHECKED_CAST")
-                    BlockStorageEncoder.encode(serializer, value as T, blockStorageSettings)
-                } else {
-                    ""
-                }
+                @Suppress("UNCHECKED_CAST")
+                val encoded = BlockStorageEncoder.encode(serializer, value as T, blockStorageSettings)
                 BlockStorage.addBlockInfo(block, key, encoded)
             }
             value = EMPTY
@@ -94,9 +90,9 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
     override fun close() = saveData()
 
     companion object {
-        inline fun SlimefunItem.applySlimefunBlock(crossinline blockCons: (Block) -> SlimefunBlock) {
+        inline fun applyBlock(item: SlimefunItem, crossinline blockCons: (Block) -> SlimefunBlock) {
             val blocks = mutableMapOf<BlockPosition, SlimefunBlock>()
-            addItemHandler(object : BlockPlaceHandler(false) {
+            item.addItemHandler(object : BlockPlaceHandler(false) {
                 override fun onPlayerPlace(e: BlockPlaceEvent) {
                     val block = e.blockPlaced
                     val sfBlock = blocks.getOrPut(block.position) { blockCons(block) }
@@ -105,7 +101,7 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
                 }
             })
 
-            addItemHandler(object : BlockBreakHandler(false, true) {
+            item.addItemHandler(object : BlockBreakHandler(false, true) {
                 override fun onPlayerBreak(e: BlockBreakEvent, item: ItemStack, drops: MutableList<ItemStack>) {
                     val block = e.block
                     val sfBlock = blocks.getOrPut(block.position) { blockCons(block) }
@@ -122,7 +118,7 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
                 }
             })
 
-            addItemHandler(object : BlockUseHandler {
+            item.addItemHandler(object : BlockUseHandler {
                 override fun onRightClick(e: PlayerRightClickEvent) {
                     val block = e.clickedBlock.getOrNull() ?: return
                     val sfBlock = blocks.getOrPut(block.position) { blockCons(block) }
@@ -131,7 +127,7 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
                 }
             })
 
-            addItemHandler(object : BlockTicker() {
+            item.addItemHandler(object : BlockTicker() {
                 override fun tick(b: Block, item: SlimefunItem, data: Config) {
                     val sfBlock = blocks.getOrPut(b.position) { blockCons(b) }
                     sfBlock.tick()

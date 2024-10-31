@@ -4,7 +4,6 @@ import io.github.seggan.prospecting.items.smelting.items.Slag
 import io.github.seggan.prospecting.items.smelting.tools.Thermometer
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.SlimefunBlock
-import io.github.seggan.prospecting.util.SlimefunBlock.Companion.applySlimefunBlock
 import io.github.seggan.prospecting.util.moveAsymptoticallyTo
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
@@ -72,7 +71,20 @@ class Crucible(
     }
 
     init {
-        applySlimefunBlock(::CrucibleBlock)
+        SlimefunBlock.applyBlock(this@Crucible, ::CrucibleBlock)
+    }
+
+    fun cast(block: Block): Smeltable? {
+        CrucibleBlock(block).use { crucible ->
+            val top = crucible.contents.keys.maxByOrNull { it.meltingPoint ?: 0 } ?: return null
+            if (top.getState(crucible.temperature) == Smeltable.State.LIQUID) {
+                crucible.contents.merge(top, 1, Int::minus)
+                crucible.contents = crucible.contents.filterValues { it > 0 }.toMutableMap()
+                return top
+            } else {
+                return null
+            }
+        }
     }
 
     private inner class CrucibleBlock(block: Block) : SlimefunBlock(block) {
@@ -124,7 +136,7 @@ class Crucible(
                         }
                     }
                 }
-                val rate = 0.01 / (contents.values.sum() + solid + 1)
+                val rate = 0.02 / (contents.values.sum() + solid + 1)
                 temperature = temperature.moveAsymptoticallyTo(ROOM_TEMPERATURE, rate)
             }
         }

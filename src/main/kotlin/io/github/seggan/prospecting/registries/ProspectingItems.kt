@@ -5,6 +5,7 @@ import io.github.seggan.prospecting.items.Mallet
 import io.github.seggan.prospecting.items.Pebble
 import io.github.seggan.prospecting.items.smelting.Crucible
 import io.github.seggan.prospecting.items.smelting.Kiln
+import io.github.seggan.prospecting.items.smelting.Mold
 import io.github.seggan.prospecting.items.smelting.items.Chemical
 import io.github.seggan.prospecting.items.smelting.items.Slag
 import io.github.seggan.prospecting.items.smelting.tools.Bellows
@@ -146,6 +147,22 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         +""
         +"Place down against a kiln and"
         +"right click to increase its temperature"
+    }
+
+    val MOLD by buildSlimefunItem<Mold> {
+        category = ProspectingCategories.SMELTING
+        name = "Mold"
+        material = Material.FLOWER_POT.asMaterialType()
+        recipeType = ProspectingRecipeTypes.VANILLA_CRAFTING_TABLE
+        recipe = buildRecipe {
+            +"   "
+            +"c c"
+            +" c "
+            'c' means Material.CLAY_BALL
+        }
+
+        +""
+        +"A mold used to cast metals"
     }
 
     val COKE by buildSlimefunItem<Chemical> {

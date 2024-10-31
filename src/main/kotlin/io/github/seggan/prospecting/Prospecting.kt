@@ -41,12 +41,14 @@ object Prospecting : AbstractAddon(), Listener {
 
         launch {
             Bukkit.getConsoleSender().sendMessage(
-                NamedTextColor.GREEN + """################# $name $pluginVersion #################
-                
-                $name is open source, you can contribute or report bugs at $bugTrackerURL
-                Join the Slimefun Addon Community Discord: discord.gg/SqD3gg5SAU
-                
-                ###################################################""".trimIndent()
+                NamedTextColor.GREEN + """
+                    ################# $name $pluginVersion #################
+                    
+                    $name is open source, you can contribute or report bugs at $bugTrackerURL
+                    Join the Slimefun Addon Community Discord: discord.gg/SqD3gg5SAU
+                    
+                    ###################################################
+                """.trimIndent()
             )
         }
     }

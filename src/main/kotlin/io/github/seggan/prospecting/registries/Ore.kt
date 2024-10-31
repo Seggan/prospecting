@@ -19,18 +19,16 @@ import org.bukkit.block.Biome
 import org.bukkit.inventory.ItemStack
 
 enum class Ore(
-    private val metal: Metal,
     private val pebbleMaterial: Material,
     asciiFormula: String,
     val crushResult: RandomizedSet<ItemStack>,
     val crushAmount: IntRange,
     distribution: Distribution,
     val biomeDistribution: Object2FloatMap<Biome>,
-    val vanillaOre: Material = metal.vanillaOre
+    val vanillaOre: Material
 ) {
     // Iron ores
     LIMONITE(
-        metal = Metal.IRON,
         pebbleMaterial = Material.SPRUCE_BUTTON,
         asciiFormula = "(Fe,Ni)O(OH)",
         crushResult = randomizedSetOf(ProspectingItems.IRON_OXIDE to 3f, ProspectingItems.NICKEL_OXIDE to 1f),
@@ -46,12 +44,12 @@ enum class Ore(
             put(Biome.COLD_OCEAN, 0.7f)
             put(Biome.WARM_OCEAN, 0.5f)
             put(Biome.FROZEN_OCEAN, 0.7f)
-        }
+        },
+        vanillaOre = Material.IRON_ORE
     ),
 
     // Copper ores
     AZURITE(
-        metal = Metal.COPPER,
         pebbleMaterial = Material.WARPED_BUTTON,
         asciiFormula = "Cu3(CO3)2(OH)2",
         distribution = NormalDistribution(30.0, 1.5),

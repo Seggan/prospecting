@@ -2,7 +2,6 @@ package io.github.seggan.prospecting.items.smelting
 
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.SlimefunBlock
-import io.github.seggan.prospecting.util.SlimefunBlock.Companion.applySlimefunBlock
 import io.github.seggan.prospecting.util.moveAsymptoticallyTo
 import io.github.seggan.prospecting.util.secondsToSfTicks
 import io.github.seggan.sf4k.serial.blockstorage.getBlockStorage
@@ -44,7 +43,7 @@ class Kiln(
     }
 
     init {
-        applySlimefunBlock(::KilnBlock)
+        SlimefunBlock.applyBlock(this@Kiln, ::KilnBlock)
     }
 
     fun useBellowsOn(block: Block) {
