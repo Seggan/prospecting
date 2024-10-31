@@ -1,5 +1,6 @@
-package io.github.seggan.prospecting.items.smelting
+package io.github.seggan.prospecting.items.smelting.items
 
+import io.github.seggan.prospecting.items.smelting.Smeltable
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
@@ -12,6 +13,7 @@ class Chemical(
     recipeType: RecipeType,
     recipe: Array<out ItemStack?>
 ) : SlimefunItem(itemGroup, item, recipeType, recipe) {
+
     init {
         useableInWorkbench = true
     }

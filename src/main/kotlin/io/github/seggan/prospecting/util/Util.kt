@@ -2,6 +2,7 @@ package io.github.seggan.prospecting.util
 
 import io.github.seggan.prospecting.Prospecting
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -60,4 +61,8 @@ fun itemKey(item: ItemStack): NamespacedKey {
 
 fun Double.moveAsymptoticallyTo(target: Double, rate: Double): Double {
     return this + (target - this) * rate
+}
+
+fun secondsToSfTicks(seconds: Int): Int {
+    return seconds * 20 / Slimefun.getTickerTask().tickRate
 }

@@ -1,8 +1,10 @@
 package io.github.seggan.prospecting.items.smelting
 
+import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.SlimefunBlock
 import io.github.seggan.prospecting.util.SlimefunBlock.Companion.applySlimefunBlock
 import io.github.seggan.prospecting.util.moveAsymptoticallyTo
+import io.github.seggan.prospecting.util.secondsToSfTicks
 import io.github.seggan.sf4k.serial.blockstorage.getBlockStorage
 import io.github.seggan.sf4k.serial.blockstorage.setBlockStorage
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
@@ -28,14 +30,28 @@ class Kiln(
 ) : SlimefunItem(itemGroup, item, recipeType, recipe) {
 
     companion object {
-        private val fuels = mapOf(
-            ItemStack(Material.COAL) to Fuel(800, 20),
-            ItemStack(Material.CHARCOAL) to Fuel(800, 20),
-        )
+
+        private lateinit var fuels: Map<ItemStack, Fuel>
+
+        internal fun initFuels() {
+            fuels = mapOf(
+                ItemStack(Material.COAL) to Fuel(900, secondsToSfTicks(10)),
+                ItemStack(Material.CHARCOAL) to Fuel(900, secondsToSfTicks(10)),
+                ItemStack(Material.COAL_BLOCK) to Fuel(900, secondsToSfTicks(10 * 9)),
+                ProspectingItems.COKE to Fuel(1100, secondsToSfTicks(3 * 60)),
+            )
+        }
     }
 
     init {
         applySlimefunBlock(::KilnBlock)
+    }
+
+    fun useBellowsOn(block: Block) {
+        val kiln = KilnBlock(block)
+        val currentFuel = kiln.currentFuel ?: return
+        currentFuel.currentMax = currentFuel.maxTemp * 1.2
+        kiln.saveData()
     }
 
     @Serializable
@@ -43,8 +59,8 @@ class Kiln(
 
     private inner class KilnBlock(block: Block) : SlimefunBlock(block) {
 
-        private val fuelQueue: ArrayDeque<Fuel> by blockStorage { ArrayDeque() }
-        private var currentFuel: Fuel? by blockStorage { null }
+        val fuelQueue: ArrayDeque<Fuel> by blockStorage { ArrayDeque() }
+        var currentFuel: Fuel? by blockStorage { null }
 
         override fun tick() {
             if (currentFuel == null && fuelQueue.isNotEmpty()) {
@@ -88,6 +104,13 @@ class Kiln(
                     item.subtract()
                     return
                 }
+            }
+            if ("SHOVEL" in e.item.type.name) {
+                val blockData = block.blockData as Furnace
+                blockData.isLit = !blockData.isLit
+                block.blockData = blockData
+                currentFuel = null
+                fuelQueue.clear()
             }
         }
     }

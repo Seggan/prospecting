@@ -1,4 +1,4 @@
-package io.github.seggan.prospecting.items.smelting
+package io.github.seggan.prospecting.items.smelting.tools
 
 import io.github.seggan.sf4k.item.BetterSlimefunItem
 import io.github.seggan.sf4k.item.ItemHandler
@@ -18,7 +18,7 @@ class Thermometer(
     item: SlimefunItemStack,
     recipeType: RecipeType,
     recipe: Array<out ItemStack?>
-) : BetterSlimefunItem(itemGroup, item.also(::modifyItem), recipeType, recipe) {
+) : BetterSlimefunItem(itemGroup, item.also(Companion::modifyItem), recipeType, recipe) {
 
     companion object {
         private fun modifyItem(item: SlimefunItemStack) {

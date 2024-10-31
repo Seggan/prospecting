@@ -41,6 +41,8 @@ object ProspectingRecipeTypes : Listener {
 
     val MALLET by lazy { RecipeType("mallet".key(), ProspectingItems.MALLET) }
 
+    val CRUCIBLE by lazy { RecipeType("crucible".key(), ProspectingItems.CRUCIBLE) }
+
     private val vanillaRecipes = mutableSetOf<Pair<Array<out ItemStack?>, ItemStack>>()
 
     @EventHandler

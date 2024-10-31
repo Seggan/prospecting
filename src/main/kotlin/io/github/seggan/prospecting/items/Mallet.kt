@@ -1,7 +1,9 @@
 package io.github.seggan.prospecting.items
 
 import io.github.seggan.prospecting.Prospecting
+import io.github.seggan.prospecting.items.smelting.items.Slag
 import io.github.seggan.prospecting.registries.Ore
+import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.sf4k.extensions.getSlimefun
 import io.github.seggan.sf4k.extensions.plus
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
@@ -55,25 +57,30 @@ class Mallet(
         val top = block.location.add(0.5, 1.0, 0.5)
         for (item in floatingItems) {
             val stack = item.itemStack
-            val id = getByItem(stack)?.id
-            val newStack = when {
-                stack.type == Material.COPPER_INGOT -> listOf(SlimefunItems.COPPER_INGOT.clone())
-                id == SlimefunItems.COPPER_INGOT.itemId -> listOf(ItemStack(Material.COPPER_INGOT))
-                else -> {
-                    val ore = id?.let(Ore::getById) ?: continue
-                    (1..ore.crushAmount.random() + fortune).map {
-                        ore.crushResult.getRandom(ThreadLocalRandom.current())
-                    }
-                }
-            }
+            val output = getRecipeOutput(stack, fortune)
             stack.subtract()
             if (stack.amount == 0) {
                 item.remove()
             } else {
                 item.itemStack = stack
             }
-            for (new in newStack) {
+            for (new in output) {
                 top.world.dropItem(top, new)
+            }
+        }
+    }
+
+    private fun getRecipeOutput(stack: ItemStack, fortune: Int): List<ItemStack> {
+        val id = getByItem(stack)?.id
+        return when {
+            stack.type == Material.COPPER_INGOT -> listOf(SlimefunItems.COPPER_INGOT.clone())
+            id == SlimefunItems.COPPER_INGOT.itemId -> listOf(ItemStack(Material.COPPER_INGOT))
+            id == ProspectingItems.SLAG.itemId -> Slag.getContents(stack)
+            else -> {
+                val ore = id?.let(Ore::getById) ?: return emptyList()
+                (1..ore.crushAmount.random() + fortune).map {
+                    ore.crushResult.getRandom(ThreadLocalRandom.current())
+                }
             }
         }
     }

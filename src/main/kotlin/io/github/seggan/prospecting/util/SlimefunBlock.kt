@@ -3,6 +3,7 @@ package io.github.seggan.prospecting.util
 import io.github.seggan.sf4k.extensions.position
 import io.github.seggan.sf4k.serial.blockstorage.BlockStorageDecoder
 import io.github.seggan.sf4k.serial.blockstorage.BlockStorageEncoder
+import io.github.seggan.sf4k.serial.blockstorage.BlockStorageSettings
 import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
@@ -24,10 +25,12 @@ import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-abstract class SlimefunBlock(val block: Block) {
+abstract class SlimefunBlock(val block: Block) : AutoCloseable {
 
     @PublishedApi
     internal val bsValues = mutableListOf<BlockStorageValue<*>>()
+
+    protected open val blockStorageSettings = BlockStorageSettings()
 
     open fun onPlace(p: Player) {}
 
@@ -55,7 +58,7 @@ abstract class SlimefunBlock(val block: Block) {
             if (value == EMPTY) {
                 val encoded = BlockStorage.getLocationInfo(block.location, key)
                 value = if (!encoded.isNullOrEmpty()) {
-                    BlockStorageDecoder.decode(serializer, encoded)
+                    BlockStorageDecoder.decode(serializer, encoded, blockStorageSettings)
                 } else {
                     default()
                 }
@@ -72,7 +75,7 @@ abstract class SlimefunBlock(val block: Block) {
             if (value != EMPTY) {
                 val encoded = if (value != null) {
                     @Suppress("UNCHECKED_CAST")
-                    BlockStorageEncoder.encode(serializer, value as T)
+                    BlockStorageEncoder.encode(serializer, value as T, blockStorageSettings)
                 } else {
                     ""
                 }
@@ -87,6 +90,8 @@ abstract class SlimefunBlock(val block: Block) {
             value.save()
         }
     }
+
+    override fun close() = saveData()
 
     companion object {
         inline fun SlimefunItem.applySlimefunBlock(crossinline blockCons: (Block) -> SlimefunBlock) {

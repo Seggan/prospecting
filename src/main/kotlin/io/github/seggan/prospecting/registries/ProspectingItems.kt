@@ -3,10 +3,12 @@ package io.github.seggan.prospecting.registries
 import io.github.seggan.prospecting.Prospecting
 import io.github.seggan.prospecting.items.Mallet
 import io.github.seggan.prospecting.items.Pebble
-import io.github.seggan.prospecting.items.smelting.Chemical
 import io.github.seggan.prospecting.items.smelting.Crucible
 import io.github.seggan.prospecting.items.smelting.Kiln
-import io.github.seggan.prospecting.items.smelting.Thermometer
+import io.github.seggan.prospecting.items.smelting.items.Chemical
+import io.github.seggan.prospecting.items.smelting.items.Slag
+import io.github.seggan.prospecting.items.smelting.tools.Bellows
+import io.github.seggan.prospecting.items.smelting.tools.Thermometer
 import io.github.seggan.prospecting.util.subscript
 import io.github.seggan.sf4k.item.builder.*
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
@@ -16,7 +18,7 @@ import org.bukkit.inventory.ItemStack
 
 object ProspectingItems : ItemRegistry(Prospecting) {
 
-    val MALLET by buildSlimefunItemDefaultId<Mallet> {
+    val MALLET by buildSlimefunItem<Mallet> {
         category = ProspectingCategories.TOOLS
         name = "Mallet"
         material = Material.WOODEN_PICKAXE.asMaterialType()
@@ -33,7 +35,7 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         +"A mallet used to crush stuff"
     }
 
-    val THERMOMETER by buildSlimefunItemDefaultId<Thermometer> {
+    val THERMOMETER by buildSlimefunItem<Thermometer> {
         category = ProspectingCategories.TOOLS
         name = "Thermometer"
         material = Material.POTION.asMaterialType()
@@ -44,7 +46,7 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         +"Right click on a crucible to check its temperature"
     }
 
-    val STONE_PEBBLE = buildSlimefunItem<Pebble> {
+    val STONE_PEBBLE by buildSlimefunItem<Pebble> {
         category = ProspectingCategories.ORES
         name = "Stone pebble"
         material = Material.STONE_BUTTON.asMaterialType()
@@ -56,7 +58,7 @@ object ProspectingItems : ItemRegistry(Prospecting) {
     }
 
     //<editor-fold desc="Ores" defaultstate="collapsed">
-    val IRON_OXIDE by buildSlimefunItemDefaultId<Chemical> {
+    val IRON_OXIDE by buildSlimefunItem<Chemical> {
         category = ProspectingCategories.RAW_MATERIALS
         name = "<red>Iron Oxide"
         material = Material.RED_DYE.asMaterialType()
@@ -66,7 +68,7 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         +"<green>Formula: FeO".subscript()
     }
 
-    val NICKEL_OXIDE by buildSlimefunItemDefaultId<SlimefunItem> {
+    val NICKEL_OXIDE by buildSlimefunItem<SlimefunItem> {
         category = ProspectingCategories.RAW_MATERIALS
         name = "<white>Nickel Oxide"
         material = Material.WHITE_DYE.asMaterialType()
@@ -76,7 +78,7 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         +"<green>Formula: NiO".subscript()
     }
 
-    val COPPER_CARBONATE by buildSlimefunItemDefaultId<Chemical> {
+    val COPPER_CARBONATE by buildSlimefunItem<Chemical> {
         category = ProspectingCategories.RAW_MATERIALS
         name = "<dark_aqua>Copper Carbonate"
         material = Material.CYAN_DYE.asMaterialType()
@@ -86,7 +88,7 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         +"<green>Formula: CuCO3".subscript()
     }
 
-    val COPPER_OXIDE by buildSlimefunItemDefaultId<Chemical> {
+    val COPPER_OXIDE by buildSlimefunItem<Chemical> {
         category = ProspectingCategories.RAW_MATERIALS
         name = "<dark_aqua>Copper Oxide"
         material = Material.BLACK_DYE.asMaterialType()
@@ -97,7 +99,7 @@ object ProspectingItems : ItemRegistry(Prospecting) {
     }
     //</editor-fold>
 
-    val CRUCIBLE by buildSlimefunItemDefaultId<Crucible>(10) {
+    val CRUCIBLE by buildSlimefunItem<Crucible>(10) {
         category = ProspectingCategories.SMELTING
         name = "Crucible"
         material = Material.CAULDRON.asMaterialType()
@@ -113,7 +115,7 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         +"A crucible used to smelt ores"
     }
 
-    val KILN by buildSlimefunItemDefaultId<Kiln> {
+    val KILN by buildSlimefunItem<Kiln> {
         category = ProspectingCategories.SMELTING
         name = "Kiln"
         material = Material.FURNACE.asMaterialType()
@@ -129,6 +131,45 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         +"A kiln used to heat crucibles"
     }
 
+    val BELLOWS by buildSlimefunItem<Bellows> {
+        category = ProspectingCategories.SMELTING
+        name = "Bellows"
+        material = MaterialType.Head("ewogICJ0aW1lc3RhbXAiIDogMTczMDI0Mjk0MDE4NSwKICAicHJvZmlsZUlkIiA6ICI3MzE4MWQxZDRjYWQ0ZmU0YTcxNWNjNmUxOGNjYzVkNyIsCiAgInByb2ZpbGVOYW1lIiA6ICJaZmVybjRuZGl0byIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS8xZTNmMTZjOWE4Y2YyMzg0ZDU4MTUyYjEzMDBlNDgyZGVjMzM3MTAyNWEzOTIyYzM5ZWRjOGI3MTY1ZTBiMjk2IgogICAgfQogIH0KfQ==")
+        recipeType = ProspectingRecipeTypes.VANILLA_CRAFTING_TABLE
+        recipe = buildRecipe {
+            +"l l"
+            +"l l"
+            +"l l"
+            'l' means Material.LEATHER
+        }
+
+        +""
+        +"Place down against a kiln and"
+        +"right click to increase its temperature"
+    }
+
+    val COKE by buildSlimefunItem<Chemical> {
+        category = ProspectingCategories.RAW_MATERIALS
+        name = "<black>Coke"
+        material = Material.COAL.asMaterialType()
+        recipeType = ProspectingRecipeTypes.CRUCIBLE
+        recipe = arrayOf(ItemStack(Material.COAL_BLOCK))
+        +""
+        +"<green>Formula: C".subscript()
+    }
+
+    val SLAG by buildSlimefunItem<Slag> {
+        category = ProspectingCategories.RAW_MATERIALS
+        name = "<gray>Slag"
+        material = Material.GRAY_DYE.asMaterialType()
+        recipeType = ProspectingRecipeTypes.CRUCIBLE
+        recipe = emptyArray()
+
+        +""
+        +"A byproduct of smelting ores"
+        +"Crush it with a mallet to get the contents"
+    }
+
     fun initExtra() {
         for (ore in Ore.entries) {
             ore.register(addon)
@@ -138,5 +179,8 @@ object ProspectingItems : ItemRegistry(Prospecting) {
             Array(9) { STONE_PEBBLE },
             ItemStack(Material.COBBLESTONE)
         )
+
+        Crucible.initRecipes()
+        Kiln.initFuels()
     }
 }

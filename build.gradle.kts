@@ -28,7 +28,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("com.github.Slimefun:Slimefun4:e02a0f61d1")
 
-    implementation("io.github.seggan:sf4k:0.7.2")
+    implementation("io.github.seggan:sf4k:0.8.0")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
     paperLibrary("co.aikar:acf-paper:0.5.1-SNAPSHOT")
