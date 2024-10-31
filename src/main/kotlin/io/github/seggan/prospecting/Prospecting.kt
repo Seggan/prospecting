@@ -2,6 +2,7 @@ package io.github.seggan.prospecting
 
 import co.aikar.commands.PaperCommandManager
 import com.github.shynixn.mccoroutine.bukkit.launch
+import io.github.seggan.prospecting.gen.OreGenerator
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.ArrayDequeSerializer
 import io.github.seggan.sf4k.AbstractAddon
@@ -24,8 +25,9 @@ object Prospecting : AbstractAddon(), Listener {
     override suspend fun onEnableAsync() {
         ProspectingItems.initExtra()
 
-        //OreGenerator(setOf("a"))
-        //WorldCreator("a").createWorld()
+//        OreGenerator(setOf("a"))
+//        WorldCreator("a").createWorld()
+        OreGenerator(setOf("world"))
 
         val manager = PaperCommandManager(this)
         manager.enableUnstableAPI("help")
