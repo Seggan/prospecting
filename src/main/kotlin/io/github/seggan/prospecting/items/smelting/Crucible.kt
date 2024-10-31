@@ -101,7 +101,7 @@ class Crucible(
                 val available = capacity - contents.values.sum()
                 val allowed = stack.amount.coerceAtMost(available)
                 if (allowed == 0) continue
-                val smeltable = Smeltable[stack] ?: continue
+                val smeltable = Smeltable.getByIngotOrDust(stack) ?: continue
                 contents.merge(smeltable, allowed, Int::plus)
                 stack.subtract(allowed)
                 if (stack.amount == 0) {

@@ -79,6 +79,10 @@ class Smeltable private constructor(
             return registry[id]
         }
 
+        fun getByIngotOrDust(item: ItemStack): Smeltable? {
+            return registry.values.firstOrNull { it.ingot.isSimilar(item) || it.dust.isSimilar(item) }
+        }
+
         val IRON = register(
             name = "iron",
             ingot = ItemStack(Material.IRON_INGOT),
