@@ -137,7 +137,7 @@ class Crucible(
                 if (ThreadLocalRandom.current().nextFloat() < 0.1) {
                     block.location.createExplosion(4f, false, false)
                     if (p.gameMode != GameMode.CREATIVE) {
-                        item.type = Material.BUCKET
+                        p.inventory.setItem(e.hand, ItemStack(Material.BUCKET))
                     }
                 }
             } else if (item.type == Material.TINTED_GLASS) {
