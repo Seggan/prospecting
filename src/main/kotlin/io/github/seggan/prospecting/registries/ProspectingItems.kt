@@ -150,10 +150,10 @@ object ProspectingItems : ItemRegistry(Prospecting) {
 
     val COKE by buildSlimefunItem<Chemical> {
         category = ProspectingCategories.RAW_MATERIALS
-        name = "<black>Metallurgical Coke"
+        name = "<black>Coke"
         material = Material.COAL_BLOCK.asMaterialType()
         recipeType = ProspectingRecipeTypes.CRUCIBLE
-        recipe = arrayOf(ItemStack(Material.COAL_BLOCK))
+        recipe = arrayOf(ItemStack(Material.CHARCOAL, 9))
     }
 
     val SLAG by buildSlimefunItem<Slag> {
