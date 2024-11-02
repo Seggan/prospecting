@@ -17,6 +17,7 @@ import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap
 import org.bukkit.Material
 import org.bukkit.block.Biome
 import org.bukkit.inventory.ItemStack
+import java.util.EnumMap
 
 enum class Ore(
     private val pebbleMaterial: Material,
@@ -33,7 +34,7 @@ enum class Ore(
         asciiFormula = "(Fe,Ni)O(OH)",
         crushResult = randomizedSetOf(ProspectingItems.IRON_OXIDE to 3f, ProspectingItems.NICKEL_OXIDE to 1f),
         crushAmount = 2..3,
-        distribution = NormalDistribution(50.0, 2.0) * 2.0,
+        distribution = NormalDistribution(50.0, 2.0),
         biomeDistribution = biomeDistribution {
             put(Biome.SWAMP, 1f)
             put(Biome.MANGROVE_SWAMP, 1f)
@@ -138,16 +139,16 @@ enum class Ore(
 
     val pebble by lazy { SlimefunItem.getById(pebbleId) as Pebble }
 
-    val distribution = distribution.precalculate(WORLD_HEIGHT_RANGE)
+    val distribution = (distribution * 1.5).precalculate(WORLD_HEIGHT_RANGE)
 
     companion object {
         private val byId = entries.associateBy { it.oreId } + entries.associateBy { it.pebbleId }
         fun getById(id: String): Ore? = byId[id]
 
-        val associations = mapOf(
-            AZURITE to randomizedSetOf(MALACHITE to 1f),
-            MALACHITE to randomizedSetOf(AZURITE to 1f)
-        )
+        val associations = EnumMap<Ore, RandomizedSet<Ore>>(Ore::class.java).apply {
+            put(AZURITE, randomizedSetOf(MALACHITE to 1f))
+            put(MALACHITE, randomizedSetOf(AZURITE to 1f))
+        }
     }
 
     fun register(addon: SlimefunAddon) {

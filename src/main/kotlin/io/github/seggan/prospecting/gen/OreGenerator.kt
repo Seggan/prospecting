@@ -90,13 +90,15 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                                 ore.biomeDistribution.getFloat(biome) *
                                 ore.distribution[y.toDouble()]
                         if (type in stoneReplaceable && random.nextFloat() < chance ) {
+                            var finalOre = ore
+                            if (random.nextFloat() < 0.1) {
+                                finalOre = Ore.associations[ore]?.getRandom(random) ?: ore
+                            }
+                            val material = if (type == Material.DEEPSLATE) finalOre.deepslateVanillaOre else finalOre.vanillaOre
                             Prospecting.launch {
                                 val block = chunk.getBlock(x, y, z)
-                                block.setType(
-                                    if (type == Material.DEEPSLATE) ore.deepslateVanillaOre else ore.vanillaOre,
-                                    false
-                                )
-                                BlockStorage.addBlockInfo(block, "id", ore.oreId)
+                                block.setType(material, false)
+                                BlockStorage.addBlockInfo(block, "id", finalOre.oreId)
                             }
                             markers.merge(ore, 0.01f, Float::plus)
                             replaceVanilla = false
