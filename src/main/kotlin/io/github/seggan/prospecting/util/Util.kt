@@ -5,6 +5,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
@@ -65,4 +66,8 @@ fun Double.moveAsymptoticallyTo(target: Double, rate: Double): Double {
 
 fun secondsToSfTicks(seconds: Int): Int {
     return seconds * 20 / Slimefun.getTickerTask().tickRate
+}
+
+fun List<String>.miniMessage(): List<Component> {
+    return map { MiniMessage.miniMessage().deserialize("<!i>$it") }
 }

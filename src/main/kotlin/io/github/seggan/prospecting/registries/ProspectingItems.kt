@@ -98,6 +98,16 @@ object ProspectingItems : ItemRegistry(Prospecting) {
         +""
         +"<green>Formula: CuO".subscript()
     }
+
+    val TIN_OXIDE by buildSlimefunItem<Chemical> {
+        category = ProspectingCategories.RAW_MATERIALS
+        name = "<gray>Tin Oxide"
+        material = Material.BLACK_DYE.asMaterialType()
+        recipeType = ProspectingRecipeTypes.NATURALLY_GENERATED
+        recipe = emptyArray()
+        +""
+        +"<green>Formula: SnO".subscript()
+    }
     //</editor-fold>
 
     val CRUCIBLE by buildSlimefunItem<Crucible>(10) {

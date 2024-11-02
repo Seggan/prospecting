@@ -4,13 +4,16 @@ import io.github.seggan.prospecting.items.smelting.items.Slag
 import io.github.seggan.prospecting.items.smelting.tools.Thermometer
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.SlimefunBlock
+import io.github.seggan.prospecting.util.miniMessage
 import io.github.seggan.prospecting.util.moveAsymptoticallyTo
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems
+import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
+import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils
 import net.kyori.adventure.text.Component
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -27,7 +30,7 @@ class Crucible(
     recipeType: RecipeType,
     recipe: Array<out ItemStack?>,
     private val capacity: Int,
-) : SlimefunItem(itemGroup, item, recipeType, recipe) {
+) : SlimefunItem(itemGroup, item, recipeType, recipe), RecipeDisplayItem {
 
     companion object {
         private const val ROOM_TEMPERATURE = 20.0
@@ -41,7 +44,7 @@ class Crucible(
         fun registerRecipe(
             vararg inputs: Pair<Smeltable, Int>,
             temperature: Int,
-            output: Smeltable,
+            output: Pair<Smeltable, Int>,
         ) = registerRecipe(SmeltingRecipe(inputs.toList(), output, temperature))
 
         internal fun initRecipes() {
@@ -50,22 +53,36 @@ class Crucible(
             registerRecipe(
                 Smeltable[ProspectingItems.COPPER_CARBONATE]!! to 1,
                 temperature = 300,
-                output = Smeltable[ProspectingItems.COPPER_OXIDE]!!,
+                output = Smeltable[ProspectingItems.COPPER_OXIDE]!! to 1,
             )
             registerRecipe(
                 Smeltable[ProspectingItems.COPPER_OXIDE]!! to 1,
                 temperature = 1200,
-                output = Smeltable[SlimefunItems.COPPER_INGOT]!!,
+                output = Smeltable.COPPER to 1,
             )
             registerRecipe(
                 coal to 1,
                 temperature = 670,
-                output = charcoal
+                output = charcoal to 1,
             )
             registerRecipe(
                 charcoal to 9,
                 temperature = 1000,
-                output = Smeltable[ProspectingItems.COKE]!!
+                output = Smeltable[ProspectingItems.COKE]!! to 1,
+            )
+            registerRecipe(
+                charcoal to 1,
+                Smeltable[ProspectingItems.TIN_OXIDE]!! to 1,
+                temperature = 1200,
+                output = Smeltable.TIN to 1,
+            )
+
+            // Alloys
+            registerRecipe(
+                Smeltable.COPPER to 2,
+                Smeltable.TIN to 1,
+                temperature = 850,
+                output = Smeltable.BRONZE to 3,
             )
         }
     }
@@ -76,7 +93,7 @@ class Crucible(
 
     fun cast(block: Block): Smeltable? {
         CrucibleBlock(block).use { crucible ->
-            val top = crucible.contents.keys.maxByOrNull { it.meltingPoint ?: 0 } ?: return null
+            val top = crucible.sortedContents.firstOrNull()?.first ?: return null
             if (top.getState(crucible.temperature) == Smeltable.State.LIQUID) {
                 crucible.contents.merge(top, 1, Int::minus)
                 crucible.contents = crucible.contents.filterValues { it > 0 }.toMutableMap()
@@ -114,13 +131,14 @@ class Crucible(
 
             // Perform smelting
             for (recipe in recipes) {
-                if (recipe.canSmelt(temperature) &&
+                if (temperature >= recipe.temperature &&
                     recipe.inputs.all { (input, amount) -> contents.getOrDefault(input, 0) >= amount }
                 ) {
                     for ((input, amount) in recipe.inputs) {
                         contents.merge(input, amount, Int::minus)
                     }
-                    contents.merge(recipe.output, 1, Int::plus)
+                    val (output, amount) = recipe.output
+                    contents.merge(output, amount, Int::plus)
                 }
             }
 
@@ -157,8 +175,7 @@ class Crucible(
                 if (contents.isEmpty()) {
                     p.sendMessage("The crucible is empty")
                 } else {
-                    val sorted = contents.toList().sortedByDescending { it.first.meltingPoint ?: 0 }
-                    for ((smeltable, amount) in sorted) {
+                    for ((smeltable, amount) in sortedContents) {
                         val unit = if (amount == 1) "unit" else "units"
                         val state = smeltable.getState(temperature).name.lowercase()
                         p.sendMessage("$amount $unit of $state ${smeltable.name}")
@@ -168,11 +185,68 @@ class Crucible(
                 p.sendActionBar(
                     Component.text("The crucible's temperature is %.2f°C".format(temperature))
                 )
-            } else if ("SHOVEL" in item.type.name && temperature <= 100 && contents.isNotEmpty()) {
-                val slag = Slag.create(contents)
-                block.world.dropItem(block.location.toCenterLocation(), slag)
-                contents.clear()
+            } else if ("SHOVEL" in item.type.name && temperature <= 100) {
+                val removedContents = contents.filterKeys { it.getState(temperature) == Smeltable.State.SOLID }
+                if (removedContents.isNotEmpty()) {
+                    val slag = Slag.create(removedContents)
+                    block.world.dropItem(block.location.toCenterLocation(), slag)
+                    contents.keys.removeAll(removedContents.keys)
+                }
             }
         }
+
+        val sortedContents: List<Pair<Smeltable, Int>>
+            get() {
+                val comparator = compareByDescending<Pair<Smeltable, Int>> {
+                    it.first.getState(temperature) == Smeltable.State.LIQUID
+                }.thenByDescending { it.first.meltingPoint }
+                return contents.toList().sortedWith(comparator)
+            }
+    }
+
+    override fun getDisplayRecipes(): MutableList<ItemStack> {
+        val list = mutableListOf<ItemStack>()
+        repeat(2) { list += smeltablesItem }
+        for (smeltable in Smeltable.all) {
+            list += smeltable.displayItem
+        }
+        if (Smeltable.all.size % 2 != 0) {
+            list += ChestMenuUtils.getBackground()
+        }
+        repeat(2) { list += recipesItem }
+        for (recipe in recipes) {
+            val displayItem = recipe.output.first.displayItem.clone()
+            displayItem.amount = recipe.output.second
+            displayItem.editMeta {
+                val lore = mutableListOf("", "<red>Inputs:")
+                for ((input, amount) in recipe.inputs) {
+                    lore += "<red>$amount ${input.name}"
+                }
+                lore += ""
+                lore += "<#ffa200>Temperature: <white>${recipe.temperature}°C"
+                lore += ""
+                val (output, amount) = recipe.output
+                lore += "<green>Output: $amount ${output.name}"
+                it.lore(lore.miniMessage())
+            }
+            list += displayItem
+        }
+        return list
     }
 }
+
+private val smeltablesItem = CustomItemStack(
+    Material.ORANGE_STAINED_GLASS_PANE,
+    "&6Smeltables",
+    "",
+    "&7Information about smeltables ->",
+    "&7Scroll past for recipes"
+)
+
+private val recipesItem = CustomItemStack(
+    Material.LIME_STAINED_GLASS_PANE,
+    "&aRecipes",
+    "",
+    "&7Information about recipes ->",
+    "&7<- Scroll back for smeltables"
+)

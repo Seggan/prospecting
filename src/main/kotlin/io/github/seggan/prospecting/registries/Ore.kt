@@ -52,7 +52,7 @@ enum class Ore(
     AZURITE(
         pebbleMaterial = Material.WARPED_BUTTON,
         asciiFormula = "Cu3(CO3)2(OH)2",
-        distribution = NormalDistribution(30.0, 1.5),
+        distribution = NormalDistribution(0.0, 1.5),
         crushResult = randomizedSetOf(ProspectingItems.COPPER_CARBONATE to 1f),
         crushAmount = 2..3,
         biomeDistribution = biomeDistribution {
@@ -67,6 +67,42 @@ enum class Ore(
             put(Biome.DRIPSTONE_CAVES, 1.8f)
         },
         vanillaOre = Material.LAPIS_ORE
+    ),
+    MALACHITE(
+        pebbleMaterial = Material.WARPED_BUTTON,
+        asciiFormula = "Cu2CO3(OH)2",
+        distribution = NormalDistribution(35.0, 2.0),
+        crushResult = randomizedSetOf(ProspectingItems.COPPER_CARBONATE to 1f),
+        crushAmount = 1..2,
+        biomeDistribution = biomeDistribution {
+            for (biome in Biome.entries) {
+                put(biome, 1f)
+            }
+            put(Biome.SNOWY_SLOPES, 0.3f)
+            put(Biome.FROZEN_PEAKS, 0.3f)
+            put(Biome.JAGGED_PEAKS, 0.3f)
+            put(Biome.STONY_PEAKS, 0.3f)
+            put(Biome.STONY_SHORE, 0.3f)
+            put(Biome.DRIPSTONE_CAVES, 1.8f)
+        },
+        vanillaOre = Material.COPPER_ORE
+    ),
+
+    // Tin ores
+    CASSITERITE(
+        pebbleMaterial = Material.POLISHED_BLACKSTONE_BUTTON,
+        asciiFormula = "SnO2",
+        distribution = NormalDistribution(-30.0, 0.9),
+        crushResult = randomizedSetOf(ProspectingItems.TIN_OXIDE to 1f),
+        crushAmount = 1..2,
+        biomeDistribution = biomeDistribution {
+            for (biome in Biome.entries) {
+                if ("OCEAN" in biome.name || "RIVER" in biome.name || biome == Biome.BEACH || biome == Biome.STONY_SHORE) {
+                    put(biome, 1f)
+                }
+            }
+        },
+        vanillaOre = Material.COAL_ORE
     )
     ;
 
@@ -106,8 +142,12 @@ enum class Ore(
 
     companion object {
         private val byId = entries.associateBy { it.oreId } + entries.associateBy { it.pebbleId }
-
         fun getById(id: String): Ore? = byId[id]
+
+        val associations = mapOf(
+            AZURITE to randomizedSetOf(MALACHITE to 1f),
+            MALACHITE to randomizedSetOf(AZURITE to 1f)
+        )
     }
 
     fun register(addon: SlimefunAddon) {

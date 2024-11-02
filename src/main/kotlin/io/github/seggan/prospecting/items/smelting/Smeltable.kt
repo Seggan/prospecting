@@ -1,14 +1,14 @@
 package io.github.seggan.prospecting.items.smelting
 
 import io.github.seggan.prospecting.util.itemKey
+import io.github.seggan.prospecting.util.miniMessage
 import io.github.seggan.prospecting.util.text
+import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
+import io.github.seggan.sf4k.serial.serializers.DelegatingSerializer
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
@@ -19,9 +19,29 @@ class Smeltable private constructor(
     val name: String,
     val ingot: ItemStack,
     val dust: ItemStack = ingot,
-    val meltingPoint: Int?,
-    val boilingPoint: Int?,
+    val meltingPoint: Int,
+    val boilingPoint: Int,
 ) {
+
+    private val titleName = name.replaceFirstChar(Char::uppercase)
+
+    val displayItem: ItemStack
+
+
+    init {
+        val stack = ingot.clone()
+        stack.editMeta {
+            it.displayName(MiniMessage.miniMessage().deserialize("<!i><white>$titleName"))
+            it.lore(
+                listOf(
+                    "",
+                    "<#ffa200>Melting Point: <white>${if (meltingPoint > -273) "${meltingPoint}°C" else "N/A"}",
+                    "<#ffa200>Boiling Point: <white>${if (boilingPoint > -273) "${boilingPoint}°C" else "N/A"}",
+                ).miniMessage()
+            )
+        }
+        displayItem = stack
+    }
 
     enum class State {
         SOLID,
@@ -31,11 +51,18 @@ class Smeltable private constructor(
 
     fun getState(temperature: Double): State {
         return when {
-            boilingPoint != null && temperature >= boilingPoint -> State.GAS
-            meltingPoint != null && temperature >= meltingPoint -> State.LIQUID
+            temperature >= boilingPoint -> State.GAS
+            temperature >= meltingPoint -> State.LIQUID
             else -> State.SOLID
         }
     }
+
+    fun getInfo(): List<Component> = listOf(
+        "<b><gold>--- $titleName ---",
+        "",
+        "<#ffa200>Melting Point: <white>${if (meltingPoint > -273) "$meltingPoint°C" else "N/A"}",
+        "<#fff5e3>Boiling Point: <white>${if (boilingPoint > -273) "$boilingPoint°C" else "N/A"}",
+    ).map(MiniMessage.miniMessage()::deserialize)
 
     override fun equals(other: Any?): Boolean {
         return this === other || (other is Smeltable && id == other.id)
@@ -46,6 +73,8 @@ class Smeltable private constructor(
     companion object {
 
         private val registry = mutableMapOf<NamespacedKey, Smeltable>()
+
+        val all: Collection<Smeltable> get() = registry.values
 
         fun register(
             ingot: ItemStack,
@@ -60,8 +89,8 @@ class Smeltable private constructor(
                 name = name,
                 ingot = ingot,
                 dust = dust,
-                meltingPoint = meltingPoint,
-                boilingPoint = boilingPoint
+                meltingPoint = meltingPoint ?: Int.MIN_VALUE,
+                boilingPoint = boilingPoint ?: Int.MIN_VALUE
             )
             registry[id] = smeltable
             return smeltable
@@ -175,17 +204,7 @@ class Smeltable private constructor(
     }
 }
 
-private object SmeltableSerializer : KSerializer<Smeltable> {
-    override val descriptor = PrimitiveSerialDescriptor("Smeltable", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: Smeltable) {
-        encoder.encodeString(value.id.toString())
-    }
-
-    override fun deserialize(decoder: Decoder): Smeltable {
-        val s = decoder.decodeString()
-        return Smeltable[
-            NamespacedKey.fromString(s) ?: throw IllegalArgumentException("Invalid NamespacedKey $s")
-        ]!!
-    }
+private object SmeltableSerializer : DelegatingSerializer<Smeltable, NamespacedKey>(BukkitSerializerRegistry.serializer()) {
+    override fun fromData(value: NamespacedKey) = Smeltable[value]!!
+    override fun toData(value: Smeltable) = value.id
 }
