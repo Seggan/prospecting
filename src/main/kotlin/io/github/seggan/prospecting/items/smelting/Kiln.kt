@@ -2,6 +2,7 @@ package io.github.seggan.prospecting.items.smelting
 
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.SlimefunBlock
+import io.github.seggan.prospecting.util.miniMessage
 import io.github.seggan.prospecting.util.moveAsymptoticallyTo
 import io.github.seggan.prospecting.util.secondsToSfTicks
 import io.github.seggan.sf4k.serial.blockstorage.getBlockStorage
@@ -11,6 +12,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
+import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils
 import kotlinx.serialization.Serializable
 import me.mrCookieSlime.Slimefun.api.BlockStorage
@@ -26,7 +28,7 @@ class Kiln(
     item: SlimefunItemStack,
     recipeType: RecipeType,
     recipe: Array<out ItemStack?>
-) : SlimefunItem(itemGroup, item, recipeType, recipe) {
+) : SlimefunItem(itemGroup, item, recipeType, recipe), RecipeDisplayItem {
 
     companion object {
 
@@ -112,5 +114,24 @@ class Kiln(
                 fuelQueue.clear()
             }
         }
+    }
+
+    override fun getDisplayRecipes(): MutableList<ItemStack> {
+        val recipes = mutableListOf<ItemStack>()
+        for ((fuel, data) in fuels) {
+            val item = fuel.clone()
+            item.editMeta {
+                val tick = if (data.burnTime != 1) "ticks" else "tick"
+                it.lore(
+                    listOf(
+                        "",
+                        "<#ffa200>Max Temperature: <white>${data.maxTemp}°C",
+                        "<#ffa200>Burn Time: <white>${data.burnTime} Slimefun $tick",
+                    ).miniMessage()
+                )
+            }
+            recipes.add(item)
+        }
+        return recipes
     }
 }

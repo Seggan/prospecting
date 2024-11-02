@@ -7,7 +7,6 @@ import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
 import io.github.seggan.sf4k.serial.serializers.DelegatingSerializer
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems
 import kotlinx.serialization.Serializable
-import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -35,8 +34,8 @@ class Smeltable private constructor(
             it.lore(
                 listOf(
                     "",
-                    "<#ffa200>Melting Point: <white>${if (meltingPoint > -273) "${meltingPoint}°C" else "N/A"}",
-                    "<#ffa200>Boiling Point: <white>${if (boilingPoint > -273) "${boilingPoint}°C" else "N/A"}",
+                    "<#ffa200>Melting Point: <white>${if (meltingPoint < Int.MAX_VALUE) "${meltingPoint}°C" else "N/A"}",
+                    "<#ffa200>Boiling Point: <white>${if (boilingPoint < Int.MAX_VALUE) "${boilingPoint}°C" else "N/A"}",
                 ).miniMessage()
             )
         }
@@ -56,13 +55,6 @@ class Smeltable private constructor(
             else -> State.SOLID
         }
     }
-
-    fun getInfo(): List<Component> = listOf(
-        "<b><gold>--- $titleName ---",
-        "",
-        "<#ffa200>Melting Point: <white>${if (meltingPoint > -273) "$meltingPoint°C" else "N/A"}",
-        "<#fff5e3>Boiling Point: <white>${if (boilingPoint > -273) "$boilingPoint°C" else "N/A"}",
-    ).map(MiniMessage.miniMessage()::deserialize)
 
     override fun equals(other: Any?): Boolean {
         return this === other || (other is Smeltable && id == other.id)
@@ -89,8 +81,8 @@ class Smeltable private constructor(
                 name = name,
                 ingot = ingot,
                 dust = dust,
-                meltingPoint = meltingPoint ?: Int.MIN_VALUE,
-                boilingPoint = boilingPoint ?: Int.MIN_VALUE
+                meltingPoint = meltingPoint ?: Int.MAX_VALUE,
+                boilingPoint = boilingPoint ?: Int.MAX_VALUE
             )
             registry[id] = smeltable
             return smeltable
