@@ -104,7 +104,7 @@ class Crucible(
         }
     }
 
-    private inner class CrucibleBlock(block: Block) : SlimefunBlock(block) {
+    inner class CrucibleBlock(block: Block) : SlimefunBlock(block) {
 
         var contents: MutableMap<Smeltable, Int> by blockStorage { mutableMapOf() }
         var temperature: Double by blockStorage { ROOM_TEMPERATURE }

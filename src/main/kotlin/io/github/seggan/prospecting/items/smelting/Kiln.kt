@@ -5,8 +5,6 @@ import io.github.seggan.prospecting.util.SlimefunBlock
 import io.github.seggan.prospecting.util.miniMessage
 import io.github.seggan.prospecting.util.moveAsymptoticallyTo
 import io.github.seggan.prospecting.util.secondsToSfTicks
-import io.github.seggan.sf4k.serial.blockstorage.getBlockStorage
-import io.github.seggan.sf4k.serial.blockstorage.setBlockStorage
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
@@ -85,15 +83,14 @@ class Kiln(
                 }
             }
 
-            val crucibleBlock = block.getRelative(BlockFace.UP)
-            if (BlockStorage.check(crucibleBlock) !is Crucible) return
-            var temperature = crucibleBlock.getBlockStorage<Double>("temperature") ?: 0.0
-            val contents = crucibleBlock.getBlockStorage<Map<Smeltable, Int>>("contents") ?: emptyMap()
-            if (temperature < fuel.currentMax) {
-                val rate = 0.1 / (contents.values.sum() + 1)
-                temperature = temperature.moveAsymptoticallyTo(fuel.currentMax, rate)
+            val blockAbove = block.getRelative(BlockFace.UP)
+            val crucible = BlockStorage.check(blockAbove) as? Crucible ?: return
+            val crucibleBlock = crucible.CrucibleBlock(blockAbove)
+            if (crucibleBlock.temperature < fuel.currentMax) {
+                val rate = 0.1 / (crucibleBlock.contents.values.sum() + 1)
+                crucibleBlock.temperature = crucibleBlock.temperature.moveAsymptoticallyTo(fuel.currentMax, rate)
             }
-            crucibleBlock.setBlockStorage<Double>("temperature", temperature)
+            crucibleBlock.saveData()
         }
 
         override fun onInteract(e: PlayerRightClickEvent) {
