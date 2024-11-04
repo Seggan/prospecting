@@ -29,6 +29,8 @@ import kotlin.math.pow
 
 class OreGenerator(private val worlds: Set<String>) : Listener {
 
+    private var running = true
+
     @Volatile
     private lateinit var noise: ConcurrentMap<Ore, OctaveGenerator>
 
@@ -36,12 +38,16 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
     private lateinit var random: Random
 
     init {
-        Bukkit.getPluginManager().registerEvents(this, Prospecting)
+        Bukkit.getPluginManager().registerEvents(this, Prospecting())
+    }
+
+    fun disable() {
+        running = false
     }
 
     @EventHandler
     private fun onChunkLoad(e: ChunkLoadEvent) {
-        if (e.world.name in worlds && e.isNewChunk) {
+        if (running && e.world.name in worlds && e.isNewChunk) {
             if (!::noise.isInitialized) {
                 random = Random(e.world.seed)
                 noise = Ore.entries.associateWithTo(ConcurrentHashMap()) {
@@ -53,7 +59,7 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
             val chunk = e.chunk
             val snapshot = chunk.getChunkSnapshot(true, true, false)
             val minHeight = chunk.world.minHeight
-            Prospecting.launch(Dispatchers.Default) {
+            Prospecting().launch(Dispatchers.Default) {
                 generate(chunk, snapshot, minHeight)
             }
         }
@@ -95,7 +101,7 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                                 finalOre = Ore.associations[ore]?.getRandom(random) ?: ore
                             }
                             val material = if (type == Material.DEEPSLATE) finalOre.deepslateVanillaOre else finalOre.vanillaOre
-                            Prospecting.launch {
+                            Prospecting().launch {
                                 val block = chunk.getBlock(x, y, z)
                                 block.setType(material, false)
                                 BlockStorage.addBlockInfo(block, "id", finalOre.oreId)
@@ -108,7 +114,7 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                     if (replaceVanilla) {
                         val replace = replaceOres[type]
                         if (replace != null) {
-                            Prospecting.launch {
+                            Prospecting().launch {
                                 chunk.getBlock(x, y, z).setType(replace, false)
                             }
                         }
@@ -118,7 +124,7 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                 if (random.nextFloat() < 0.003) {
                     val y = snapshot.getHighestOpaqueBlockY(x, z, snapshot.getHighestBlockYAt(x, z)) + 1
                     if (!snapshot.getBlockType(x, y, z).isLiquid) {
-                        Prospecting.launch {
+                        Prospecting().launch {
                             stonePebble.place(chunk.getBlock(x, y, z))
                         }
                     }
@@ -129,7 +135,7 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                         val yBelow = snapshot.getHighestOpaqueBlockY(x, z, snapshot.getHighestBlockYAt(x, z))
                         val y = yBelow + 1
                         if (!snapshot.getBlockType(x, y, z).isLiquid) {
-                            Prospecting.launch {
+                            Prospecting().launch {
                                 ore.pebble.place(chunk.getBlock(x, y, z))
                             }
                             break
@@ -141,7 +147,7 @@ class OreGenerator(private val worlds: Set<String>) : Listener {
                                 else -> null
                             }
                             if (replaceType != null) {
-                                Prospecting.launch {
+                                Prospecting().launch {
                                     val block = chunk.getBlock(x, yBelow, z)
                                     block.setType(replaceType, false)
                                     val state = block.state as BrushableBlock

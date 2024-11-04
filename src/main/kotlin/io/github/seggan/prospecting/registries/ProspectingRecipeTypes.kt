@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack
 object ProspectingRecipeTypes : Listener {
 
     init {
-        Bukkit.getPluginManager().registerEvents(this, Prospecting)
+        Bukkit.getPluginManager().registerEvents(this, Prospecting())
     }
 
     val NATURALLY_GENERATED = RecipeType(

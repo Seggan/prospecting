@@ -15,7 +15,9 @@ import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.collections.ArrayDeque
 
-object Prospecting : AbstractAddon(), Listener {
+class Prospecting : AbstractAddon(), Listener {
+
+    private lateinit var generator: OreGenerator
 
     override suspend fun onLoadAsync() {
         BukkitSerializerRegistry.edit {
@@ -24,6 +26,8 @@ object Prospecting : AbstractAddon(), Listener {
     }
 
     override suspend fun onEnableAsync() {
+        instance = this
+
         saveDefaultConfig()
 
         ProspectingItems.initExtra()
@@ -33,7 +37,7 @@ object Prospecting : AbstractAddon(), Listener {
             WorldCreator(world).createWorld()
         }
 
-        OreGenerator(oregenWorlds)
+        generator = OreGenerator(oregenWorlds)
 
         val manager = PaperCommandManager(this)
         manager.enableUnstableAPI("help")
@@ -53,6 +57,19 @@ object Prospecting : AbstractAddon(), Listener {
         }
     }
 
+    override suspend fun onDisableAsync() {
+        generator.disable()
+        instance = null
+    }
+
     override fun getJavaPlugin(): JavaPlugin = this
     override fun getBugTrackerURL(): String = "https://github.com/Seggan/Prospecting"
+
+    companion object {
+        private var instance: Prospecting? = null
+
+        @JvmStatic
+        @JvmName("getInstance")
+        operator fun invoke(): Prospecting = instance ?: error("Plugin not enabled")
+    }
 }

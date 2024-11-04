@@ -17,7 +17,7 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-object ProspectingItems : ItemRegistry(Prospecting) {
+object ProspectingItems : ItemRegistry(Prospecting()) {
 
     val MALLET by buildSlimefunItem<Mallet> {
         category = ProspectingCategories.TOOLS

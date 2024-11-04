@@ -34,7 +34,7 @@ class Mallet(
 ) : SlimefunItem(itemGroup, item, recipeType, recipe), RecipeDisplayItem, Listener {
 
     init {
-        Bukkit.getPluginManager().registerEvents(this, Prospecting)
+        Bukkit.getPluginManager().registerEvents(this, Prospecting())
     }
 
     @EventHandler

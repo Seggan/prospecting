@@ -26,7 +26,7 @@ object PropsectingCommand : BaseCommand() {
         for (cx in -range..range) {
             for (cz in -range..range) {
                 val chunk = firstChunk.world.getChunkAt(firstChunk.x + cx, firstChunk.z + cz)
-                Prospecting.launch {
+                Prospecting().launch {
                     for (x in 0..15) {
                         for (z in 0..15) {
                             for (y in chunk.world.minHeight until chunk.world.maxHeight) {
