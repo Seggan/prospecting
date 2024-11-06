@@ -1,4 +1,4 @@
-package io.github.seggan.prospecting.gen
+package io.github.seggan.prospecting.ores.gen
 
 import org.bukkit.ChunkSnapshot
 import java.util.Random

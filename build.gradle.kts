@@ -25,6 +25,7 @@ dependencies {
     compileOnly("com.github.Slimefun:Slimefun4:e02a0f61d1")
 
     implementation("io.github.seggan:sf4k:0.8.0")
+    library("org.msgpack:msgpack-core:0.9.8")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")

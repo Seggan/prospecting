@@ -77,7 +77,7 @@ class Mallet(
             id == SlimefunItems.COPPER_INGOT.itemId -> listOf(ItemStack(Material.COPPER_INGOT))
             id == ProspectingItems.SLAG.itemId -> Slag.getContents(stack)
             else -> {
-                val ore = id?.let(Ore::getById) ?: return emptyList()
+                val ore = id?.let(Ore::getBySlimefunId) ?: return emptyList()
                 (1..ore.crushAmount.random() + fortune).map {
                     ore.crushResult.getRandom(ThreadLocalRandom.current())
                 }

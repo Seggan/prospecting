@@ -1,15 +1,15 @@
-package io.github.seggan.prospecting.gen
+package io.github.seggan.prospecting.ores
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import io.github.seggan.prospecting.items.Pebble
 import io.github.seggan.prospecting.pluginInstance
 import io.github.seggan.prospecting.registries.Ore
 import io.github.seggan.prospecting.registries.ProspectingItems
+import io.github.seggan.prospecting.util.IntPair
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import me.mrCookieSlime.Slimefun.api.BlockStorage
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.ChunkSnapshot
@@ -18,6 +18,7 @@ import org.bukkit.block.BrushableBlock
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.world.ChunkLoadEvent
+import org.bukkit.generator.WorldInfo
 import org.bukkit.util.noise.OctaveGenerator
 import org.bukkit.util.noise.SimplexOctaveGenerator
 import java.util.EnumMap
@@ -57,14 +58,13 @@ class OreSpawnerThingy(private val worlds: Set<String>) : Listener {
             }
             val chunk = e.chunk
             val snapshot = chunk.getChunkSnapshot(true, true, false)
-            val minHeight = chunk.world.minHeight
             pluginInstance.launch(Dispatchers.Default) {
-                generate(chunk, snapshot, minHeight)
+                generate(chunk, snapshot, chunk.world)
             }
         }
     }
 
-    private suspend fun generate(chunk: Chunk, snapshot: ChunkSnapshot, minHeight: Int) = coroutineScope {
+    private suspend fun generate(chunk: Chunk, snapshot: ChunkSnapshot, world: WorldInfo) = coroutineScope {
         fun placeBrushableBlock(type: Material, x: Int, y: Int, z: Int, ore: Ore): Boolean {
             val replaceType = when (type) {
                 in sandReplaceable -> Material.SUSPICIOUS_SAND
@@ -83,10 +83,11 @@ class OreSpawnerThingy(private val worlds: Set<String>) : Listener {
 
         val chunkX = snapshot.x shl 4
         val chunkZ = snapshot.z shl 4
+        val oreChunk = OreWorld.getWorld(world).getChunk(snapshot.x, snapshot.z)
 
         for (x in 0..15) {
             for (z in 0..15) {
-                for (y in minHeight..snapshot.getHighestBlockYAt(x, z)) {
+                for (y in world.minHeight..snapshot.getHighestBlockYAt(x, z)) {
                     val type = snapshot.getBlockType(x, y, z)
                     val replace = replaceOres[type]
                     if (replace != null) {
@@ -124,8 +125,8 @@ class OreSpawnerThingy(private val worlds: Set<String>) : Listener {
                     pluginInstance.launch {
                         val block = chunk.getBlock(x, y, z)
                         block.setType(material, false)
-                        BlockStorage.addBlockInfo(block, "id", finalOre.oreId)
                     }
+                    oreChunk[x, y, z] = finalOre
                     markers.mergeFloat(IntPair(x, z), 0.01f, Float::plus)
                 }
             }
@@ -150,8 +151,6 @@ class OreSpawnerThingy(private val worlds: Set<String>) : Listener {
         }
     }
 }
-
-private data class IntPair(val x: Int, val z: Int)
 
 private tailrec fun ChunkSnapshot.getHighestOpaqueBlockY(x: Int, z: Int, y: Int): Int {
     return if (y < -64 || getBlockType(x, y, z).isOccluding) y else getHighestOpaqueBlockY(x, z, y - 1)

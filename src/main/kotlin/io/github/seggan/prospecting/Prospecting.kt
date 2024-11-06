@@ -2,18 +2,22 @@ package io.github.seggan.prospecting
 
 import co.aikar.commands.PaperCommandManager
 import com.github.shynixn.mccoroutine.bukkit.launch
-import io.github.seggan.prospecting.gen.OreSpawnerThingy
+import io.github.seggan.prospecting.ores.OreSpawnerThingy
+import io.github.seggan.prospecting.ores.OreWorld
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.ArrayDequeSerializer
 import io.github.seggan.sf4k.AbstractAddon
 import io.github.seggan.sf4k.extensions.plus
 import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.WorldCreator
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.collections.ArrayDeque
+import kotlin.time.Duration.Companion.minutes
 
 class Prospecting : AbstractAddon(), Listener {
 
@@ -34,7 +38,7 @@ class Prospecting : AbstractAddon(), Listener {
 
         val oregenWorlds = config.getStringList("oregen.worlds").toSet()
         for (world in oregenWorlds) {
-            WorldCreator(world).createWorld()
+            OreWorld.getWorld(WorldCreator(world).createWorld()!!)
         }
 
         generator = OreSpawnerThingy(oregenWorlds)
@@ -42,6 +46,13 @@ class Prospecting : AbstractAddon(), Listener {
         val manager = PaperCommandManager(this)
         manager.enableUnstableAPI("help")
         manager.registerCommand(PropsectingCommand)
+
+        launch(Dispatchers.IO) {
+            while (isEnabled) {
+                delay(5.minutes)
+                OreWorld.saveAll()
+            }
+        }
 
         launch {
             Bukkit.getConsoleSender().sendMessage(
@@ -59,6 +70,7 @@ class Prospecting : AbstractAddon(), Listener {
 
     override suspend fun onDisableAsync() {
         generator.disable()
+        OreWorld.saveAll()
         instance_ = null
     }
 

@@ -1,4 +1,4 @@
-package io.github.seggan.prospecting.gen.distribution
+package io.github.seggan.prospecting.ores.gen.distribution
 
 import kotlin.math.exp
 
