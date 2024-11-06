@@ -11,7 +11,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import kotlin.reflect.KProperty
 
-fun String.key() = NamespacedKey(pluginInstance, this)
+internal fun String.key() = NamespacedKey(pluginInstance, this)
 
 val Component.text: String get() = PlainTextComponentSerializer.plainText().serialize(this)
 
