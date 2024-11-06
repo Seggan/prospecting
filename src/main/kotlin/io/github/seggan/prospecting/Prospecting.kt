@@ -2,7 +2,7 @@ package io.github.seggan.prospecting
 
 import co.aikar.commands.PaperCommandManager
 import com.github.shynixn.mccoroutine.bukkit.launch
-import io.github.seggan.prospecting.gen.OreGenerator
+import io.github.seggan.prospecting.gen.OreSpawnerThingy
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.ArrayDequeSerializer
 import io.github.seggan.sf4k.AbstractAddon
@@ -17,7 +17,7 @@ import kotlin.collections.ArrayDeque
 
 class Prospecting : AbstractAddon(), Listener {
 
-    private lateinit var generator: OreGenerator
+    private lateinit var generator: OreSpawnerThingy
 
     override suspend fun onLoadAsync() {
         BukkitSerializerRegistry.edit {
@@ -26,7 +26,7 @@ class Prospecting : AbstractAddon(), Listener {
     }
 
     override suspend fun onEnableAsync() {
-        instance = this
+        instance_ = this
 
         saveDefaultConfig()
 
@@ -37,7 +37,7 @@ class Prospecting : AbstractAddon(), Listener {
             WorldCreator(world).createWorld()
         }
 
-        generator = OreGenerator(oregenWorlds)
+        generator = OreSpawnerThingy(oregenWorlds)
 
         val manager = PaperCommandManager(this)
         manager.enableUnstableAPI("help")
@@ -59,17 +59,19 @@ class Prospecting : AbstractAddon(), Listener {
 
     override suspend fun onDisableAsync() {
         generator.disable()
-        instance = null
+        instance_ = null
     }
 
     override fun getJavaPlugin(): JavaPlugin = this
     override fun getBugTrackerURL(): String = "https://github.com/Seggan/Prospecting"
 
     companion object {
-        private var instance: Prospecting? = null
+        private var instance_: Prospecting? = null
 
-        @JvmStatic
-        @JvmName("getInstance")
-        operator fun invoke(): Prospecting = instance ?: error("Plugin not enabled")
+        val instance: Prospecting
+            get() = instance_ ?: error("Plugin not enabled")
     }
 }
+
+internal val pluginInstance: Prospecting
+    get() = Prospecting.instance

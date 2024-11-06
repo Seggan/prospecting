@@ -1,6 +1,5 @@
 package io.github.seggan.prospecting.registries
 
-import io.github.seggan.prospecting.Prospecting
 import io.github.seggan.prospecting.items.Mallet
 import io.github.seggan.prospecting.items.Pebble
 import io.github.seggan.prospecting.items.smelting.Crucible
@@ -10,6 +9,7 @@ import io.github.seggan.prospecting.items.smelting.items.Chemical
 import io.github.seggan.prospecting.items.smelting.items.Slag
 import io.github.seggan.prospecting.items.smelting.tools.Bellows
 import io.github.seggan.prospecting.items.smelting.tools.Thermometer
+import io.github.seggan.prospecting.pluginInstance
 import io.github.seggan.prospecting.util.subscript
 import io.github.seggan.sf4k.item.builder.*
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
@@ -17,7 +17,7 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-object ProspectingItems : ItemRegistry(Prospecting()) {
+object ProspectingItems : ItemRegistry(pluginInstance) {
 
     val MALLET by buildSlimefunItem<Mallet> {
         category = ProspectingCategories.TOOLS

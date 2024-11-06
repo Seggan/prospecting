@@ -1,6 +1,6 @@
 package io.github.seggan.prospecting.registries
 
-import io.github.seggan.prospecting.Prospecting
+import io.github.seggan.prospecting.pluginInstance
 import io.github.seggan.prospecting.util.key
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack
 object ProspectingRecipeTypes : Listener {
 
     init {
-        Bukkit.getPluginManager().registerEvents(this, Prospecting())
+        Bukkit.getPluginManager().registerEvents(this, pluginInstance)
     }
 
     val NATURALLY_GENERATED = RecipeType(

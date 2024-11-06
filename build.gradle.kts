@@ -19,16 +19,15 @@ repositories {
 dependencies {
     library(kotlin("stdlib"))
     library("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-
     library(kotlin("reflect"))
 
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("com.github.Slimefun:Slimefun4:e02a0f61d1")
 
-    library("io.github.seggan:sf4k:0.8.0")
+    implementation("io.github.seggan:sf4k:0.8.0")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    library("co.aikar:acf-paper:0.5.1-SNAPSHOT")
+    implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
 }
 
 tasks.test {
@@ -44,9 +43,16 @@ kotlin {
 }
 
 tasks.shadowJar {
-
     mergeServiceFiles()
-    relocate("org.bstats", "io.github.seggan.prospecting.shadowlibs.bstats")
+
+
+    fun doRelocate(lib: String) {
+        relocate(lib, "io.github.seggan.prospecting.shadowlibs.$lib")
+    }
+
+    doRelocate("org.bstats")
+    doRelocate("co.aikar")
+    doRelocate("io.github.seggan.sf4k")
 
     dependencies {
         exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib"))

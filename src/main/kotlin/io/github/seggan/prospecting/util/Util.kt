@@ -1,6 +1,6 @@
 package io.github.seggan.prospecting.util
 
-import io.github.seggan.prospecting.Prospecting
+import io.github.seggan.prospecting.pluginInstance
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet
@@ -11,7 +11,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import kotlin.reflect.KProperty
 
-fun String.key() = NamespacedKey(Prospecting(), this)
+fun String.key() = NamespacedKey(pluginInstance, this)
 
 val Component.text: String get() = PlainTextComponentSerializer.plainText().serialize(this)
 

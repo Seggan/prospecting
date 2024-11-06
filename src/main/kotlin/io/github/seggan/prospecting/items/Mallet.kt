@@ -1,7 +1,7 @@
 package io.github.seggan.prospecting.items
 
-import io.github.seggan.prospecting.Prospecting
 import io.github.seggan.prospecting.items.smelting.items.Slag
+import io.github.seggan.prospecting.pluginInstance
 import io.github.seggan.prospecting.registries.Ore
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.sf4k.extensions.getSlimefun
@@ -34,7 +34,7 @@ class Mallet(
 ) : SlimefunItem(itemGroup, item, recipeType, recipe), RecipeDisplayItem, Listener {
 
     init {
-        Bukkit.getPluginManager().registerEvents(this, Prospecting())
+        Bukkit.getPluginManager().registerEvents(this, pluginInstance)
     }
 
     @EventHandler
