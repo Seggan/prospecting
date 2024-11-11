@@ -1,9 +1,10 @@
 package io.github.seggan.prospecting.registries
 
+import io.github.seggan.prospecting.gen.LargeVeinGenerator
+import io.github.seggan.prospecting.gen.OreGenerator
+import io.github.seggan.prospecting.gen.distribution.NormalDistribution
+import io.github.seggan.prospecting.gen.distribution.biomeDistribution
 import io.github.seggan.prospecting.items.Pebble
-import io.github.seggan.prospecting.ores.gen.LargeVeinGenerator
-import io.github.seggan.prospecting.ores.gen.OreGenerator
-import io.github.seggan.prospecting.ores.gen.distribution.NormalDistribution
 import io.github.seggan.prospecting.util.key
 import io.github.seggan.prospecting.util.randomizedSetOf
 import io.github.seggan.prospecting.util.subscript
@@ -12,8 +13,6 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet
 import io.github.thebusybiscuit.slimefun4.utils.ChatUtils
-import it.unimi.dsi.fastutil.objects.Object2FloatMap
-import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.block.Biome
@@ -197,8 +196,3 @@ class Ore(
     }
 }
 
-private inline fun biomeDistribution(block: MutableMap<Biome, Float>.() -> Unit): Object2FloatMap<Biome> {
-    val map = Object2FloatOpenHashMap<Biome>()
-    map.block()
-    return map
-}

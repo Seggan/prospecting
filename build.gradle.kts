@@ -1,4 +1,5 @@
 plugins {
+    idea
     kotlin("jvm") version "2.0.0"
     kotlin("plugin.serialization") version "2.0.0"
     id("com.gradleup.shadow") version "8.3.2"
@@ -28,6 +29,13 @@ dependencies {
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
+}
+
+idea {
+    module {
+        isDownloadJavadoc = true
+        isDownloadSources = true
+    }
 }
 
 tasks.test {
