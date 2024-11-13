@@ -2,7 +2,8 @@ package io.github.seggan.prospecting
 
 import co.aikar.commands.PaperCommandManager
 import com.github.shynixn.mccoroutine.bukkit.launch
-import io.github.seggan.prospecting.gen.OreSpawnerThingy
+import io.github.seggan.prospecting.ores.Ore
+import io.github.seggan.prospecting.ores.gen.OreSpawnerThingy
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.ArrayDequeSerializer
 import io.github.seggan.sf4k.AbstractAddon
@@ -29,6 +30,8 @@ class Prospecting : AbstractAddon(), Listener {
         instance_ = this
 
         saveDefaultConfig()
+
+        Ore.loadFromConfig(getConfigOrCopy("ores.json"))
 
         ProspectingItems.initExtra()
 
@@ -75,3 +78,11 @@ class Prospecting : AbstractAddon(), Listener {
 
 internal val pluginInstance: Prospecting
     get() = Prospecting.instance
+
+private fun getConfigOrCopy(path: String): String {
+    val file = pluginInstance.dataFolder.resolve(path)
+    if (!file.exists()) {
+        pluginInstance.saveResource(path, false)
+    }
+    return file.readText()
+}

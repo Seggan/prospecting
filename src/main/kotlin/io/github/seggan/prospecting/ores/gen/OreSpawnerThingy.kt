@@ -1,12 +1,11 @@
-package io.github.seggan.prospecting.gen
+package io.github.seggan.prospecting.ores.gen
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import io.github.seggan.prospecting.items.Pebble
+import io.github.seggan.prospecting.ores.Ore
 import io.github.seggan.prospecting.pluginInstance
-import io.github.seggan.prospecting.registries.Ore
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
-import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import me.mrCookieSlime.Slimefun.api.BlockStorage
@@ -109,12 +108,12 @@ class OreSpawnerThingy(private val worlds: Set<String>) : Listener {
 
         for (ore in Ore.entries) {
             val generator = ore.generator
-            val markers = Object2FloatOpenHashMap<IntPair>()
+            val markers = ConcurrentHashMap<IntPair, Float>()
             generator.generate(snapshot, chunkX, chunkZ, random) { x, y, z ->
                 val type = snapshot.getBlockType(x, y, z)
                 var finalOre = ore
                 if (random.nextFloat() < 0.1) {
-                    finalOre = Ore.associations[ore]?.getRandom(random) ?: ore
+                    finalOre = Ore.associations[ore]?.randomOrNull() ?: ore
                 }
                 val brushablePlaced = placeBrushableBlock(type, x, y, z, finalOre)
                 if (!brushablePlaced && type in stoneReplaceable) {
@@ -126,12 +125,12 @@ class OreSpawnerThingy(private val worlds: Set<String>) : Listener {
                         block.setType(material, false)
                         BlockStorage.addBlockInfo(block, "id", finalOre.oreId)
                     }
-                    markers.mergeFloat(IntPair(x, z), 0.01f, Float::plus)
+                    markers.merge(IntPair(x, z), 0.01f, Float::plus)
                 }
             }
 
             if (generator.generateMarker) {
-                for ((place, markerChance) in markers.object2FloatEntrySet()) {
+                for ((place, markerChance) in markers) {
                     if (random.nextFloat() < markerChance) {
                         val (x, z) = place
                         val yBelow = snapshot.getHighestOpaqueBlockY(x, z, snapshot.getHighestBlockYAt(x, z))

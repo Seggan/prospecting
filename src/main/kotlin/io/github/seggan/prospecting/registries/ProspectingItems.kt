@@ -9,6 +9,7 @@ import io.github.seggan.prospecting.items.smelting.items.Chemical
 import io.github.seggan.prospecting.items.smelting.items.Slag
 import io.github.seggan.prospecting.items.smelting.tools.Bellows
 import io.github.seggan.prospecting.items.smelting.tools.Thermometer
+import io.github.seggan.prospecting.ores.Ore
 import io.github.seggan.prospecting.pluginInstance
 import io.github.seggan.prospecting.util.subscript
 import io.github.seggan.sf4k.item.builder.*
@@ -197,7 +198,7 @@ object ProspectingItems : ItemRegistry(pluginInstance) {
 
     fun initExtra() {
         for (ore in Ore.entries) {
-            ore.register(addon)
+            ore.registerItems(addon)
         }
 
         ProspectingRecipeTypes.VANILLA_CRAFTING_TABLE.register(

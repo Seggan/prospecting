@@ -6,7 +6,8 @@ import org.bukkit.Tag
 import org.bukkit.block.Biome
 
 enum class BiomeTag(vararg values: Set<Biome>) : Tag<Biome> {
-    OCEAN(
+    ALL(Biome.entries.toSet()),
+    OCEANS(
         setOf(
             Biome.OCEAN,
             Biome.DEEP_OCEAN,
@@ -19,7 +20,26 @@ enum class BiomeTag(vararg values: Set<Biome>) : Tag<Biome> {
             Biome.DEEP_FROZEN_OCEAN
         )
     ),
-    WATERY(setOf(Biome.RIVER, Biome.FROZEN_RIVER, Biome.MUSHROOM_FIELDS), OCEAN.values),
+    RIVERS(setOf(Biome.RIVER, Biome.FROZEN_RIVER)),
+    SWAMPS(setOf(Biome.SWAMP, Biome.MANGROVE_SWAMP)),
+    MOUNTAINS(
+        setOf(
+            Biome.JAGGED_PEAKS,
+            Biome.FROZEN_PEAKS,
+            Biome.STONY_PEAKS,
+            Biome.MEADOW,
+            Biome.CHERRY_GROVE,
+            Biome.GROVE,
+            Biome.SNOWY_SLOPES
+        )
+    ),
+    WINDSWEPT_HILLS(
+        setOf(
+            Biome.WINDSWEPT_HILLS,
+            Biome.WINDSWEPT_FOREST,
+            Biome.WINDSWEPT_GRAVELLY_HILLS
+        )
+    ),
     ;
 
     private val key = NamespacedKey(pluginInstance, name.lowercase())

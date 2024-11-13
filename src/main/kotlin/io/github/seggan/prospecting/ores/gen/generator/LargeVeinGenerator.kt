@@ -1,10 +1,11 @@
-package io.github.seggan.prospecting.gen
+package io.github.seggan.prospecting.ores.gen.generator
 
-import io.github.seggan.prospecting.gen.distribution.BiomeDistribution
-import io.github.seggan.prospecting.gen.distribution.Distribution
-import io.github.seggan.prospecting.gen.distribution.precalculate
-import io.github.seggan.prospecting.gen.distribution.times
+import io.github.seggan.prospecting.ores.gen.distribution.Distribution
+import io.github.seggan.prospecting.ores.gen.distribution.precalculate
+import io.github.seggan.prospecting.ores.gen.distribution.times
+import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap
 import org.bukkit.ChunkSnapshot
+import org.bukkit.block.Biome
 import org.bukkit.util.noise.OctaveGenerator
 import org.bukkit.util.noise.SimplexOctaveGenerator
 import java.util.Random
@@ -13,10 +14,12 @@ import kotlin.math.pow
 class LargeVeinGenerator(
     private val size: Int,
     distribution: Distribution,
-    private val biomes: BiomeDistribution
+    biomes: Map<Biome, Float>
 ) : OreGenerator {
 
     override val generateMarker = true
+
+    private var biomes = Object2FloatOpenHashMap(biomes)
 
     private val distribution = (distribution * 1.5).precalculate(WORLD_HEIGHT_RANGE)
 
@@ -52,7 +55,7 @@ class LargeVeinGenerator(
                         // so we only get it if the first check passes
                         // random() < a && random() < b is equivalent to random() < a * b
                         val biome = chunk.getBiome(x, y, z)
-                        if (random.nextFloat() < biomes[biome]) {
+                        if (random.nextFloat() < biomes.getFloat(biome)) {
                             setBlock(x, y, z)
                         }
                     }

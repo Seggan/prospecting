@@ -1,8 +1,8 @@
 package io.github.seggan.prospecting.items
 
 import io.github.seggan.prospecting.items.smelting.items.Slag
+import io.github.seggan.prospecting.ores.Ore
 import io.github.seggan.prospecting.pluginInstance
-import io.github.seggan.prospecting.registries.Ore
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.sf4k.extensions.getSlimefun
 import io.github.seggan.sf4k.extensions.plus
@@ -77,9 +77,9 @@ class Mallet(
             id == SlimefunItems.COPPER_INGOT.itemId -> listOf(ItemStack(Material.COPPER_INGOT))
             id == ProspectingItems.SLAG.itemId -> Slag.getContents(stack)
             else -> {
-                val ore = id?.let(Ore::getById) ?: return emptyList()
+                val ore = id?.let(Ore::getBySlimefunId) ?: return emptyList()
                 (1..ore.crushAmount.random() + fortune).map {
-                    ore.crushResult.getRandom(ThreadLocalRandom.current())
+                    ore.crushResult.getRandom(ThreadLocalRandom.current()).dust.clone()
                 }
             }
         }
@@ -91,7 +91,7 @@ class Mallet(
             ItemStack(Material.COPPER_INGOT), SlimefunItems.COPPER_INGOT
         )
         list += Ore.entries.flatMap { ore ->
-            ore.crushResult.flatMap { listOf(ore.oreItem, it.clone().add(ore.crushAmount.first)) }
+            ore.crushResult.flatMap { listOf(ore.oreItem, it.dust.clone().add(ore.crushAmount.first)) }
         }
         return list
     }

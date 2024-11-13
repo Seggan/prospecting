@@ -21,6 +21,7 @@ dependencies {
     library(kotlin("stdlib"))
     library("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     library(kotlin("reflect"))
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("com.github.Slimefun:Slimefun4:e02a0f61d1")

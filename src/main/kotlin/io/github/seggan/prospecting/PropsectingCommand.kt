@@ -7,7 +7,7 @@ import co.aikar.commands.annotation.Description
 import co.aikar.commands.annotation.Subcommand
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.ticks
-import io.github.seggan.prospecting.registries.Ore
+import io.github.seggan.prospecting.ores.Ore
 import kotlinx.coroutines.delay
 import me.mrCookieSlime.Slimefun.api.BlockStorage
 import org.bukkit.Material

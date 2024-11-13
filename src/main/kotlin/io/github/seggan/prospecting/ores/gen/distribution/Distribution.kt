@@ -1,4 +1,4 @@
-package io.github.seggan.prospecting.gen.distribution
+package io.github.seggan.prospecting.ores.gen.distribution
 
 import io.github.seggan.prospecting.util.size
 
@@ -7,9 +7,9 @@ interface Distribution {
 
     companion object {
 
-        val NONE = constant(0.0)
+        val NONE = uniform(0.0)
 
-        fun constant(constant: Double) = object : Distribution {
+        fun uniform(constant: Double) = object : Distribution {
             override fun get(x: Double): Double = constant
         }
     }
