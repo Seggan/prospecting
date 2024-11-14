@@ -2,9 +2,13 @@ package io.github.seggan.prospecting
 
 import co.aikar.commands.PaperCommandManager
 import com.github.shynixn.mccoroutine.bukkit.launch
+import io.github.seggan.prospecting.items.smelting.Crucible
+import io.github.seggan.prospecting.items.smelting.Kiln
+import io.github.seggan.prospecting.items.smelting.Smeltable
 import io.github.seggan.prospecting.ores.Ore
 import io.github.seggan.prospecting.ores.gen.OreSpawnerThingy
 import io.github.seggan.prospecting.registries.ProspectingItems
+import io.github.seggan.prospecting.registries.ProspectingItems.addon
 import io.github.seggan.prospecting.util.ArrayDequeSerializer
 import io.github.seggan.sf4k.AbstractAddon
 import io.github.seggan.sf4k.extensions.plus
@@ -31,9 +35,17 @@ class Prospecting : AbstractAddon(), Listener {
 
         saveDefaultConfig()
 
+        ProspectingItems.initExtra()
+
+        Smeltable.loadFromConfig(getConfigOrCopy("smeltables.json"))
         Ore.loadFromConfig(getConfigOrCopy("ores.json"))
 
-        ProspectingItems.initExtra()
+        Crucible.initRecipes()
+        Kiln.initFuels()
+
+        for (ore in Ore.entries) {
+            ore.registerItems(addon)
+        }
 
         val oregenWorlds = config.getStringList("oregen.worlds").toSet()
         for (world in oregenWorlds) {

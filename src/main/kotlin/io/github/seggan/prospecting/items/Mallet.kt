@@ -1,6 +1,6 @@
 package io.github.seggan.prospecting.items
 
-import io.github.seggan.prospecting.items.smelting.items.Slag
+import io.github.seggan.prospecting.items.smelting.Slag
 import io.github.seggan.prospecting.ores.Ore
 import io.github.seggan.prospecting.pluginInstance
 import io.github.seggan.prospecting.registries.ProspectingItems
@@ -79,7 +79,7 @@ class Mallet(
             else -> {
                 val ore = id?.let(Ore::getBySlimefunId) ?: return emptyList()
                 (1..ore.crushAmount.random() + fortune).map {
-                    ore.crushResult.getRandom(ThreadLocalRandom.current()).dust.clone()
+                    ore.crushResult.getRandom(ThreadLocalRandom.current()).item.clone()
                 }
             }
         }
@@ -91,7 +91,7 @@ class Mallet(
             ItemStack(Material.COPPER_INGOT), SlimefunItems.COPPER_INGOT
         )
         list += Ore.entries.flatMap { ore ->
-            ore.crushResult.flatMap { listOf(ore.oreItem, it.dust.clone().add(ore.crushAmount.first)) }
+            ore.crushResult.flatMap { listOf(ore.oreItem, it.item.clone().add(ore.crushAmount.first)) }
         }
         return list
     }

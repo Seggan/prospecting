@@ -1,0 +1,122 @@
+[
+  // Metals and alloys
+  {
+    "key": "slimefun:iron",
+    "item": "slimefun:iron_dust",
+    "ingot": "minecraft:iron_ingot",
+    "melting_point": 1538
+  },
+  {
+    "key": "slimefun:gold",
+    "item": "slimefun:gold_dust",
+    "ingot": "minecraft:gold_ingot",
+    "melting_point": 1064
+  },
+  {
+    "key": "slimefun:copper",
+    "item": "slimefun:copper_dust",
+    "ingot": "slimefun:copper_ingot",
+    "melting_point": 1085
+  },
+  {
+    "key": "slimefun:tin",
+    "item": "slimefun:tin_dust",
+    "ingot": "slimefun:tin_ingot",
+    "melting_point": 231
+  },
+  {
+    "key": "slimefun:silver",
+    "item": "slimefun:silver_dust",
+    "ingot": "slimefun:silver_ingot",
+    "melting_point": 962
+  },
+  {
+    "key": "slimefun:lead",
+    "item": "slimefun:lead_dust",
+    "ingot": "slimefun:lead_ingot",
+    "melting_point": 327
+  },
+  {
+    "key": "slimefun:aluminum",
+    "item": "slimefun:aluminum_dust",
+    "ingot": "slimefun:aluminum_ingot",
+    "melting_point": 660
+  },
+  {
+    "key": "slimefun:zinc",
+    "item": "slimefun:zinc_dust",
+    "ingot": "slimefun:zinc_ingot",
+    "melting_point": 419
+  },
+  {
+    "key": "slimefun:nickel",
+    "item": "slimefun:nickel_ingot",
+    "melting_point": 1455
+  },
+  {
+    "key": "slimefun:cobalt",
+    "item": "slimefun:cobalt_ingot",
+    "melting_point": 1495
+  },
+  {
+    "key": "slimefun:bronze",
+    "item": "slimefun:bronze_ingot",
+    "melting_point": 950
+  },
+  {
+    "key": "slimefun:brass",
+    "item": "slimefun:brass_ingot",
+    "melting_point": 900
+  },
+  {
+    "key": "slimefun:steel",
+    "item": "slimefun:steel_ingot",
+    "melting_point": 1400
+  },
+  // Coke
+  {
+    "key": "prospecting:coke",
+    "item": "prospecting:prospecting_coke"
+  },
+  // Raw materials
+  {
+    "item": {
+      "item": "red_dye",
+      "key": "prospecting:iron_oxide",
+      "name": "<red>Iron Oxide",
+      "formula": "FeO"
+    }
+  },
+  {
+    "item": {
+      "item": "white_dye",
+      "key": "prospecting:nickel_oxide",
+      "name": "<white>Nickel Oxide",
+      "formula": "NiO"
+    }
+  },
+  {
+    "item": {
+      "item": "cyan_dye",
+      "key": "prospecting:copper_carbonate",
+      "name": "<dark_aqua>Copper Carbonate",
+      "formula": "CuCO3"
+    }
+  },
+  {
+    "item": {
+      "item": "black_dye",
+      "key": "prospecting:copper_oxide",
+      "name": "<gray>Copper Oxide",
+      "formula": "CuO"
+    }
+  },
+  {
+    "item": {
+      "item": "black_dye",
+      "key": "prospecting:tin_oxide",
+      "name": "<gray>Tin Oxide",
+      "formula": "SnO"
+    }
+  }
+]

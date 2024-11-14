@@ -1,117 +1,125 @@
-{
-  "prospecting:limonite": {
-    pebble: "spruce_button",
-    ore_type: "iron_ore",
-    formula: "(Fe,Ni)O(OH)",
-    crushing: {
-      yield: {
-        min: 1,
-        max: 2
+[
+  {
+    "key": "prospecting:limonite",
+    "pebble": "spruce_button",
+    "ore_type": "iron_ore",
+    "formula": "(Fe,Ni)O(OH)",
+    "crushing": {
+      "yield": {
+        "min": 1,
+        "max": 2
       },
-      results: {
+      "results": {
         "prospecting:iron_oxide": 3,
         "prospecting:nickel_oxide": 1
       }
     },
-    generator: {
-      type: "prospecting:noise_vein",
-      size: 64,
-      height_distribution: {
-        type: "prospecting:normal",
-        mean: 50,
-        std_dev: 2
+    "generator": {
+      "type": "prospecting:noise_vein",
+      "size": 64,
+      "height_distribution": {
+        "type": "prospecting:normal",
+        "mean": 50,
+        "std_dev": 2
       },
-      biome_distribution: {
+      "biome_distribution": {
         "#prospecting:swamps": 1,
         "#prospecting:oceans": 0.7,
         "#prospecting:rivers": 0.7
       }
     }
   },
-  azurite: {
-    pebble: "warped_button",
-    ore_type: "lapis_ore",
-    formula: "Cu3(CO3)2(OH)2",
-    crushing: {
-      yield: {
-        min: 2,
-        max: 3
+  {
+    "key": "prospecting:azurite",
+    "pebble": "warped_button",
+    "ore_type": "lapis_ore",
+    "formula": "Cu3(CO3)2(OH)2",
+    "crushing": {
+      "yield": {
+        "min": 2,
+        "max": 3
       },
-      results: {
+      "results": {
         "prospecting:copper_carbonate": 1
       }
     },
-    generator: {
-      type: "prospecting:noise_vein",
-      size: 64,
-      height_distribution: {
-        type: "prospecting:normal",
-        mean: 0,
-        std_dev: 1.5
+    "generator": {
+      "type": "prospecting:noise_vein",
+      "size": 64,
+      "height_distribution": {
+        "type": "prospecting:normal",
+        "mean": 0,
+        "std_dev": 1.5
       },
-      biome_distribution: {
+      "biome_distribution": {
         "#prospecting:all": 1,
         "#prospecting:mountains": 0.3,
         "minecraft:dripstone_caves": 1.8
       }
     },
-    associations: [
+    "associations": [
       "prospecting:malachite"
     ]
   },
-  malachite: {
-    pebble: "warped_button",
-    ore_type: "copper_ore",
-    formula: "Cu2CO3(OH)2",
-    crushing: {
-      yield: {
-        min: 1,
-        max: 2
+  {
+    "key": "prospecting:malachite",
+    "pebble": "warped_button",
+    "ore_type": "copper_ore",
+    "formula": "Cu2CO3(OH)2",
+    "crushing": {
+      "yield": {
+        "min": 1,
+        "max": 2
       },
-      results: {
+      "results": {
         "prospecting:copper_carbonate": 1
       }
     },
-    generator: {
-      type: "prospecting:noise_vein",
-      size: 64,
-      height_distribution: {
-        type: "prospecting:normal",
-        mean: 35,
-        std_dev: 2
+    "generator": {
+      "type": "prospecting:noise_vein",
+      "size": 64,
+      "height_distribution": {
+        "type": "prospecting:normal",
+        "mean": 35,
+        "std_dev": 2
       },
-      biome_distribution: {
+      "biome_distribution": {
         "#prospecting:all": 1,
         "#prospecting:mountains": 0.3,
         "minecraft:dripstone_caves": 1.8
       }
     },
-    associations: [
+    "associations": [
       "prospecting:azurite"
     ]
   },
-  cassiterite: {
-    pebble: "polished_blackstone_button",
-    ore_type: "coal_ore",
-    formula: "SnO2",
-    crushing: {
-      yield: {
-        min: 1,
-        max: 2
+  {
+    "key": "prospecting:cassiterite",
+    "pebble": "polished_blackstone_button",
+    "ore_type": "coal_ore",
+    "formula": "SnO2",
+    "crushing": {
+      "yield": {
+        "min": 1,
+        "max": 2
       },
-      results: {
+      "results": {
         "prospecting:tin_oxide": 1
       }
     },
-    generator: {
-      type: "prospecting:noise_vein",
-      size: 128,
-      height_distribution: {
-        type: "prospecting:normal",
-        mean: -30,
-        std_dev: 0.9
+    "generator": {
+      "type": "prospecting:noise_vein",
+      "size": 128,
+      "height_distribution": {
+        "type": "prospecting:multiply",
+        "distribution": {
+          "type": "prospecting:normal",
+          "mean": -30,
+          "std_dev": 0.9
+        },
+        "value": 1.3
       },
-      biome_distribution: {
+      "biome_distribution": {
         "#prospecting:oceans": 1,
         "#prospecting:rivers": 1,
         "minecraft:beach": 1,
@@ -119,4 +127,4 @@
       }
     }
   }
-}
+]

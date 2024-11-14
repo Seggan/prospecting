@@ -52,9 +52,8 @@ val IntRange.size get() = last - first + 1
 fun itemKey(item: ItemStack): NamespacedKey {
     val sfi = SlimefunItem.getByItem(item)
     if (sfi != null) {
-        val addon = sfi.addon.javaPlugin
         val id = sfi.id.lowercase()
-        return NamespacedKey(addon, id)
+        return NamespacedKey(sfi.addon.javaPlugin, id)
     } else {
         return item.type.key
     }

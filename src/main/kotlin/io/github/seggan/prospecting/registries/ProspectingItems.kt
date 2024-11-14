@@ -5,13 +5,10 @@ import io.github.seggan.prospecting.items.Pebble
 import io.github.seggan.prospecting.items.smelting.Crucible
 import io.github.seggan.prospecting.items.smelting.Kiln
 import io.github.seggan.prospecting.items.smelting.Mold
-import io.github.seggan.prospecting.items.smelting.items.Chemical
-import io.github.seggan.prospecting.items.smelting.items.Slag
+import io.github.seggan.prospecting.items.smelting.Slag
 import io.github.seggan.prospecting.items.smelting.tools.Bellows
 import io.github.seggan.prospecting.items.smelting.tools.Thermometer
-import io.github.seggan.prospecting.ores.Ore
 import io.github.seggan.prospecting.pluginInstance
-import io.github.seggan.prospecting.util.subscript
 import io.github.seggan.sf4k.item.builder.*
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
@@ -58,58 +55,6 @@ object ProspectingItems : ItemRegistry(pluginInstance) {
         +""
         +"A normal stone pebble"
     }
-
-    //<editor-fold desc="Ores" defaultstate="collapsed">
-    val IRON_OXIDE by buildSlimefunItem<Chemical> {
-        category = ProspectingCategories.RAW_MATERIALS
-        name = "<red>Iron Oxide"
-        material = Material.RED_DYE.asMaterialType()
-        recipeType = ProspectingRecipeTypes.NATURALLY_GENERATED
-        recipe = emptyArray()
-        +""
-        +"<green>Formula: FeO".subscript()
-    }
-
-    val NICKEL_OXIDE by buildSlimefunItem<SlimefunItem> {
-        category = ProspectingCategories.RAW_MATERIALS
-        name = "<white>Nickel Oxide"
-        material = Material.WHITE_DYE.asMaterialType()
-        recipeType = ProspectingRecipeTypes.NATURALLY_GENERATED
-        recipe = emptyArray()
-        +""
-        +"<green>Formula: NiO".subscript()
-    }
-
-    val COPPER_CARBONATE by buildSlimefunItem<Chemical> {
-        category = ProspectingCategories.RAW_MATERIALS
-        name = "<dark_aqua>Copper Carbonate"
-        material = Material.CYAN_DYE.asMaterialType()
-        recipeType = ProspectingRecipeTypes.NATURALLY_GENERATED
-        recipe = emptyArray()
-        +""
-        +"<green>Formula: CuCO3".subscript()
-    }
-
-    val COPPER_OXIDE by buildSlimefunItem<Chemical> {
-        category = ProspectingCategories.RAW_MATERIALS
-        name = "<dark_aqua>Copper Oxide"
-        material = Material.BLACK_DYE.asMaterialType()
-        recipeType = ProspectingRecipeTypes.NATURALLY_GENERATED
-        recipe = emptyArray()
-        +""
-        +"<green>Formula: CuO".subscript()
-    }
-
-    val TIN_OXIDE by buildSlimefunItem<Chemical> {
-        category = ProspectingCategories.RAW_MATERIALS
-        name = "<gray>Tin Oxide"
-        material = Material.BLACK_DYE.asMaterialType()
-        recipeType = ProspectingRecipeTypes.NATURALLY_GENERATED
-        recipe = emptyArray()
-        +""
-        +"<green>Formula: SnO".subscript()
-    }
-    //</editor-fold>
 
     val CRUCIBLE by buildSlimefunItem<Crucible>(10) {
         category = ProspectingCategories.SMELTING
@@ -176,7 +121,7 @@ object ProspectingItems : ItemRegistry(pluginInstance) {
         +"A mold used to cast metals"
     }
 
-    val COKE by buildSlimefunItem<Chemical> {
+    val COKE by buildSlimefunItem<SlimefunItem> {
         category = ProspectingCategories.RAW_MATERIALS
         name = "<black>Coke"
         material = Material.COAL_BLOCK.asMaterialType()
@@ -197,16 +142,9 @@ object ProspectingItems : ItemRegistry(pluginInstance) {
     }
 
     fun initExtra() {
-        for (ore in Ore.entries) {
-            ore.registerItems(addon)
-        }
-
         ProspectingRecipeTypes.VANILLA_CRAFTING_TABLE.register(
             Array(9) { STONE_PEBBLE },
             ItemStack(Material.COBBLESTONE)
         )
-
-        Crucible.initRecipes()
-        Kiln.initFuels()
     }
 }

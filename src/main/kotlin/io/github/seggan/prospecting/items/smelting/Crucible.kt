@@ -1,8 +1,6 @@
 package io.github.seggan.prospecting.items.smelting
 
-import io.github.seggan.prospecting.items.smelting.items.Slag
 import io.github.seggan.prospecting.items.smelting.tools.Thermometer
-import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.SlimefunBlock
 import io.github.seggan.prospecting.util.miniMessage
 import io.github.seggan.prospecting.util.moveAsymptoticallyTo
@@ -51,14 +49,14 @@ class Crucible(
             val coal = Smeltable.register(ItemStack(Material.COAL))
             val charcoal = Smeltable.register(ItemStack(Material.CHARCOAL))
             registerRecipe(
-                Smeltable[ProspectingItems.COPPER_CARBONATE]!! to 1,
+                Smeltable["prospecting:copper_carbonate"]!! to 1,
                 temperature = 300,
-                output = Smeltable[ProspectingItems.COPPER_OXIDE]!! to 1,
+                output = Smeltable["prospecting:copper_oxide"]!! to 1,
             )
             registerRecipe(
-                Smeltable[ProspectingItems.COPPER_OXIDE]!! to 1,
+                Smeltable["prospecting:copper_oxide"]!! to 1,
                 temperature = 1200,
-                output = Smeltable.COPPER to 1,
+                output = Smeltable["slimefun:copper"]!! to 1,
             )
             registerRecipe(
                 coal to 1,
@@ -68,21 +66,21 @@ class Crucible(
             registerRecipe(
                 charcoal to 9,
                 temperature = 1000,
-                output = Smeltable[ProspectingItems.COKE]!! to 1,
+                output = Smeltable["prospecting:coke"]!! to 1,
             )
             registerRecipe(
                 charcoal to 1,
-                Smeltable[ProspectingItems.TIN_OXIDE]!! to 1,
+                Smeltable["prospecting:tin_oxide"]!! to 1,
                 temperature = 1200,
-                output = Smeltable.TIN to 1,
+                output = Smeltable["slimefun:tin"]!! to 1,
             )
 
             // Alloys
             registerRecipe(
-                Smeltable.COPPER to 2,
-                Smeltable.TIN to 1,
+                Smeltable["slimefun:copper"]!! to 2,
+                Smeltable["slimefun:tin"]!! to 1,
                 temperature = 850,
-                output = Smeltable.BRONZE to 3,
+                output = Smeltable["slimefun:bronze"]!! to 3,
             )
         }
     }

@@ -1,3 +1,5 @@
+@file:UseContextualSerialization(NamespacedKey::class)
+
 package io.github.seggan.prospecting.ores.config
 
 import io.github.seggan.prospecting.items.smelting.Smeltable
@@ -5,10 +7,7 @@ import io.github.seggan.prospecting.ores.Ore
 import io.github.seggan.prospecting.ores.gen.generator.OreGenerator
 import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.plus
 import org.bukkit.Material
@@ -16,12 +15,13 @@ import org.bukkit.NamespacedKey
 
 @Serializable
 data class OreConfig(
+    val key: NamespacedKey,
     val pebble: Material,
     @SerialName("ore_type") val oreType: Material,
     val formula: String,
     val crushing: CrushConfig,
     @Serializable(with = GeneratorSerializer::class) val generator: OreGenerator,
-    val associations: List<@Contextual NamespacedKey> = emptyList()
+    val associations: List<NamespacedKey> = emptyList()
 ) {
     companion object {
         @OptIn(ExperimentalSerializationApi::class)
@@ -33,12 +33,12 @@ data class OreConfig(
             isLenient = true
         }
 
-        fun parse(s: String): Map<NamespacedKey, OreConfig> {
-            return json.decodeFromString<Map<NamespacedKey, OreConfig>>(s)
+        fun parse(s: String): List<OreConfig> {
+            return json.decodeFromString<List<OreConfig>>(s)
         }
     }
 
-    fun toOre(key: NamespacedKey): Ore {
+    fun toOre(): Ore {
         val (yield, items) = crushing.convert()
         return Ore(key, pebble, oreType, formula, items, yield, generator)
     }

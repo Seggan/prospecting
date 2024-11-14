@@ -1,6 +1,5 @@
-package io.github.seggan.prospecting.items.smelting.items
+package io.github.seggan.prospecting.items.smelting
 
-import io.github.seggan.prospecting.items.smelting.Smeltable
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.key
 import io.github.seggan.sf4k.serial.pdc.getData
@@ -34,7 +33,7 @@ class Slag(
             val meta = item.itemMeta
             val data = meta.persistentDataContainer.getData<Map<Smeltable, Int>>(contentsKey) ?: return emptyList()
             return data.map { (smeltable, amount) ->
-                smeltable.dust.clone().also { it.amount = amount }
+                smeltable.item.clone().also { it.amount = amount }
             }
         }
     }
