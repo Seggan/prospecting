@@ -1,0 +1,50 @@
+[
+  // Smelting
+  {
+    "inputs": {
+      "prospecting:copper_carbonate": 1
+    },
+    "output": "prospecting:copper_oxide",
+    "temperature": 300
+  },
+  {
+    "inputs": {
+      "prospecting:copper_oxide": 1
+    },
+    "output": "slimefun:copper",
+    "temperature": 1200
+  },
+  {
+    "inputs": {
+      "minecraft:coal": 1
+    },
+    "output": "minecraft:charcoal",
+    "temperature": 670
+  },
+  {
+    "inputs": {
+      "minecraft:charcoal": 9
+    },
+    "output": "prospecting:coke",
+    "temperature": 1000
+  },
+  {
+    "inputs": {
+      "minecraft:charcoal": 1,
+      "prospecting:tin_oxide": 1
+    },
+    "output": "slimefun:tin",
+    "temperature": 1200
+  },
+
+  // Alloys
+  {
+    "inputs": {
+      "slimefun:copper": 2,
+      "slimefun:tin": 1
+    },
+    "output": "slimefun:bronze",
+    "output_amount": 3,
+    "temperature": 850
+  }
+]

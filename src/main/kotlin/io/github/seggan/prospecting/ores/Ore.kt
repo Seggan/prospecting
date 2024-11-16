@@ -69,12 +69,12 @@ class Ore(
 
         fun loadFromConfig(file: String) {
             val configs = OreConfig.parse(file)
-            for ((key, config) in configs) {
-                val ore = config.toOre(key)
+            for (config in configs) {
+                val ore = config.toOre()
                 ore.register()
             }
-            for ((key, config) in configs) {
-                val ore = getById(key)!!
+            for (config in configs) {
+                val ore = getById(config.key)!!
                 val associations = config.associations.mapNotNull(::getById).toSet()
                 this.associations[ore] = associations
             }

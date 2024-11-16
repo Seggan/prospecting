@@ -73,7 +73,13 @@
     "item": "slimefun:steel_ingot",
     "melting_point": 1400
   },
-  // Coke
+  // Coal and coke
+  {
+    "item": "minecraft:coal",
+  },
+  {
+    "item": "minecraft:charcoal",
+  },
   {
     "key": "prospecting:coke",
     "item": "prospecting:prospecting_coke"

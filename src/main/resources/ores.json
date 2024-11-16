@@ -112,12 +112,12 @@
       "size": 128,
       "height_distribution": {
         "type": "prospecting:multiply",
+        "value": 1.3,
         "distribution": {
           "type": "prospecting:normal",
           "mean": -30,
           "std_dev": 0.9
-        },
-        "value": 1.3
+        }
       },
       "biome_distribution": {
         "#prospecting:oceans": 1,

@@ -2,6 +2,7 @@
 
 package io.github.seggan.prospecting.ores.config
 
+import io.github.seggan.prospecting.Prospecting
 import io.github.seggan.prospecting.items.smelting.Smeltable
 import io.github.seggan.prospecting.registries.ProspectingCategories
 import io.github.seggan.prospecting.registries.ProspectingRecipeTypes
@@ -12,15 +13,12 @@ import io.github.seggan.sf4k.serial.serializers.DelegatingSerializer
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseContextualSerialization
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.modules.plus
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -49,17 +47,8 @@ data class SmeltableConfig(
     }
 
     companion object {
-        @OptIn(ExperimentalSerializationApi::class)
-        private val json = Json {
-            serializersModule += BukkitSerializerRegistry.serializersModule
-            ignoreUnknownKeys = true
-            decodeEnumsCaseInsensitive = true
-            allowComments = true
-            isLenient = true
-        }
-
         fun parse(config: String): List<SmeltableConfig> {
-            return json.decodeFromString<List<SmeltableConfig>>(config)
+            return Prospecting.json.decodeFromString<List<SmeltableConfig>>(config)
         }
     }
 }

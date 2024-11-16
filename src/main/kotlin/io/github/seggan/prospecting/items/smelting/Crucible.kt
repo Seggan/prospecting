@@ -1,5 +1,6 @@
 package io.github.seggan.prospecting.items.smelting
 
+import io.github.seggan.prospecting.Prospecting
 import io.github.seggan.prospecting.items.smelting.tools.Thermometer
 import io.github.seggan.prospecting.util.SlimefunBlock
 import io.github.seggan.prospecting.util.miniMessage
@@ -20,6 +21,7 @@ import org.bukkit.entity.Item
 import org.bukkit.event.Event
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.BoundingBox
+import java.util.TreeSet
 import java.util.concurrent.ThreadLocalRandom
 
 class Crucible(
@@ -33,55 +35,18 @@ class Crucible(
     companion object {
         private const val ROOM_TEMPERATURE = 20.0
 
-        private val recipes = mutableSetOf<SmeltingRecipe>()
+        private val recipes = TreeSet<SmeltingRecipe>(
+            compareByDescending<SmeltingRecipe> { it.temperature }
+                .thenComparingInt(SmeltingRecipe::hashCode)
+        )
 
-        fun registerRecipe(recipe: SmeltingRecipe) {
-            recipes.add(recipe)
+        fun addRecipe(recipe: SmeltingRecipe) {
+            recipes += recipe
         }
 
-        fun registerRecipe(
-            vararg inputs: Pair<Smeltable, Int>,
-            temperature: Int,
-            output: Pair<Smeltable, Int>,
-        ) = registerRecipe(SmeltingRecipe(inputs.toList(), output, temperature))
-
-        internal fun initRecipes() {
-            val coal = Smeltable.register(ItemStack(Material.COAL))
-            val charcoal = Smeltable.register(ItemStack(Material.CHARCOAL))
-            registerRecipe(
-                Smeltable["prospecting:copper_carbonate"]!! to 1,
-                temperature = 300,
-                output = Smeltable["prospecting:copper_oxide"]!! to 1,
-            )
-            registerRecipe(
-                Smeltable["prospecting:copper_oxide"]!! to 1,
-                temperature = 1200,
-                output = Smeltable["slimefun:copper"]!! to 1,
-            )
-            registerRecipe(
-                coal to 1,
-                temperature = 670,
-                output = charcoal to 1,
-            )
-            registerRecipe(
-                charcoal to 9,
-                temperature = 1000,
-                output = Smeltable["prospecting:coke"]!! to 1,
-            )
-            registerRecipe(
-                charcoal to 1,
-                Smeltable["prospecting:tin_oxide"]!! to 1,
-                temperature = 1200,
-                output = Smeltable["slimefun:tin"]!! to 1,
-            )
-
-            // Alloys
-            registerRecipe(
-                Smeltable["slimefun:copper"]!! to 2,
-                Smeltable["slimefun:tin"]!! to 1,
-                temperature = 850,
-                output = Smeltable["slimefun:bronze"]!! to 3,
-            )
+        internal fun initRecipes(config: String) {
+            val loaded = Prospecting.json.decodeFromString<List<SmeltingRecipe>>(config)
+            recipes += loaded
         }
     }
 
@@ -135,8 +100,7 @@ class Crucible(
                     for ((input, amount) in recipe.inputs) {
                         contents.merge(input, amount, Int::minus)
                     }
-                    val (output, amount) = recipe.output
-                    contents.merge(output, amount, Int::plus)
+                    contents.merge(recipe.output, recipe.outputAmount, Int::plus)
                 }
             }
 
@@ -213,8 +177,10 @@ class Crucible(
         }
         repeat(2) { list += recipesItem }
         for (recipe in recipes) {
-            val displayItem = recipe.output.first.displayItem.clone()
-            displayItem.amount = recipe.output.second
+            val output = recipe.output
+            val outputAmount = recipe.outputAmount
+            val displayItem = output.displayItem.clone()
+            displayItem.amount = outputAmount
             displayItem.editMeta {
                 val lore = mutableListOf("", "<red>Inputs:")
                 for ((input, amount) in recipe.inputs) {
@@ -223,8 +189,7 @@ class Crucible(
                 lore += ""
                 lore += "<#ffa200>Temperature: <white>${recipe.temperature}°C"
                 lore += ""
-                val (output, amount) = recipe.output
-                lore += "<green>Output: $amount ${output.name}"
+                lore += "<green>Output: $outputAmount ${output.name}"
                 it.lore(lore.miniMessage())
             }
             list += displayItem

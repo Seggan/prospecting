@@ -13,12 +13,14 @@ import io.github.seggan.prospecting.util.ArrayDequeSerializer
 import io.github.seggan.sf4k.AbstractAddon
 import io.github.seggan.sf4k.extensions.plus
 import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.plus
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.WorldCreator
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
-import kotlin.collections.ArrayDeque
 
 class Prospecting : AbstractAddon(), Listener {
 
@@ -40,7 +42,7 @@ class Prospecting : AbstractAddon(), Listener {
         Smeltable.loadFromConfig(getConfigOrCopy("smeltables.json"))
         Ore.loadFromConfig(getConfigOrCopy("ores.json"))
 
-        Crucible.initRecipes()
+        Crucible.initRecipes(getConfigOrCopy("smelting.json"))
         Kiln.initFuels()
 
         for (ore in Ore.entries) {
@@ -73,7 +75,10 @@ class Prospecting : AbstractAddon(), Listener {
     }
 
     override suspend fun onDisableAsync() {
-        generator.disable()
+        if (::generator.isInitialized) {
+            // Prevent errors when another error causes the plugin to disable
+            generator.disable()
+        }
         instance_ = null
     }
 
@@ -85,6 +90,17 @@ class Prospecting : AbstractAddon(), Listener {
 
         val instance: Prospecting
             get() = instance_ ?: error("Plugin not enabled")
+
+        @OptIn(ExperimentalSerializationApi::class)
+        internal val json = Json {
+            serializersModule += BukkitSerializerRegistry.serializersModule
+            ignoreUnknownKeys = true
+            decodeEnumsCaseInsensitive = true
+            allowComments = true
+            isLenient = true
+            allowTrailingComma = true
+            allowSpecialFloatingPointValues = true
+        }
     }
 }
 

@@ -2,14 +2,15 @@
 
 package io.github.seggan.prospecting.ores.config
 
+import io.github.seggan.prospecting.Prospecting
 import io.github.seggan.prospecting.items.smelting.Smeltable
 import io.github.seggan.prospecting.ores.Ore
 import io.github.seggan.prospecting.ores.gen.generator.OreGenerator
-import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet
-import kotlinx.serialization.*
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.plus
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseContextualSerialization
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 
@@ -24,17 +25,8 @@ data class OreConfig(
     val associations: List<NamespacedKey> = emptyList()
 ) {
     companion object {
-        @OptIn(ExperimentalSerializationApi::class)
-        private val json = Json {
-            serializersModule += BukkitSerializerRegistry.serializersModule
-            ignoreUnknownKeys = true
-            decodeEnumsCaseInsensitive = true
-            allowComments = true
-            isLenient = true
-        }
-
         fun parse(s: String): List<OreConfig> {
-            return json.decodeFromString<List<OreConfig>>(s)
+            return Prospecting.json.decodeFromString<List<OreConfig>>(s)
         }
     }
 
