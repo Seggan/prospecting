@@ -31,30 +31,30 @@ class Mold(
 
     private inner class MoldBlock(block: Block) : SlimefunBlock(block) {
 
-        private var smeltable: Smeltable? by blockStorage { null }
+        private var chemical: Chemical? by blockStorage { null }
         private var time: Int by blockStorage { 0 }
         private var lavaDisplay: UUID? by blockStorage { null }
 
         override fun tick() {
-            if (smeltable != null) {
+            if (chemical != null) {
                 time--
                 if (time <= 0) {
-                    block.world.dropItem(block.location.add(0.5, 0.5, 0.5), smeltable!!.ingot)
+                    block.world.dropItem(block.location.add(0.5, 0.5, 0.5), chemical!!.ingot)
                     lavaDisplay?.let(block.world::getEntity)?.remove()
-                    smeltable = null
+                    chemical = null
                 }
             }
         }
 
         override fun onInteract(e: PlayerRightClickEvent) {
             e.cancel()
-            if (smeltable != null) return
+            if (chemical != null) return
             for (face in orthogonal) {
                 val crucibleBlock = block.getRelative(face)
                 val crucible = BlockStorage.check(crucibleBlock) as? Crucible ?: continue
-                val smeltable = crucible.cast(crucibleBlock)
-                if (smeltable != null) {
-                    this.smeltable = smeltable
+                val chemical = crucible.cast(crucibleBlock)
+                if (chemical != null) {
+                    this.chemical = chemical
                     time = secondsToSfTicks(10)
 
                     val display = block.world.spawn(
@@ -76,7 +76,7 @@ class Mold(
 
         override fun onBreak(p: Player?, drops: MutableList<ItemStack>) {
             lavaDisplay?.let(block.world::getEntity)?.remove()
-            if (smeltable != null) {
+            if (chemical != null) {
                 block.type = Material.LAVA
             }
         }

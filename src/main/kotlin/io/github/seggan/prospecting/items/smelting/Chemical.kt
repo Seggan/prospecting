@@ -1,6 +1,6 @@
 package io.github.seggan.prospecting.items.smelting
 
-import io.github.seggan.prospecting.ores.config.SmeltableConfig
+import io.github.seggan.prospecting.ores.config.ChemicalConfig
 import io.github.seggan.prospecting.util.itemKey
 import io.github.seggan.prospecting.util.miniMessage
 import io.github.seggan.prospecting.util.text
@@ -12,7 +12,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 
 @Serializable(with = SmeltableSerializer::class)
-class Smeltable(
+class Chemical(
     val id: NamespacedKey,
     val name: String,
     val item: ItemStack,
@@ -55,16 +55,16 @@ class Smeltable(
     }
 
     override fun equals(other: Any?): Boolean {
-        return this === other || (other is Smeltable && id == other.id)
+        return this === other || (other is Chemical && id == other.id)
     }
 
     override fun hashCode(): Int = ingot.hashCode()
 
     companion object {
 
-        private val registry = mutableMapOf<NamespacedKey, Smeltable>()
+        private val registry = mutableMapOf<NamespacedKey, Chemical>()
 
-        val all: Collection<Smeltable> get() = registry.values
+        val all: Collection<Chemical> get() = registry.values
 
         fun register(
             item: ItemStack,
@@ -73,8 +73,8 @@ class Smeltable(
             ingot: ItemStack = item,
             meltingPoint: Int? = null,
             boilingPoint: Int? = null
-        ): Smeltable {
-            val smeltable = Smeltable(
+        ): Chemical {
+            val chemical = Chemical(
                 id = id,
                 name = name,
                 item = item,
@@ -82,30 +82,30 @@ class Smeltable(
                 meltingPoint = meltingPoint ?: Int.MAX_VALUE,
                 boilingPoint = boilingPoint ?: Int.MAX_VALUE
             )
-            registry[id] = smeltable
-            return smeltable
+            registry[id] = chemical
+            return chemical
         }
 
-        fun register(smeltable: Smeltable) {
-            registry[smeltable.id] = smeltable
+        fun register(chemical: Chemical) {
+            registry[chemical.id] = chemical
         }
 
-        operator fun get(id: NamespacedKey): Smeltable? {
+        operator fun get(id: NamespacedKey): Chemical? {
             return registry[id]
         }
 
-        operator fun get(id: String): Smeltable? {
+        operator fun get(id: String): Chemical? {
             return registry[NamespacedKey.fromString(id)]
         }
 
-        fun getByIngotOrDust(item: ItemStack): Smeltable? {
+        fun getByIngotOrDust(item: ItemStack): Chemical? {
             return registry.values.firstOrNull { it.ingot.isSimilar(item) || it.item.isSimilar(item) }
         }
 
         fun loadFromConfig(config: String) {
-            val configs = SmeltableConfig.parse(config)
-            for (smeltable in configs) {
-                register(smeltable.toSmeltable())
+            val configs = ChemicalConfig.parse(config)
+            for (chemical in configs) {
+                register(chemical.toChemical())
             }
         }
     }
@@ -115,7 +115,7 @@ class Smeltable(
     }
 }
 
-private object SmeltableSerializer : DelegatingSerializer<Smeltable, NamespacedKey>(BukkitSerializerRegistry.serializer()) {
-    override fun fromData(value: NamespacedKey) = Smeltable[value]!!
-    override fun toData(value: Smeltable) = value.id
+private object SmeltableSerializer : DelegatingSerializer<Chemical, NamespacedKey>(BukkitSerializerRegistry.serializer()) {
+    override fun fromData(value: NamespacedKey) = Chemical[value]!!
+    override fun toData(value: Chemical) = value.id
 }

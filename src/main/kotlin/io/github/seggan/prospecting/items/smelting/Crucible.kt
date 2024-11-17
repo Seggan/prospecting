@@ -37,7 +37,7 @@ class Crucible(
 
         private val recipes = TreeSet<SmeltingRecipe>(
             compareByDescending<SmeltingRecipe> { it.temperature }
-                .thenComparingInt(SmeltingRecipe::hashCode)
+                .thenComparingInt(System::identityHashCode) // why treeset not use equals aaaa
         )
 
         fun addRecipe(recipe: SmeltingRecipe) {
@@ -54,10 +54,10 @@ class Crucible(
         SlimefunBlock.applyBlock(this@Crucible, ::CrucibleBlock)
     }
 
-    fun cast(block: Block): Smeltable? {
+    fun cast(block: Block): Chemical? {
         CrucibleBlock(block).use { crucible ->
             val top = crucible.sortedContents.firstOrNull()?.first ?: return null
-            if (top.getState(crucible.temperature) == Smeltable.State.LIQUID) {
+            if (top.getState(crucible.temperature) == Chemical.State.LIQUID) {
                 crucible.contents.merge(top, 1, Int::minus)
                 crucible.contents = crucible.contents.filterValues { it > 0 }.toMutableMap()
                 return top
@@ -69,20 +69,19 @@ class Crucible(
 
     inner class CrucibleBlock(block: Block) : SlimefunBlock(block) {
 
-        var contents: MutableMap<Smeltable, Int> by blockStorage { mutableMapOf() }
+        var contents: MutableMap<Chemical, Int> by blockStorage { mutableMapOf() }
         var temperature: Double by blockStorage { ROOM_TEMPERATURE }
 
         override fun tick() {
             // Add new items
-            val items = block.world.getNearbyEntities(BoundingBox.of(block))
-                .filterIsInstance<Item>()
+            val items = block.world.getNearbyEntities(BoundingBox.of(block)).filterIsInstance<Item>()
             for (item in items) {
                 val stack = item.itemStack
                 val available = capacity - contents.values.sum()
                 val allowed = stack.amount.coerceAtMost(available)
                 if (allowed == 0) continue
-                val smeltable = Smeltable.getByIngotOrDust(stack) ?: continue
-                contents.merge(smeltable, allowed, Int::plus)
+                val chemical = Chemical.getByIngotOrDust(stack) ?: continue
+                contents.merge(chemical, allowed, Int::plus)
                 stack.subtract(allowed)
                 if (stack.amount == 0) {
                     item.remove()
@@ -137,10 +136,10 @@ class Crucible(
                 if (contents.isEmpty()) {
                     p.sendMessage("The crucible is empty")
                 } else {
-                    for ((smeltable, amount) in sortedContents) {
+                    for ((chemical, amount) in sortedContents) {
                         val unit = if (amount == 1) "unit" else "units"
-                        val state = smeltable.getState(temperature).name.lowercase()
-                        p.sendMessage("$amount $unit of $state ${smeltable.name}")
+                        val state = chemical.getState(temperature).name.lowercase()
+                        p.sendMessage("$amount $unit of $state ${chemical.name}")
                     }
                 }
             } else if (getByItem(item) is Thermometer) {
@@ -148,7 +147,7 @@ class Crucible(
                     Component.text("The crucible's temperature is %.2f°C".format(temperature))
                 )
             } else if ("SHOVEL" in item.type.name && temperature <= 100) {
-                val removedContents = contents.filterKeys { it.getState(temperature) == Smeltable.State.SOLID }
+                val removedContents = contents.filterKeys { it.getState(temperature) == Chemical.State.SOLID }
                 if (removedContents.isNotEmpty()) {
                     val slag = Slag.create(removedContents)
                     block.world.dropItem(block.location.toCenterLocation(), slag)
@@ -157,10 +156,10 @@ class Crucible(
             }
         }
 
-        val sortedContents: List<Pair<Smeltable, Int>>
+        val sortedContents: List<Pair<Chemical, Int>>
             get() {
-                val comparator = compareByDescending<Pair<Smeltable, Int>> {
-                    it.first.getState(temperature) == Smeltable.State.LIQUID
+                val comparator = compareByDescending<Pair<Chemical, Int>> {
+                    it.first.getState(temperature) == Chemical.State.LIQUID
                 }.thenByDescending { it.first.meltingPoint }
                 return contents.toList().sortedWith(comparator)
             }
@@ -168,11 +167,11 @@ class Crucible(
 
     override fun getDisplayRecipes(): MutableList<ItemStack> {
         val list = mutableListOf<ItemStack>()
-        repeat(2) { list += smeltablesItem }
-        for (smeltable in Smeltable.all) {
-            list += smeltable.displayItem
+        repeat(2) { list += chemicalsItem }
+        for (chemical in Chemical.all) {
+            list += chemical.displayItem
         }
-        if (Smeltable.all.size % 2 != 0) {
+        if (Chemical.all.size % 2 != 0) {
             list += ChestMenuUtils.getBackground()
         }
         repeat(2) { list += recipesItem }
@@ -198,11 +197,11 @@ class Crucible(
     }
 }
 
-private val smeltablesItem = CustomItemStack(
+private val chemicalsItem = CustomItemStack(
     Material.ORANGE_STAINED_GLASS_PANE,
-    "&6Smeltables",
+    "&6Chemicals",
     "",
-    "&7Information about smeltables ->",
+    "&7Information about chemicals ->",
     "&7Scroll past for recipes"
 )
 
@@ -211,5 +210,5 @@ private val recipesItem = CustomItemStack(
     "&aRecipes",
     "",
     "&7Information about recipes ->",
-    "&7<- Scroll back for smeltables"
+    "&7<- Scroll back for chemcials"
 )

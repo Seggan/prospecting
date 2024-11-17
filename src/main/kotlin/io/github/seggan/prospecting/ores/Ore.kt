@@ -1,7 +1,7 @@
 package io.github.seggan.prospecting.ores
 
 import io.github.seggan.prospecting.items.Pebble
-import io.github.seggan.prospecting.items.smelting.Smeltable
+import io.github.seggan.prospecting.items.smelting.Chemical
 import io.github.seggan.prospecting.ores.config.OreConfig
 import io.github.seggan.prospecting.ores.gen.generator.OreGenerator
 import io.github.seggan.prospecting.registries.ProspectingCategories
@@ -20,7 +20,7 @@ class Ore(
     private val pebbleMaterial: Material,
     val vanillaOre: Material,
     asciiFormula: String,
-    val crushResult: RandomizedSet<Smeltable>,
+    val crushResult: RandomizedSet<Chemical>,
     val crushAmount: IntRange,
     val generator: OreGenerator
 ) {

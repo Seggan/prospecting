@@ -21,19 +21,19 @@ class Slag(
 
         private val contentsKey = "contents".key()
 
-        fun create(contents: Map<Smeltable, Int>): ItemStack {
+        fun create(contents: Map<Chemical, Int>): ItemStack {
             val item = ProspectingItems.SLAG.clone()
             val meta = item.itemMeta
-            meta.persistentDataContainer.setData<Map<Smeltable, Int>>(contentsKey, contents)
+            meta.persistentDataContainer.setData<Map<Chemical, Int>>(contentsKey, contents)
             item.itemMeta = meta
             return item
         }
 
         fun getContents(item: ItemStack): List<ItemStack> {
             val meta = item.itemMeta
-            val data = meta.persistentDataContainer.getData<Map<Smeltable, Int>>(contentsKey) ?: return emptyList()
-            return data.map { (smeltable, amount) ->
-                smeltable.item.clone().also { it.amount = amount }
+            val data = meta.persistentDataContainer.getData<Map<Chemical, Int>>(contentsKey) ?: return emptyList()
+            return data.map { (chemical, amount) ->
+                chemical.item.clone().also { it.amount = amount }
             }
         }
     }

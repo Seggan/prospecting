@@ -3,7 +3,7 @@
 package io.github.seggan.prospecting.ores.config
 
 import io.github.seggan.prospecting.Prospecting
-import io.github.seggan.prospecting.items.smelting.Smeltable
+import io.github.seggan.prospecting.items.smelting.Chemical
 import io.github.seggan.prospecting.ores.Ore
 import io.github.seggan.prospecting.ores.gen.generator.OreGenerator
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet
@@ -42,11 +42,11 @@ data class CrushConfig(val yield: Yield, val results: Map<@Contextual Namespaced
     @Serializable
     data class Yield(val min: Int, val max: Int)
 
-    fun convert(): Pair<IntRange, RandomizedSet<Smeltable>> {
+    fun convert(): Pair<IntRange, RandomizedSet<Chemical>> {
         val range = yield.min..yield.max
-        val set = RandomizedSet<Smeltable>()
+        val set = RandomizedSet<Chemical>()
         for ((key, value) in results) {
-            set.add(Smeltable[key] ?: error("No smeltable found with key $key"), value)
+            set.add(Chemical[key] ?: error("No chemical found with key $key"), value)
         }
         return range to set
     }

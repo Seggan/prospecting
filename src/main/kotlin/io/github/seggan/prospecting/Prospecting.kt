@@ -2,9 +2,9 @@ package io.github.seggan.prospecting
 
 import co.aikar.commands.PaperCommandManager
 import com.github.shynixn.mccoroutine.bukkit.launch
+import io.github.seggan.prospecting.items.smelting.Chemical
 import io.github.seggan.prospecting.items.smelting.Crucible
 import io.github.seggan.prospecting.items.smelting.Kiln
-import io.github.seggan.prospecting.items.smelting.Smeltable
 import io.github.seggan.prospecting.ores.Ore
 import io.github.seggan.prospecting.ores.gen.OreSpawnerThingy
 import io.github.seggan.prospecting.registries.ProspectingItems
@@ -39,7 +39,7 @@ class Prospecting : AbstractAddon(), Listener {
 
         ProspectingItems.initExtra()
 
-        Smeltable.loadFromConfig(getConfigOrCopy("smeltables.json"))
+        Chemical.loadFromConfig(getConfigOrCopy("chemicals.json"))
         Ore.loadFromConfig(getConfigOrCopy("ores.json"))
 
         Crucible.initRecipes(getConfigOrCopy("smelting.json"))

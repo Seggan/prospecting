@@ -3,7 +3,7 @@
 package io.github.seggan.prospecting.ores.config
 
 import io.github.seggan.prospecting.Prospecting
-import io.github.seggan.prospecting.items.smelting.Smeltable
+import io.github.seggan.prospecting.items.smelting.Chemical
 import io.github.seggan.prospecting.registries.ProspectingCategories
 import io.github.seggan.prospecting.registries.ProspectingRecipeTypes
 import io.github.seggan.prospecting.util.subscript
@@ -25,18 +25,18 @@ import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 
 @Serializable
-data class SmeltableConfig(
-    val item: SmeltableItemConfig,
+data class ChemicalConfig(
+    val item: ChemicalItemConfig,
     val key: NamespacedKey = item.key,
     val name: String = key.key.replace('_', ' '),
-    val ingot: SmeltableItemConfig = SmeltableItemConfig.Existing(item.key),
+    val ingot: ChemicalItemConfig = ChemicalItemConfig.Existing(item.key),
     @SerialName("melting_point") val meltingPoint: Int = Int.MAX_VALUE,
     @SerialName("boiling_point") val boilingPoint: Int = Int.MAX_VALUE,
 ) {
-    fun toSmeltable(): Smeltable {
+    fun toChemical(): Chemical {
         val item = this.item.getItem()
         val ingot = this.ingot.getItem()
-        return Smeltable(
+        return Chemical(
             key,
             name,
             item,
@@ -47,14 +47,14 @@ data class SmeltableConfig(
     }
 
     companion object {
-        fun parse(config: String): List<SmeltableConfig> {
-            return Prospecting.json.decodeFromString<List<SmeltableConfig>>(config)
+        fun parse(config: String): List<ChemicalConfig> {
+            return Prospecting.json.decodeFromString<List<ChemicalConfig>>(config)
         }
     }
 }
 
-@Serializable(with = SmeltableItemConfig.Serializer::class)
-sealed interface SmeltableItemConfig {
+@Serializable(with = ChemicalItemConfig.Serializer::class)
+sealed interface ChemicalItemConfig {
 
     val key: NamespacedKey
 
@@ -66,7 +66,7 @@ sealed interface SmeltableItemConfig {
         override val key: NamespacedKey,
         val item: Material,
         val formula: String
-    ) : SmeltableItemConfig {
+    ) : ChemicalItemConfig {
         override fun getItem(): ItemStack {
             val sfis = SlimefunItemStack(
                 key.key.uppercase(),
@@ -90,7 +90,7 @@ sealed interface SmeltableItemConfig {
     }
 
     @Serializable(with = Existing.Serializer::class)
-    data class Existing(override val key: NamespacedKey) : SmeltableItemConfig {
+    data class Existing(override val key: NamespacedKey) : ChemicalItemConfig {
         object Serializer : DelegatingSerializer<Existing, NamespacedKey>(BukkitSerializerRegistry.serializer()) {
             override fun toData(value: Existing) = value.key
             override fun fromData(value: NamespacedKey) = Existing(value)
@@ -109,7 +109,7 @@ sealed interface SmeltableItemConfig {
         }
     }
 
-    object Serializer : JsonContentPolymorphicSerializer<SmeltableItemConfig>(SmeltableItemConfig::class) {
+    object Serializer : JsonContentPolymorphicSerializer<ChemicalItemConfig>(ChemicalItemConfig::class) {
         override fun selectDeserializer(element: JsonElement) = when {
             element is JsonPrimitive -> Existing.serializer()
             else -> NewItem.serializer()
