@@ -15,6 +15,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.UseContextualSerialization
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
@@ -29,7 +30,7 @@ data class ChemicalConfig(
     val item: ChemicalItemConfig,
     val key: NamespacedKey = item.key,
     val name: String = key.key.replace('_', ' '),
-    val ingot: ChemicalItemConfig = ChemicalItemConfig.Existing(item.key),
+    val ingot: ChemicalItemConfig = ChemicalItemConfig.Existing(item.itemKey),
     @SerialName("melting_point") val meltingPoint: Int = Int.MAX_VALUE,
     @SerialName("boiling_point") val boilingPoint: Int = Int.MAX_VALUE,
 ) {
@@ -57,6 +58,7 @@ data class ChemicalConfig(
 sealed interface ChemicalItemConfig {
 
     val key: NamespacedKey
+    val itemKey: NamespacedKey
 
     fun getItem(): ItemStack
 
@@ -65,11 +67,22 @@ sealed interface ChemicalItemConfig {
         val name: String,
         override val key: NamespacedKey,
         val item: Material,
-        val formula: String
+        val formula: String,
+        @SerialName("prefix_id") val prefixId: Boolean = true,
     ) : ChemicalItemConfig {
+
+        @Transient
+        override val itemKey = run {
+            var id = key.key
+            if (prefixId) {
+                id = "${key.namespace}_$id"
+            }
+            NamespacedKey(key.namespace, id)
+        }
+
         override fun getItem(): ItemStack {
             val sfis = SlimefunItemStack(
-                key.key.uppercase(),
+                itemKey.key.uppercase(),
                 item,
                 name.miniMessageToLegacy(),
                 "<green>$formula".subscript().miniMessageToLegacy()
@@ -91,6 +104,9 @@ sealed interface ChemicalItemConfig {
 
     @Serializable(with = Existing.Serializer::class)
     data class Existing(override val key: NamespacedKey) : ChemicalItemConfig {
+
+        override val itemKey = key
+
         object Serializer : DelegatingSerializer<Existing, NamespacedKey>(BukkitSerializerRegistry.serializer()) {
             override fun toData(value: Existing) = value.key
             override fun fromData(value: NamespacedKey) = Existing(value)

@@ -40,10 +40,10 @@ class Chemical(
         displayItem = stack
     }
 
-    enum class State {
-        SOLID,
-        LIQUID,
-        GAS
+    enum class State(val adjective: String) {
+        SOLID("solid"),
+        LIQUID("liquid"),
+        GAS("gaseous");
     }
 
     fun getState(temperature: Double): State {

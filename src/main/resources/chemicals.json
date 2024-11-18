@@ -75,10 +75,10 @@
   },
   // Coal and coke
   {
-    "item": "minecraft:coal",
+    "item": "minecraft:coal"
   },
   {
-    "item": "minecraft:charcoal",
+    "item": "minecraft:charcoal"
   },
   {
     "key": "prospecting:coke",
@@ -124,5 +124,16 @@
       "name": "<gray>Tin Oxide",
       "formula": "SnO"
     }
+  },
+  // Mercury and amalgams
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:mercury",
+      "name": "<gray>Mercury",
+      "formula": "Hg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
   }
 ]
