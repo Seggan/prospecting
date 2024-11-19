@@ -48,8 +48,6 @@ class Crucible(
 ) : SlimefunItem(itemGroup, item, recipeType, recipe), RecipeDisplayItem {
 
     companion object {
-        private const val ROOM_TEMPERATURE = 20.0
-
         private val recipes = TreeSet<SmeltingRecipe>(
             compareByDescending<SmeltingRecipe> { it.temperature }
                 .thenComparingInt(System::identityHashCode) // why treeset not use equals aaaa
@@ -73,7 +71,7 @@ class Crucible(
         CrucibleBlock(block).use { crucible ->
             val top = crucible.sortedContents.find { (chemical, _) ->
                 chemical.getState(crucible.temperature) == Chemical.State.LIQUID &&
-                        chemical.getState(ROOM_TEMPERATURE) == Chemical.State.SOLID
+                        chemical.getState(Chemical.ROOM_TEMPERATURE) == Chemical.State.SOLID
             }?.first ?: return null
             crucible.contents.merge(top, 1, Int::minus)
             crucible.contents = crucible.contents.filterValues { it > 0 }.toMutableMap()
@@ -84,7 +82,7 @@ class Crucible(
     inner class CrucibleBlock(block: Block) : SlimefunBlock(block) {
 
         var contents: MutableMap<Chemical, Int> by blockStorage { mutableMapOf() }
-        var temperature: Double by blockStorage { ROOM_TEMPERATURE }
+        var temperature: Double by blockStorage { Chemical.ROOM_TEMPERATURE }
 
         override fun tick() {
             // Add new items
@@ -117,7 +115,9 @@ class Crucible(
                     for ((input, amount) in recipe.inputs) {
                         contents.merge(input, amount, Int::minus)
                     }
-                    contents.merge(recipe.output, recipe.outputAmount, Int::plus)
+                    for ((output, amount) in recipe.outputs) {
+                        contents.merge(output, amount, Int::plus)
+                    }
                 }
             }
 
@@ -154,7 +154,7 @@ class Crucible(
                 }
             }
 
-            if (temperature > ROOM_TEMPERATURE) {
+            if (temperature > Chemical.ROOM_TEMPERATURE) {
                 var solid = -1 // -1 to account for the crucible itself
                 for (x in -1..1) {
                     for (y in -1..1) {
@@ -165,7 +165,7 @@ class Crucible(
                     }
                 }
                 val rate = 0.02 / (contents.values.sum() + solid + 1)
-                temperature = temperature.moveAsymptoticallyTo(ROOM_TEMPERATURE, rate)
+                temperature = temperature.moveAsymptoticallyTo(Chemical.ROOM_TEMPERATURE, rate)
             }
         }
 
@@ -174,7 +174,7 @@ class Crucible(
             val item = e.item
             val p = e.player
             if (item.type == Material.WATER_BUCKET) {
-                temperature = temperature.moveAsymptoticallyTo(ROOM_TEMPERATURE, 0.5)
+                temperature = temperature.moveAsymptoticallyTo(Chemical.ROOM_TEMPERATURE, 0.5)
                 if (ThreadLocalRandom.current().nextFloat() < 0.1) {
                     block.location.createExplosion(4f, false, false)
                     if (p.gameMode != GameMode.CREATIVE) {
@@ -213,7 +213,7 @@ class Crucible(
                         meta.basePotionType = PotionType.WATER
                         meta.lore(null)
                     } else {
-                        val top = sortedContents.firstOrNull { it.first.getState(temperature) == Chemical.State.LIQUID }
+                        val top = sortedContents.find { it.first.getState(Chemical.ROOM_TEMPERATURE) == Chemical.State.LIQUID }
                         if (top != null) {
                             val (chemical, amount) = top
                             contents.merge(chemical, 1, Int::minus)
@@ -248,10 +248,9 @@ class Crucible(
         }
         repeat(2) { list += recipesItem }
         for (recipe in recipes) {
-            val output = recipe.output
-            val outputAmount = recipe.outputAmount
+            val (output, amount) = recipe.outputs.entries.first()
             val displayItem = output.displayItem.clone()
-            displayItem.amount = outputAmount
+            displayItem.amount = amount
             displayItem.editMeta {
                 val lore = mutableListOf("", "<red>Inputs:")
                 for ((input, amount) in recipe.inputs) {
@@ -260,7 +259,7 @@ class Crucible(
                 lore += ""
                 lore += "<#ffa200>Temperature: <white>${recipe.temperature}°C"
                 lore += ""
-                lore += "<green>Output: $outputAmount ${output.name}"
+                lore += "<green>Output: $amount ${output.name}"
                 it.lore(lore.miniMessage())
             }
             list += displayItem

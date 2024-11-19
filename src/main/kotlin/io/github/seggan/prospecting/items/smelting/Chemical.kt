@@ -1,9 +1,7 @@
 package io.github.seggan.prospecting.items.smelting
 
 import io.github.seggan.prospecting.ores.config.ChemicalConfig
-import io.github.seggan.prospecting.util.itemKey
 import io.github.seggan.prospecting.util.miniMessage
-import io.github.seggan.prospecting.util.text
 import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
 import io.github.seggan.sf4k.serial.serializers.DelegatingSerializer
 import kotlinx.serialization.Serializable
@@ -54,6 +52,8 @@ class Chemical(
         }
     }
 
+    val isSolidAtRoomTemperature = getState(ROOM_TEMPERATURE) == State.SOLID
+
     override fun equals(other: Any?): Boolean {
         return this === other || (other is Chemical && id == other.id)
     }
@@ -62,29 +62,11 @@ class Chemical(
 
     companion object {
 
+        const val ROOM_TEMPERATURE = 20.0
+
         private val registry = mutableMapOf<NamespacedKey, Chemical>()
 
         val all: Collection<Chemical> get() = registry.values
-
-        fun register(
-            item: ItemStack,
-            name: String = item.itemMeta.displayName()?.text?.lowercase() ?: item.type.name.lowercase(),
-            id: NamespacedKey = itemKey(item),
-            ingot: ItemStack = item,
-            meltingPoint: Int? = null,
-            boilingPoint: Int? = null
-        ): Chemical {
-            val chemical = Chemical(
-                id = id,
-                name = name,
-                item = item,
-                ingot = ingot,
-                meltingPoint = meltingPoint ?: Int.MAX_VALUE,
-                boilingPoint = boilingPoint ?: Int.MAX_VALUE
-            )
-            registry[id] = chemical
-            return chemical
-        }
 
         fun register(chemical: Chemical) {
             registry[chemical.id] = chemical

@@ -13,6 +13,50 @@
     "melting_point": 1064
   },
   {
+    "item": "slimefun:gold_4k",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_6k",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_8k",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_10k",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_12k",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_14k",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_16k",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_18k",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_20k",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_22k",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_24k",
+    "melting_point": 1064
+  },
+  {
     "key": "slimefun:copper",
     "item": "slimefun:copper_dust",
     "ingot": "slimefun:copper_ingot",
@@ -132,6 +176,127 @@
       "key": "prospecting:mercury",
       "name": "<gray>Mercury",
       "formula": "Hg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
+  },
+
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:gold_amalgam",
+      "name": "<gray>Gold Amalgam (Vanilla)",
+      "formula": "AuHg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
+  },
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:gold_4k_amalgam",
+        "name": "<gray>Gold Amalgam (4-Carat)",
+        "formula": "AuHg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
+  },
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:gold_6k_amalgam",
+      "name": "<gray>Gold Amalgam (6-Carat)",
+      "formula": "AuHg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
+  },
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:gold_8k_amalgam",
+      "name": "<gray>Gold Amalgam (8-Carat)",
+      "formula": "AuHg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
+  },
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:gold_10k_amalgam",
+      "name": "<gray>Gold Amalgam (10-Carat)",
+      "formula": "AuHg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
+  },
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:gold_12k_amalgam",
+      "name": "<gray>Gold Amalgam (12-Carat)",
+      "formula": "AuHg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
+  },
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:gold_14k_amalgam",
+      "name": "<gray>Gold Amalgam (14-Carat)",
+      "formula": "AuHg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
+  },
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:gold_16k_amalgam",
+      "name": "<gray>Gold Amalgam (16-Carat)",
+      "formula": "AuHg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
+  },
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:gold_18k_amalgam",
+      "name": "<gray>Gold Amalgam (18-Carat)",
+      "formula": "AuHg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
+  },
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:gold_20k_amalgam",
+      "name": "<gray>Gold Amalgam (20-Carat)",
+      "formula": "AuHg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
+  },
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:gold_22k_amalgam",
+      "name": "<gray>Gold Amalgam (22-Carat)",
+      "formula": "AuHg"
+    },
+    "melting_point": -38,
+    "boiling_point": 356
+  },
+  {
+    "item": {
+      "item": "light_gray_dye",
+      "key": "prospecting:gold_24k_amalgam",
+      "name": "<gray>Gold Amalgam (24-Carat)",
+      "formula": "AuHg"
     },
     "melting_point": -38,
     "boiling_point": 356
