@@ -110,7 +110,8 @@ class Crucible(
                     &&
                     recipe.inputs.all { (input, amount) -> contents.getOrDefault(input, 0) >= amount }
                     &&
-                    recipe.inputs.all { (input, _) -> input.getState(temperature) != Chemical.State.GAS }
+                    (recipe.inputs.all { (input, _) -> input.getState(temperature) != Chemical.State.GAS }
+                            || recipe.inputs.size == 1)
                 ) {
                     for ((input, amount) in recipe.inputs) {
                         contents.merge(input, amount, Int::minus)
@@ -143,11 +144,13 @@ class Crucible(
                     val mercury = Chemical[MERCURY]?.let(escaping::get)
                     if (mercury != null) {
                         for (entity in entities) {
-                            entity.addPotionEffect(PotionEffect(
-                                PotionEffectType.WITHER,
-                                20 * mercury,
-                                mercury / 10 + 1
-                            ))
+                            entity.addPotionEffect(
+                                PotionEffect(
+                                    PotionEffectType.WITHER,
+                                    20 * mercury,
+                                    mercury / 10 + 1
+                                )
+                            )
                             entity.sendMessage(NamedTextColor.RED + "You have been poisoned by mercury!")
                         }
                     }
@@ -213,7 +216,8 @@ class Crucible(
                         meta.basePotionType = PotionType.WATER
                         meta.lore(null)
                     } else {
-                        val top = sortedContents.find { it.first.getState(Chemical.ROOM_TEMPERATURE) == Chemical.State.LIQUID }
+                        val top =
+                            sortedContents.find { it.first.getState(Chemical.ROOM_TEMPERATURE) == Chemical.State.LIQUID }
                         if (top != null) {
                             val (chemical, amount) = top
                             contents.merge(chemical, 1, Int::minus)

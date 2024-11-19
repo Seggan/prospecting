@@ -7,19 +7,19 @@ import io.github.seggan.prospecting.items.smelting.Chemical
 import io.github.seggan.prospecting.registries.ProspectingCategories
 import io.github.seggan.prospecting.registries.ProspectingRecipeTypes
 import io.github.seggan.prospecting.util.subscript
+import io.github.seggan.prospecting.util.text
 import io.github.seggan.sf4k.extensions.miniMessageToLegacy
 import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
 import io.github.seggan.sf4k.serial.serializers.DelegatingSerializer
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import kotlinx.serialization.UseContextualSerialization
+import kotlinx.serialization.*
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -29,7 +29,7 @@ import org.bukkit.inventory.ItemStack
 data class ChemicalConfig(
     val item: ChemicalItemConfig,
     val key: NamespacedKey = item.key,
-    val name: String = key.key.replace('_', ' '),
+    val name: String? = null,
     val ingot: ChemicalItemConfig = ChemicalItemConfig.Existing(item.itemKey),
     @SerialName("melting_point") val meltingPoint: Int = Int.MAX_VALUE,
     @SerialName("boiling_point") val boilingPoint: Int = Int.MAX_VALUE,
@@ -37,6 +37,11 @@ data class ChemicalConfig(
     fun toChemical(): Chemical {
         val item = this.item.getItem()
         val ingot = this.ingot.getItem()
+        val name = name
+            ?: (
+                    if (this.item is ChemicalItemConfig.NewItem) item.displayName().text.lowercase().drop(1).dropLast(1)
+                    else key.key.replace('_', ' ')
+                    )
         return Chemical(
             key,
             name,
@@ -131,4 +136,9 @@ sealed interface ChemicalItemConfig {
             else -> NewItem.serializer()
         }
     }
+}
+
+private object MiniMessageSerializer : DelegatingSerializer<Component, String>(serializer()) {
+    override fun fromData(value: String) = MiniMessage.miniMessage().deserialize(value)
+    override fun toData(value: Component) = MiniMessage.miniMessage().serialize(value)
 }

@@ -74,13 +74,14 @@
     },
     "outputs": {
       "slimefun:gold_4k": 1,
+      "slimefun:silver": 1,
       "prospecting:mercury": 1
     },
     "temperature": 357
   },
   {
     "inputs": {
-      "prospecting:gold_4k": 1,
+      "slimefun:gold_4k": 1,
       "prospecting:mercury": 1
     },
     "outputs": {
@@ -94,13 +95,14 @@
     },
     "outputs": {
       "slimefun:gold_6k": 1,
+      "slimefun:silver": 1,
       "prospecting:mercury": 1
     },
     "temperature": 357
   },
   {
     "inputs": {
-      "prospecting:gold_6k": 1,
+      "slimefun:gold_6k": 1,
       "prospecting:mercury": 1
     },
     "outputs": {
@@ -114,13 +116,14 @@
     },
     "outputs": {
       "slimefun:gold_8k": 1,
+      "slimefun:silver": 1,
       "prospecting:mercury": 1
     },
     "temperature": 357
   },
   {
     "inputs": {
-      "prospecting:gold_8k": 1,
+      "slimefun:gold_8k": 1,
       "prospecting:mercury": 1
     },
     "outputs": {
@@ -134,13 +137,14 @@
     },
     "outputs": {
       "slimefun:gold_10k": 1,
+      "slimefun:silver": 1,
       "prospecting:mercury": 1
     },
     "temperature": 357
   },
   {
     "inputs": {
-      "prospecting:gold_10k": 1,
+      "slimefun:gold_10k": 1,
       "prospecting:mercury": 1
     },
     "outputs": {
@@ -154,13 +158,14 @@
     },
     "outputs": {
       "slimefun:gold_12k": 1,
+      "slimefun:silver": 1,
       "prospecting:mercury": 1
     },
     "temperature": 357
   },
   {
     "inputs": {
-      "prospecting:gold_12k": 1,
+      "slimefun:gold_12k": 1,
       "prospecting:mercury": 1
     },
     "outputs": {
@@ -174,13 +179,14 @@
     },
     "outputs": {
       "slimefun:gold_14k": 1,
+      "slimefun:silver": 1,
       "prospecting:mercury": 1
     },
     "temperature": 357
   },
   {
     "inputs": {
-      "prospecting:gold_14k": 1,
+      "slimefun:gold_14k": 1,
       "prospecting:mercury": 1
     },
     "outputs": {
@@ -194,13 +200,14 @@
     },
     "outputs": {
       "slimefun:gold_16k": 1,
+      "slimefun:silver": 1,
       "prospecting:mercury": 1
     },
     "temperature": 357
   },
   {
     "inputs": {
-      "prospecting:gold_16k": 1,
+      "slimefun:gold_16k": 1,
       "prospecting:mercury": 1
     },
     "outputs": {
@@ -214,13 +221,14 @@
     },
     "outputs": {
       "slimefun:gold_18k": 1,
+      "slimefun:silver": 1,
       "prospecting:mercury": 1
     },
     "temperature": 357
   },
   {
     "inputs": {
-      "prospecting:gold_18k": 1,
+      "slimefun:gold_18k": 1,
       "prospecting:mercury": 1
     },
     "outputs": {
@@ -234,13 +242,14 @@
     },
     "outputs": {
       "slimefun:gold_20k": 1,
+      "slimefun:silver": 1,
       "prospecting:mercury": 1
     },
     "temperature": 357
   },
   {
     "inputs": {
-      "prospecting:gold_20k": 1,
+      "slimefun:gold_20k": 1,
       "prospecting:mercury": 1
     },
     "outputs": {
@@ -254,13 +263,14 @@
     },
     "outputs": {
       "slimefun:gold_22k": 1,
+      "slimefun:silver": 1,
       "prospecting:mercury": 1
     },
     "temperature": 357
   },
   {
     "inputs": {
-      "prospecting:gold_22k": 1,
+      "slimefun:gold_22k": 1,
       "prospecting:mercury": 1
     },
     "outputs": {
@@ -274,13 +284,14 @@
     },
     "outputs": {
       "slimefun:gold_24k": 1,
+      "slimefun:silver": 1,
       "prospecting:mercury": 1
     },
     "temperature": 357
   },
   {
     "inputs": {
-      "prospecting:gold_24k": 1,
+      "slimefun:gold_24k": 1,
       "prospecting:mercury": 1
     },
     "outputs": {

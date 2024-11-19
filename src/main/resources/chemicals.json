@@ -7,53 +7,65 @@
     "melting_point": 1538
   },
   {
-    "key": "slimefun:gold",
+    "key": "minecraft:gold",
+    "name": "gold (vanilla)",
     "item": "slimefun:gold_dust",
     "ingot": "minecraft:gold_ingot",
     "melting_point": 1064
   },
   {
     "item": "slimefun:gold_4k",
+    "name": "gold (4-carat)",
     "melting_point": 1064
   },
   {
     "item": "slimefun:gold_6k",
+    "name": "gold (6-carat)",
     "melting_point": 1064
   },
   {
     "item": "slimefun:gold_8k",
+    "name": "gold (8-carat)",
     "melting_point": 1064
   },
   {
     "item": "slimefun:gold_10k",
+    "name": "gold (10-carat)",
     "melting_point": 1064
   },
   {
     "item": "slimefun:gold_12k",
+    "name": "gold (12-carat)",
     "melting_point": 1064
   },
   {
     "item": "slimefun:gold_14k",
+    "name": "gold (14-carat)",
     "melting_point": 1064
   },
   {
     "item": "slimefun:gold_16k",
+    "name": "gold (16-carat)",
     "melting_point": 1064
   },
   {
     "item": "slimefun:gold_18k",
+    "name": "gold (18-carat)",
     "melting_point": 1064
   },
   {
     "item": "slimefun:gold_20k",
+    "name": "gold (20-carat)",
     "melting_point": 1064
   },
   {
     "item": "slimefun:gold_22k",
+    "name": "gold (22-carat)",
     "melting_point": 1064
   },
   {
     "item": "slimefun:gold_24k",
+    "name": "gold (24-carat)",
     "melting_point": 1064
   },
   {

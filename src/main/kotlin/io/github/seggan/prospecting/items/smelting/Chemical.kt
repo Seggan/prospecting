@@ -98,6 +98,6 @@ class Chemical(
 }
 
 private object SmeltableSerializer : DelegatingSerializer<Chemical, NamespacedKey>(BukkitSerializerRegistry.serializer()) {
-    override fun fromData(value: NamespacedKey) = Chemical[value]!!
+    override fun fromData(value: NamespacedKey) = Chemical[value] ?: error("Unknown chemical: $value")
     override fun toData(value: Chemical) = value.id
 }
