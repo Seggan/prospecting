@@ -3,8 +3,10 @@ package io.github.seggan.prospecting.ores.gen
 import com.github.shynixn.mccoroutine.bukkit.launch
 import io.github.seggan.prospecting.items.Pebble
 import io.github.seggan.prospecting.ores.Ore
+import io.github.seggan.prospecting.ores.gen.generator.OreGenerator
 import io.github.seggan.prospecting.pluginInstance
 import io.github.seggan.prospecting.registries.ProspectingItems
+import io.github.seggan.prospecting.util.getHighestOpaqueBlockY
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -21,11 +23,11 @@ import org.bukkit.util.noise.OctaveGenerator
 import org.bukkit.util.noise.SimplexOctaveGenerator
 import java.util.EnumMap
 import java.util.EnumSet
-import java.util.Random
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
+import kotlin.random.Random
 
-class OreSpawnerThingy(private val worlds: Set<String>) : Listener {
+class OreSpawnerThingy(private val world: String) : Listener {
 
     private var running = true
 
@@ -45,7 +47,7 @@ class OreSpawnerThingy(private val worlds: Set<String>) : Listener {
 
     @EventHandler
     private fun onChunkLoad(e: ChunkLoadEvent) {
-        if (running && e.world.name in worlds && e.isNewChunk) {
+        if (running && e.world.name == world && e.isNewChunk) {
             if (!::noise.isInitialized) {
                 random = Random(e.world.seed)
                 noise = Ore.entries.associateWithTo(ConcurrentHashMap()) {
@@ -109,17 +111,25 @@ class OreSpawnerThingy(private val worlds: Set<String>) : Listener {
         for (ore in Ore.entries) {
             val generator = ore.generator
             val markers = ConcurrentHashMap<IntPair, Float>()
-            generator.generate(snapshot, chunkX, chunkZ, random) { x, y, z ->
+            generator.generate(chunk.world.seed, snapshot, chunkX, chunkZ, random) placeBlock@{ x, y, z, oreBlock ->
                 val type = snapshot.getBlockType(x, y, z)
                 var finalOre = ore
                 if (random.nextFloat() < 0.1) {
                     finalOre = Ore.associations[ore]?.randomOrNull() ?: ore
                 }
-                val brushablePlaced = placeBrushableBlock(type, x, y, z, finalOre)
+                val oreBlockType = oreBlock ?: when (type) {
+                    in sandReplaceable -> OreGenerator.OreType.SAND
+                    in gravelReplaceable -> OreGenerator.OreType.GRAVEL
+                    in stoneReplaceable -> OreGenerator.OreType.BLOCK
+                    else -> return@placeBlock
+                }
+                val material = when (oreBlockType) {
+                    OreGenerator.OreType.SAND -> Material.SAND
+                    OreGenerator.OreType.GRAVEL -> Material.GRAVEL
+                    OreGenerator.OreType.BLOCK -> if (type == Material.STONE) ore.vanillaOre else ore.deepslateVanillaOre
+                }
+                val brushablePlaced = placeBrushableBlock(material, x, y, z, finalOre)
                 if (!brushablePlaced && type in stoneReplaceable) {
-                    val material =
-                        if (type == Material.DEEPSLATE) finalOre.deepslateVanillaOre
-                        else finalOre.vanillaOre
                     pluginInstance.launch {
                         val block = chunk.getBlock(x, y, z)
                         block.setType(material, false)
@@ -133,7 +143,7 @@ class OreSpawnerThingy(private val worlds: Set<String>) : Listener {
                 for ((place, markerChance) in markers) {
                     if (random.nextFloat() < markerChance) {
                         val (x, z) = place
-                        val yBelow = snapshot.getHighestOpaqueBlockY(x, z, snapshot.getHighestBlockYAt(x, z))
+                        val yBelow = snapshot.getHighestOpaqueBlockY(x, z)
                         val y = yBelow + 1
                         if (!snapshot.getBlockType(x, y, z).isLiquid) {
                             pluginInstance.launch {
@@ -152,12 +162,8 @@ class OreSpawnerThingy(private val worlds: Set<String>) : Listener {
 
 private data class IntPair(val x: Int, val z: Int)
 
-private tailrec fun ChunkSnapshot.getHighestOpaqueBlockY(x: Int, z: Int, y: Int): Int {
-    return if (y < -64 || getBlockType(x, y, z).isOccluding) y else getHighestOpaqueBlockY(x, z, y - 1)
-}
-
-private val gravelReplaceable = EnumSet.of(Material.GRAVEL, Material.DIRT)
-private val sandReplaceable = EnumSet.of(Material.SAND, Material.RED_SAND, Material.CLAY)
+private val gravelReplaceable = EnumSet.of(Material.GRAVEL, Material.SUSPICIOUS_GRAVEL, Material.DIRT)
+private val sandReplaceable = EnumSet.of(Material.SAND, Material.SUSPICIOUS_SAND, Material.RED_SAND, Material.CLAY)
 private val stoneReplaceable = EnumSet.of(
     Material.STONE,
     Material.DEEPSLATE,

@@ -108,23 +108,10 @@
       }
     },
     "generator": {
-      "type": "prospecting:noise_vein",
-      "size": 128,
-      "height_distribution": {
-        "type": "prospecting:multiply",
-        "value": 1.3,
-        "distribution": {
-          "type": "prospecting:normal",
-          "mean": -30,
-          "std_dev": 0.9
-        }
-      },
-      "biome_distribution": {
-        "#prospecting:oceans": 1,
-        "#prospecting:rivers": 1,
-        "minecraft:beach": 1,
-        "minecraft:stony_shore": 1
-      }
+      "type": "prospecting:placer",
+      "chance": 0.1,
+      "size": 64,
+      "density": 0.75
     }
   }
 ]

@@ -40,6 +40,20 @@ enum class BiomeTag(vararg values: Set<Biome>) : Tag<Biome> {
             Biome.WINDSWEPT_GRAVELLY_HILLS
         )
     ),
+    BEACHES(
+        setOf(
+            Biome.BEACH,
+            Biome.STONY_SHORE,
+            Biome.SNOWY_BEACH
+        )
+    ),
+    BADLANDS(
+        setOf(
+            Biome.BADLANDS,
+            Biome.ERODED_BADLANDS,
+            Biome.WOODED_BADLANDS
+        )
+    ),
     ;
 
     private val key = NamespacedKey(pluginInstance, name.lowercase())

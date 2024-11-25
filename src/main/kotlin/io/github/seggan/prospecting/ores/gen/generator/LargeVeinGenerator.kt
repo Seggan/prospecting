@@ -8,8 +8,8 @@ import org.bukkit.ChunkSnapshot
 import org.bukkit.block.Biome
 import org.bukkit.util.noise.OctaveGenerator
 import org.bukkit.util.noise.SimplexOctaveGenerator
-import java.util.Random
 import kotlin.math.pow
+import kotlin.random.Random
 
 class LargeVeinGenerator(
     private val size: Int,
@@ -26,11 +26,12 @@ class LargeVeinGenerator(
     private lateinit var noise: OctaveGenerator
 
     override fun generate(
+        seed: Long,
         chunk: ChunkSnapshot,
         cx: Int,
         cz: Int,
         random: Random,
-        setBlock: (Int, Int, Int) -> Unit
+        setBlock: OreGenerator.OreSetter
     ) {
         if (!::noise.isInitialized) {
             noise = SimplexOctaveGenerator(random.nextLong(), 8)

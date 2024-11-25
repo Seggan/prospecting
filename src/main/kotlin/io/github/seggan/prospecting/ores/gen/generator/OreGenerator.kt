@@ -1,19 +1,34 @@
 package io.github.seggan.prospecting.ores.gen.generator
 
 import org.bukkit.ChunkSnapshot
-import java.util.Random
+import kotlin.random.Random
 
 interface OreGenerator {
 
     val generateMarker: Boolean
 
     fun generate(
+        seed: Long,
         chunk: ChunkSnapshot,
         cx: Int,
         cz: Int,
         random: Random,
-        setBlock: (Int, Int, Int) -> Unit
+        setBlock: OreSetter
     )
+
+    enum class OreType {
+        SAND,
+        GRAVEL,
+        BLOCK
+    }
+
+    fun interface OreSetter {
+        operator fun invoke(x: Int, y: Int, z: Int, type: OreType?)
+
+        operator fun invoke(x: Int, y: Int, z: Int) {
+            invoke(x, y, z, null)
+        }
+    }
 }
 
 operator fun OreGenerator.plus(other: OreGenerator): OreGenerator {
@@ -21,14 +36,15 @@ operator fun OreGenerator.plus(other: OreGenerator): OreGenerator {
         override val generateMarker = this@plus.generateMarker || other.generateMarker
 
         override fun generate(
+            seed: Long,
             chunk: ChunkSnapshot,
             cx: Int,
             cz: Int,
             random: Random,
-            setBlock: (Int, Int, Int) -> Unit
+            setBlock: OreGenerator.OreSetter
         ) {
-            this@plus.generate(chunk, cx, cz, random, setBlock)
-            other.generate(chunk, cx, cz, random, setBlock)
+            this@plus.generate(seed, chunk, cx, cz, random, setBlock)
+            other.generate(seed, chunk, cx, cz, random, setBlock)
         }
     }
 }

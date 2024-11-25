@@ -7,6 +7,7 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Randomized
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import org.bukkit.ChunkSnapshot
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import kotlin.reflect.KProperty
@@ -69,4 +70,8 @@ fun secondsToSfTicks(seconds: Int): Int {
 
 fun List<String>.miniMessage(): List<Component> {
     return map { MiniMessage.miniMessage().deserialize("<!i>$it") }
+}
+
+tailrec fun ChunkSnapshot.getHighestOpaqueBlockY(x: Int, z: Int, y: Int = getHighestBlockYAt(x, z)): Int {
+    return if (y < -64 || getBlockType(x, y, z).isOccluding) y else getHighestOpaqueBlockY(x, z, y - 1)
 }

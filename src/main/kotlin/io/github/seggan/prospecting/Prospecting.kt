@@ -24,7 +24,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class Prospecting : AbstractAddon(), Listener {
 
-    private lateinit var generator: OreSpawnerThingy
+    private val generators = mutableListOf<OreSpawnerThingy>()
 
     override suspend fun onLoadAsync() {
         BukkitSerializerRegistry.edit {
@@ -52,9 +52,8 @@ class Prospecting : AbstractAddon(), Listener {
         val oregenWorlds = config.getStringList("oregen.worlds").toSet()
         for (world in oregenWorlds) {
             WorldCreator(world).createWorld()
+            generators += OreSpawnerThingy(world)
         }
-
-        generator = OreSpawnerThingy(oregenWorlds)
 
         val manager = PaperCommandManager(this)
         manager.enableUnstableAPI("help")
@@ -75,8 +74,7 @@ class Prospecting : AbstractAddon(), Listener {
     }
 
     override suspend fun onDisableAsync() {
-        if (::generator.isInitialized) {
-            // Prevent errors when another error causes the plugin to disable
+        for (generator in generators) {
             generator.disable()
         }
         instance_ = null
