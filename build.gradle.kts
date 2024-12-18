@@ -89,7 +89,6 @@ tasks.runServer {
     downloadPlugins {
         url("https://blob.build/dl/Slimefun4/Dev/1156")
         url("https://blob.build/dl/SlimeHUD/Dev/3")
-        hangar("Multiverse-Core", "4.3.13")
     }
     maxHeapSize = "4G"
     minecraftVersion("1.20.6")

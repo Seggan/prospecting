@@ -4,6 +4,7 @@ import io.github.seggan.prospecting.ores.gen.distribution.Distribution
 import io.github.seggan.prospecting.ores.gen.distribution.NormalDistribution
 import io.github.seggan.prospecting.ores.gen.distribution.times
 import io.github.seggan.prospecting.ores.gen.generator.LargeVeinGenerator
+import io.github.seggan.prospecting.ores.gen.generator.NearLavaGenerator
 import io.github.seggan.prospecting.ores.gen.generator.OreGenerator
 import io.github.seggan.prospecting.ores.gen.generator.PlacerGenerator
 import io.github.seggan.prospecting.pluginInstance
@@ -58,6 +59,7 @@ object GeneratorSerializer : DelegatingSerializer<OreGenerator, JsonObject>(Json
             LargeVeinGenerator(size, distribution, biomeDistribution)
         }
         generators["placer".key()] = { json.decodeFromJsonElement<PlacerGenerator>(it) }
+        generators["near_lava".key()] = { json.decodeFromJsonElement<NearLavaGenerator>(it) }
 
         distributions["normal".key()] = { json.decodeFromJsonElement<NormalDistribution>(it) }
         distributions["multiply".key()] = {

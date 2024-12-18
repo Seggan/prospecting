@@ -11,6 +11,7 @@ import io.github.seggan.prospecting.ores.Ore
 import kotlinx.coroutines.delay
 import me.mrCookieSlime.Slimefun.api.BlockStorage
 import org.bukkit.Material
+import org.bukkit.World
 import org.bukkit.entity.Player
 import java.util.EnumSet
 
@@ -42,6 +43,12 @@ object PropsectingCommand : BaseCommand() {
                 }
             }
         }
+    }
+
+    @Subcommand("wtp")
+    @Description("Teleport to the world's spawn point")
+    fun teleport(p: Player, w: World) {
+        p.teleportAsync(w.spawnLocation)
     }
 }
 

@@ -17,7 +17,7 @@ import org.bukkit.NamespacedKey
 @Serializable
 data class OreConfig(
     val key: NamespacedKey,
-    val pebble: Material,
+    val pebble: Material?,
     @SerialName("ore_type") val oreType: Material,
     val formula: String,
     val crushing: CrushConfig,

@@ -17,7 +17,7 @@ import org.bukkit.NamespacedKey
 
 class Ore(
     val id: NamespacedKey,
-    private val pebbleMaterial: Material,
+    private val pebbleMaterial: Material?,
     val vanillaOre: Material,
     asciiFormula: String,
     val crushResult: RandomizedSet<Chemical>,
@@ -25,8 +25,10 @@ class Ore(
     val generator: OreGenerator
 ) {
     init {
-        require("BUTTON" in pebbleMaterial.name) {
-            "Pebble material for $id must be a button, got $pebbleMaterial"
+        if (pebbleMaterial != null) {
+            require("BUTTON" in pebbleMaterial.name) {
+                "Pebble material for $id must be a button, got $pebbleMaterial"
+            }
         }
     }
 
@@ -45,14 +47,16 @@ class Ore(
     )
 
     private val pebbleId = "${id.namespace.uppercase()}_PEBBLE_${id.key.uppercase()}"
-    val pebbleItem = SlimefunItemStack(
-        pebbleId,
-        pebbleMaterial,
-        "&f$oreName pebble",
-        "",
-        "&7A pebble of ${oreName.lowercase()}",
-        "&aFormula: $formula"
-    )
+    val pebbleItem = pebbleMaterial?.let { pebble ->
+        SlimefunItemStack(
+            pebbleId,
+            pebble,
+            "&f$oreName pebble",
+            "",
+            "&7A pebble of ${oreName.lowercase()}",
+            "&aFormula: $formula"
+        )
+    }
 
     val pebble by lazy { SlimefunItem.getById(pebbleId) as Pebble }
 
@@ -92,12 +96,14 @@ class Ore(
             ProspectingRecipeTypes.NATURALLY_GENERATED,
             emptyArray()
         ).register(addon)
-        Pebble(
-            ProspectingCategories.ORES,
-            pebbleItem,
-            ProspectingRecipeTypes.NATURALLY_GENERATED,
-            emptyArray()
-        ).register(addon)
+        if (pebbleItem != null) {
+            Pebble(
+                ProspectingCategories.ORES,
+                pebbleItem,
+                ProspectingRecipeTypes.NATURALLY_GENERATED,
+                emptyArray()
+            ).register(addon)
+        }
     }
 
     override fun equals(other: Any?): Boolean {

@@ -181,6 +181,14 @@
       "formula": "SnO"
     }
   },
+  {
+    "item": {
+      "item": "redstone",
+      "key": "prospecting:mercury_sulfide",
+      "name": "<red>Mercury Sulfide",
+      "formula": "HgS"
+    }
+  },
   // Mercury and amalgams
   {
     "item": {
@@ -192,7 +200,6 @@
     "melting_point": -38,
     "boiling_point": 356
   },
-
   {
     "item": {
       "item": "light_gray_dye",
@@ -207,8 +214,8 @@
     "item": {
       "item": "light_gray_dye",
       "key": "prospecting:gold_4k_amalgam",
-        "name": "<gray>Gold Amalgam (4-Carat)",
-        "formula": "AuHg"
+      "name": "<gray>Gold Amalgam (4-Carat)",
+      "formula": "AuHg"
     },
     "melting_point": -38,
     "boiling_point": 356

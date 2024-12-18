@@ -95,7 +95,7 @@
   },
   {
     "key": "prospecting:cassiterite",
-    "pebble": "polished_blackstone_button",
+    "pebble": null,
     "ore_type": "coal_ore",
     "formula": "SnO2",
     "crushing": {
@@ -112,6 +112,25 @@
       "rarity": 0.01,
       "depth": 40,
       "density": 0.2
+    }
+  },
+  {
+    "key": "prospecting:cinnabar",
+    "pebble": null,
+    "ore_type": "redstone_ore",
+    "formula": "HgS",
+    "crushing": {
+      "yield": {
+        "min": 1,
+        "max": 1
+      },
+      "results": {
+        "prospecting:mercury_sulfide": 1
+      }
+    },
+    "generator": {
+      "type": "prospecting:near_lava",
+      "chance": 0.01
     }
   }
 ]

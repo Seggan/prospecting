@@ -46,6 +46,15 @@
     },
     "temperature": 1200
   },
+  {
+    "inputs": {
+      "prospecting:mercury_sulfide": 1
+    },
+    "outputs": {
+      "prospecting:mercury": 1
+    },
+    "temperature": 265
+  },
   // Alloys
   {
     "inputs": {
