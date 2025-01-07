@@ -102,7 +102,7 @@ class Prospecting : AbstractAddon(), Listener {
     }
 }
 
-internal val pluginInstance: Prospecting
+internal inline val pluginInstance: Prospecting
     get() = Prospecting.instance
 
 private fun getConfigOrCopy(path: String): String {

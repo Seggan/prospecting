@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalPathApi::class)
+
+import kotlin.io.path.ExperimentalPathApi
+
 plugins {
     idea
     kotlin("jvm") version "2.0.0"
@@ -24,9 +28,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
-    compileOnly("com.github.Slimefun:Slimefun4:e02a0f61d1")
+    compileOnly("com.github.Slimefun:Slimefun4:d12ae8580b")
 
-    implementation("io.github.seggan:sf4k:0.8.0")
+    implementation("io.github.seggan:sf4k:0.8.1")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
@@ -51,9 +55,42 @@ kotlin {
     }
 }
 
+val createResourceListingTask = tasks.register("createResourceListing") {
+    dependsOn(tasks.generateBukkitPluginDescription)
+
+    val dirs = project.sourceSets.main.get().resources.srcDirs
+    for (dir in dirs) {
+        inputs.dir(dir)
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+    }
+
+    val output = layout.buildDirectory.dir("resource-listing")
+    outputs.dir(output)
+        .withPropertyName("output")
+
+    doLast {
+        val relative = dirs
+            .filter(File::exists)
+            .flatMap { dir ->
+                dir.walk().map { it.relativeTo(dir) }
+            }
+            .map(File::toString)
+            .filter(String::isNotBlank)
+            .toSet()
+        output.get().asFile.resolve("resources.txt").writeText(relative.joinToString("\n"))
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir(createResourceListingTask.map { it.outputs })
+        }
+    }
+}
+
 tasks.shadowJar {
     mergeServiceFiles()
-
 
     fun doRelocate(lib: String) {
         relocate(lib, "io.github.seggan.prospecting.shadowlibs.$lib")
@@ -87,7 +124,7 @@ bukkit {
 
 tasks.runServer {
     downloadPlugins {
-        url("https://blob.build/dl/Slimefun4/Dev/1156")
+        url("https://blob.build/dl/Slimefun4/Dev/1157")
         url("https://blob.build/dl/SlimeHUD/Dev/3")
     }
     maxHeapSize = "4G"
