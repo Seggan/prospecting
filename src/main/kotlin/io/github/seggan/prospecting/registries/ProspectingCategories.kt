@@ -25,6 +25,12 @@ object ProspectingCategories {
         CustomItemStack(Material.GUNPOWDER, "&fRaw Materials")
     )
 
+    val LIQUIDS = SubItemGroup(
+        "liquids".key(),
+        MAIN,
+        CustomItemStack(Material.LAVA_BUCKET, "&fLiquids")
+    )
+
     val TOOLS = SubItemGroup(
         "tools".key(),
         MAIN,

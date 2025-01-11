@@ -124,8 +124,8 @@ bukkit {
 
 tasks.runServer {
     downloadPlugins {
-        url("https://blob.build/dl/Slimefun4/Dev/1157")
-        url("https://blob.build/dl/SlimeHUD/Dev/3")
+        url("https://blob.build/dl/Slimefun4/Dev/1158")
+        url("https://blob.build/dl/SlimeHUD/Dev/4")
     }
     maxHeapSize = "4G"
     minecraftVersion("1.20.6")

@@ -1,4 +1,4 @@
-package io.github.seggan.prospecting.ores.gen.distribution
+package io.github.seggan.prospecting.ore.gen.distribution
 
 import io.github.seggan.prospecting.util.size
 

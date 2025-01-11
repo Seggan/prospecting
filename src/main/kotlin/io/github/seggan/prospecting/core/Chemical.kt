@@ -1,6 +1,6 @@
-package io.github.seggan.prospecting.items.smelting
+package io.github.seggan.prospecting.core
 
-import io.github.seggan.prospecting.ores.config.ChemicalConfig
+import io.github.seggan.prospecting.config.ChemicalConfig
 import io.github.seggan.prospecting.util.miniMessage
 import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
 import io.github.seggan.sf4k.serial.serializers.DelegatingSerializer
@@ -33,8 +33,8 @@ class Chemical(
             it.lore(
                 listOf(
                     "",
-                    "<#ffa200>Melting Point: <white>${if (meltingPoint < Int.MAX_VALUE) "${meltingPoint}°C" else "N/A"}",
-                    "<#ffa200>Boiling Point: <white>${if (boilingPoint < Int.MAX_VALUE) "${boilingPoint}°C" else "N/A"}",
+                    "<#ffa200>Melting Point: <white>${if (meltingPoint < Int.MAX_VALUE) "$meltingPoint°C" else "N/A"}",
+                    "<#ffa200>Boiling Point: <white>${if (boilingPoint < Int.MAX_VALUE) "$boilingPoint°C" else "N/A"}",
                 ).miniMessage()
             )
         }
@@ -89,7 +89,7 @@ class Chemical(
 
         fun loadFromConfigs(configs: Path) {
             for (config in configs.listDirectoryEntries("*.json")) {
-                val configs = ChemicalConfig.parse(config.readText())
+                val configs = ChemicalConfig.Companion.parse(config.readText())
                 for (chemical in configs) {
                     register(chemical.toChemical())
                 }

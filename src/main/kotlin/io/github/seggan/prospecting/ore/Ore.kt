@@ -1,9 +1,9 @@
-package io.github.seggan.prospecting.ores
+package io.github.seggan.prospecting.ore
 
+import io.github.seggan.prospecting.config.OreConfig
+import io.github.seggan.prospecting.core.Chemical
 import io.github.seggan.prospecting.items.Pebble
-import io.github.seggan.prospecting.items.smelting.Chemical
-import io.github.seggan.prospecting.ores.config.OreConfig
-import io.github.seggan.prospecting.ores.gen.generator.OreGenerator
+import io.github.seggan.prospecting.ore.gen.generator.OreGenerator
 import io.github.seggan.prospecting.registries.ProspectingCategories
 import io.github.seggan.prospecting.registries.ProspectingRecipeTypes
 import io.github.seggan.prospecting.util.subscript

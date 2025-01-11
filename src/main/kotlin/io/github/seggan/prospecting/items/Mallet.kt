@@ -1,7 +1,7 @@
 package io.github.seggan.prospecting.items
 
 import io.github.seggan.prospecting.items.smelting.Slag
-import io.github.seggan.prospecting.ores.Ore
+import io.github.seggan.prospecting.ore.Ore
 import io.github.seggan.prospecting.pluginInstance
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.sf4k.extensions.getSlimefun

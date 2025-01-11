@@ -38,6 +38,10 @@ fun String.subscript(): String {
     return sb.toString()
 }
 
+fun String.capitalizeWords(): String {
+    return split(" ").joinToString(" ") { it.replaceFirstChar(Char::titlecase) }
+}
+
 fun <T : Any> randomizedSetOf(vararg pairs: Pair<T, Float>): RandomizedSet<T> {
     val set = RandomizedSet<T>()
     for ((value, weight) in pairs) {

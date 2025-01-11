@@ -1,4 +1,4 @@
-package io.github.seggan.prospecting.ores.gen.generator
+package io.github.seggan.prospecting.ore.gen.generator
 
 import kotlinx.serialization.Serializable
 import org.bukkit.ChunkSnapshot

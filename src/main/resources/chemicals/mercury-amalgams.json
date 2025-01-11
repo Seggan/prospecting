@@ -2,7 +2,7 @@
   // Mercury
   {
     "item": {
-      "item": "light_gray_dye",
+      "item": "gray_dye",
       "key": "prospecting:mercury",
       "name": "<gray>Mercury",
       "formula": "Hg"

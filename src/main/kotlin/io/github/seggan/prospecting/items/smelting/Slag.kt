@@ -1,5 +1,6 @@
 package io.github.seggan.prospecting.items.smelting
 
+import io.github.seggan.prospecting.core.Chemical
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.key
 import io.github.seggan.sf4k.serial.pdc.getData

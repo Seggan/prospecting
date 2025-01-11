@@ -2,15 +2,15 @@ package io.github.seggan.prospecting.items.smelting
 
 import com.destroystokyo.paper.ParticleBuilder
 import io.github.seggan.prospecting.Prospecting
-import io.github.seggan.prospecting.items.Beaker
+import io.github.seggan.prospecting.core.Chemical
+import io.github.seggan.prospecting.core.SmeltingRecipe
+import io.github.seggan.prospecting.items.LiquidChemicalHolder
 import io.github.seggan.prospecting.items.smelting.tools.Thermometer
 import io.github.seggan.prospecting.util.SlimefunBlock
 import io.github.seggan.prospecting.util.key
 import io.github.seggan.prospecting.util.miniMessage
 import io.github.seggan.prospecting.util.moveAsymptoticallyTo
 import io.github.seggan.sf4k.extensions.plus
-import io.github.seggan.sf4k.serial.pdc.getData
-import io.github.seggan.sf4k.serial.pdc.setData
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
@@ -21,7 +21,6 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import org.bukkit.Color
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.Particle
@@ -31,10 +30,8 @@ import org.bukkit.entity.Item
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.Event
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import org.bukkit.potion.PotionType
 import org.bukkit.util.BoundingBox
 import java.nio.file.Path
 import java.util.TreeSet
@@ -179,60 +176,61 @@ class Crucible(
 
         override fun onInteract(e: PlayerRightClickEvent) {
             e.setUseItem(Event.Result.DENY)
+            e.setUseBlock(Event.Result.DENY)
             val item = e.item
             val p = e.player
-            if (item.type == Material.WATER_BUCKET) {
-                temperature = temperature.moveAsymptoticallyTo(Chemical.ROOM_TEMPERATURE, 0.5)
-                if (ThreadLocalRandom.current().nextFloat() < 0.1) {
-                    block.location.createExplosion(4f, false, false)
-                    if (p.gameMode != GameMode.CREATIVE) {
-                        p.inventory.setItem(e.hand, ItemStack(Material.BUCKET))
+            val sfItem = getByItem(item)
+            when {
+                item.type == Material.WATER_BUCKET -> {
+                    temperature = temperature.moveAsymptoticallyTo(Chemical.ROOM_TEMPERATURE, 0.5)
+                    if (ThreadLocalRandom.current().nextFloat() < 0.1) {
+                        block.location.createExplosion(4f, false, false)
+                        if (p.gameMode != GameMode.CREATIVE) {
+                            p.inventory.setItem(e.hand, ItemStack(Material.BUCKET))
+                        }
                     }
                 }
-            } else if (item.type == Material.TINTED_GLASS) {
-                e.setUseItem(Event.Result.DENY)
-                if (contents.isEmpty()) {
-                    p.sendMessage("The crucible is empty")
-                } else {
-                    for ((chemical, amount) in sortedContents) {
-                        val unit = if (amount == 1) "unit" else "units"
-                        val state = chemical.getState(temperature).adjective
-                        p.sendMessage("$amount $unit of $state ${chemical.name}")
+                item.type == Material.TINTED_GLASS -> {
+                    if (contents.isEmpty()) {
+                        p.sendMessage("The crucible is empty")
+                    } else {
+                        for ((chemical, amount) in sortedContents) {
+                            val unit = if (amount == 1) "unit" else "units"
+                            val state = chemical.getState(temperature).adjective
+                            p.sendMessage("$amount $unit of $state ${chemical.name}")
+                        }
                     }
                 }
-            } else if (getByItem(item) is Thermometer) {
-                p.sendActionBar(
-                    Component.text("The crucible's temperature is %.2f°C".format(temperature))
-                )
-            } else if (temperature <= 100) {
-                if ("SHOVEL" in item.type.name) {
+                sfItem is Thermometer -> {
+                    p.sendActionBar(
+                        Component.text("The crucible's temperature is %.2f°C".format(temperature))
+                    )
+                }
+                temperature <= 100 && "SHOVEL" in item.type.name -> {
                     val removedContents = contents.filterKeys { it.getState(temperature) == Chemical.State.SOLID }
                     if (removedContents.isNotEmpty()) {
                         val slag = Slag.create(removedContents)
                         block.world.dropItem(block.location.toCenterLocation(), slag)
                         contents.keys.removeAll(removedContents.keys)
                     }
-                } else if (getByItem(item) is Beaker) {
-                    val meta = item.itemMeta as PotionMeta
-                    val beakerContents = meta.persistentDataContainer.getData<Chemical?>(Beaker.CONTENTS_KEY)
-                    if (beakerContents != null) {
-                        contents.merge(beakerContents, 1, Int::plus)
-                        meta.persistentDataContainer.remove(Beaker.CONTENTS_KEY)
-                        meta.basePotionType = PotionType.WATER
-                        meta.lore(null)
-                    } else {
-                        val top =
-                            sortedContents.find { it.first.getState(Chemical.ROOM_TEMPERATURE) == Chemical.State.LIQUID }
-                        if (top != null) {
-                            val (chemical, amount) = top
-                            contents.merge(chemical, 1, Int::minus)
-                            meta.persistentDataContainer.setData<Chemical?>(Beaker.CONTENTS_KEY, chemical)
-                            meta.basePotionType = PotionType.WATER
-                            meta.color = Color.fromRGB(0x4d4d4d)
-                            meta.lore(listOf("", "<gold>Contents: 1 ${chemical.name}").miniMessage())
+                }
+                sfItem is LiquidChemicalHolder -> {
+                    val chemical = sfItem.chemical
+                    contents.merge(chemical, 1, Int::plus)
+                    p.inventory.setItem(e.hand, ItemStack(sfItem.emptyMaterial))
+                }
+                item.type == Material.BUCKET || item.type == Material.GLASS_BOTTLE -> {
+                    val liquid = sortedContents.firstOrNull {
+                        it.first.getState(temperature) == Chemical.State.LIQUID
+                    }?.first
+                    if (liquid != null) {
+                        val holder = LiquidChemicalHolder.getHolder(liquid)
+                        if (holder != null && holder.emptyMaterial == item.type) {
+                            item.subtract()
+                            p.inventory.addItem(holder.item.clone())
+                            contents.merge(liquid, 1, Int::minus)
                         }
                     }
-                    item.itemMeta = meta
                 }
             }
         }

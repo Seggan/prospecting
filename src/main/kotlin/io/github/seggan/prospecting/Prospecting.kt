@@ -2,13 +2,13 @@ package io.github.seggan.prospecting
 
 import co.aikar.commands.PaperCommandManager
 import com.github.shynixn.mccoroutine.bukkit.launch
-import io.github.seggan.prospecting.items.smelting.Chemical
+import io.github.seggan.prospecting.core.Chemical
+import io.github.seggan.prospecting.items.LiquidChemicalHolder
 import io.github.seggan.prospecting.items.smelting.Crucible
 import io.github.seggan.prospecting.items.smelting.Kiln
-import io.github.seggan.prospecting.ores.Ore
-import io.github.seggan.prospecting.ores.gen.OreSpawnerThingy
+import io.github.seggan.prospecting.ore.Ore
+import io.github.seggan.prospecting.ore.gen.OreSpawnerThingy
 import io.github.seggan.prospecting.registries.ProspectingItems
-import io.github.seggan.prospecting.registries.ProspectingItems.addon
 import io.github.seggan.prospecting.util.ArrayDequeSerializer
 import io.github.seggan.sf4k.AbstractAddon
 import io.github.seggan.sf4k.extensions.plus
@@ -54,7 +54,13 @@ class Prospecting : AbstractAddon(), Listener {
         Kiln.initFuels()
 
         for (ore in Ore.entries) {
-            ore.registerItems(addon)
+            ore.registerItems(this)
+        }
+
+        for (chemical in Chemical.all) {
+            if (chemical.meltingPoint < Int.MAX_VALUE) {
+                LiquidChemicalHolder(chemical).register(this)
+            }
         }
 
         val oregenWorlds = config.getStringList("oregen.worlds").toSet()

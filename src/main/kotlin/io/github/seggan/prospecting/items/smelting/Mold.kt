@@ -1,5 +1,6 @@
 package io.github.seggan.prospecting.items.smelting
 
+import io.github.seggan.prospecting.core.Chemical
 import io.github.seggan.prospecting.util.SlimefunBlock
 import io.github.seggan.prospecting.util.secondsToSfTicks
 import io.github.seggan.sf4k.extensions.plus

@@ -1,9 +1,9 @@
 @file:UseContextualSerialization(NamespacedKey::class)
 
-package io.github.seggan.prospecting.ores.config
+package io.github.seggan.prospecting.config
 
 import io.github.seggan.prospecting.Prospecting
-import io.github.seggan.prospecting.items.smelting.Chemical
+import io.github.seggan.prospecting.core.Chemical
 import io.github.seggan.prospecting.registries.ProspectingCategories
 import io.github.seggan.prospecting.registries.ProspectingRecipeTypes
 import io.github.seggan.prospecting.util.subscript

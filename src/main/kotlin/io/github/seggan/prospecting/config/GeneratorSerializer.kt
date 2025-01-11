@@ -1,12 +1,12 @@
-package io.github.seggan.prospecting.ores.config
+package io.github.seggan.prospecting.config
 
-import io.github.seggan.prospecting.ores.gen.distribution.Distribution
-import io.github.seggan.prospecting.ores.gen.distribution.NormalDistribution
-import io.github.seggan.prospecting.ores.gen.distribution.times
-import io.github.seggan.prospecting.ores.gen.generator.LargeVeinGenerator
-import io.github.seggan.prospecting.ores.gen.generator.NearLavaGenerator
-import io.github.seggan.prospecting.ores.gen.generator.OreGenerator
-import io.github.seggan.prospecting.ores.gen.generator.PlacerGenerator
+import io.github.seggan.prospecting.ore.gen.distribution.Distribution
+import io.github.seggan.prospecting.ore.gen.distribution.NormalDistribution
+import io.github.seggan.prospecting.ore.gen.distribution.times
+import io.github.seggan.prospecting.ore.gen.generator.LargeVeinGenerator
+import io.github.seggan.prospecting.ore.gen.generator.NearLavaGenerator
+import io.github.seggan.prospecting.ore.gen.generator.OreGenerator
+import io.github.seggan.prospecting.ore.gen.generator.PlacerGenerator
 import io.github.seggan.prospecting.pluginInstance
 import io.github.seggan.prospecting.registries.BiomeTag
 import io.github.seggan.prospecting.util.key

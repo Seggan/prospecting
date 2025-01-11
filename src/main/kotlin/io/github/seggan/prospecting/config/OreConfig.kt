@@ -1,11 +1,11 @@
 @file:UseContextualSerialization(NamespacedKey::class)
 
-package io.github.seggan.prospecting.ores.config
+package io.github.seggan.prospecting.config
 
 import io.github.seggan.prospecting.Prospecting
-import io.github.seggan.prospecting.items.smelting.Chemical
-import io.github.seggan.prospecting.ores.Ore
-import io.github.seggan.prospecting.ores.gen.generator.OreGenerator
+import io.github.seggan.prospecting.core.Chemical
+import io.github.seggan.prospecting.ore.Ore
+import io.github.seggan.prospecting.ore.gen.generator.OreGenerator
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName

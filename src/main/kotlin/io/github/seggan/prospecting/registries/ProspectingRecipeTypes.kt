@@ -43,6 +43,17 @@ object ProspectingRecipeTypes : Listener {
 
     val CRUCIBLE by lazy { RecipeType("crucible".key(), ProspectingItems.CRUCIBLE) }
 
+    val LIQUID = RecipeType(
+        "liquid".key(),
+        CustomItemStack(
+            Material.BUCKET,
+            "&fLiquid",
+            "",
+            "&7Right click on a crucible to fill it with this liquid",
+            "&7Right click again to empty it"
+        )
+    )
+
     private val vanillaRecipes = mutableSetOf<Pair<Array<out ItemStack?>, ItemStack>>()
 
     @EventHandler

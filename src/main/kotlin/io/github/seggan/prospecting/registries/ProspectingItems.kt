@@ -1,6 +1,5 @@
 package io.github.seggan.prospecting.registries
 
-import io.github.seggan.prospecting.items.Beaker
 import io.github.seggan.prospecting.items.Mallet
 import io.github.seggan.prospecting.items.Pebble
 import io.github.seggan.prospecting.items.smelting.Crucible
@@ -44,23 +43,6 @@ object ProspectingItems : ItemRegistry(pluginInstance) {
 
         +""
         +"Right click on a crucible to check its temperature"
-    }
-
-    val BEAKER by buildSlimefunItem<Beaker> {
-        category = ProspectingCategories.TOOLS
-        name = "Beaker"
-        material = Material.POTION.asMaterialType()
-        recipeType = ProspectingRecipeTypes.VANILLA_CRAFTING_TABLE
-        recipe = buildRecipe {
-            +"g g"
-            +"g g"
-            +"gGg"
-            'g' means Material.GLASS
-            'G' means Material.GLASS_BOTTLE
-        }
-
-        +""
-        +"A beaker used to hold liquids"
     }
 
     val STONE_PEBBLE by buildSlimefunItem<Pebble> {

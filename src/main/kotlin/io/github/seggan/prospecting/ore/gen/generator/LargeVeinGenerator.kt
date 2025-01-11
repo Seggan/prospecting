@@ -1,8 +1,8 @@
-package io.github.seggan.prospecting.ores.gen.generator
+package io.github.seggan.prospecting.ore.gen.generator
 
-import io.github.seggan.prospecting.ores.gen.distribution.Distribution
-import io.github.seggan.prospecting.ores.gen.distribution.precalculate
-import io.github.seggan.prospecting.ores.gen.distribution.times
+import io.github.seggan.prospecting.ore.gen.distribution.Distribution
+import io.github.seggan.prospecting.ore.gen.distribution.precalculate
+import io.github.seggan.prospecting.ore.gen.distribution.times
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap
 import org.bukkit.ChunkSnapshot
 import org.bukkit.block.Biome

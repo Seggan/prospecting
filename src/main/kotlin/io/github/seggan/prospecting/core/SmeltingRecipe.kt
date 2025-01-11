@@ -1,4 +1,4 @@
-package io.github.seggan.prospecting.items.smelting
+package io.github.seggan.prospecting.core
 
 import kotlinx.serialization.Serializable
 
