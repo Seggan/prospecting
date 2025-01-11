@@ -1,0 +1,32 @@
+[
+  {
+    "key": "prospecting:limonite",
+    "pebble": "spruce_button",
+    "ore_type": "iron_ore",
+    "formula": "(Fe,Ni)O(OH)",
+    "crushing": {
+      "yield": {
+        "min": 1,
+        "max": 2
+      },
+      "results": {
+        "prospecting:iron_oxide": 3,
+        "prospecting:nickel_oxide": 1
+      }
+    },
+    "generator": {
+      "type": "prospecting:noise_vein",
+      "size": 64,
+      "height_distribution": {
+        "type": "prospecting:normal",
+        "mean": 50,
+        "std_dev": 2
+      },
+      "biome_distribution": {
+        "#prospecting:swamps": 1,
+        "#prospecting:oceans": 0.7,
+        "#prospecting:rivers": 0.7
+      }
+    }
+  }
+]

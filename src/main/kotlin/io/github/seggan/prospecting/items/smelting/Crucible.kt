@@ -36,8 +36,11 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.potion.PotionType
 import org.bukkit.util.BoundingBox
+import java.nio.file.Path
 import java.util.TreeSet
 import java.util.concurrent.ThreadLocalRandom
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.readText
 
 class Crucible(
     itemGroup: ItemGroup,
@@ -57,9 +60,11 @@ class Crucible(
             recipes += recipe
         }
 
-        internal fun initRecipes(config: String) {
-            val loaded = Prospecting.json.decodeFromString<List<SmeltingRecipe>>(config)
-            recipes += loaded
+        internal fun initRecipes(configs: Path) {
+            for (config in configs.listDirectoryEntries("*.json")) {
+                val loaded = Prospecting.json.decodeFromString<List<SmeltingRecipe>>(config.readText())
+                recipes += loaded
+            }
         }
     }
 

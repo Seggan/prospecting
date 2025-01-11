@@ -1,0 +1,21 @@
+[
+  {
+    "key": "prospecting:cinnabar",
+    "pebble": null,
+    "ore_type": "redstone_ore",
+    "formula": "HgS",
+    "crushing": {
+      "yield": {
+        "min": 1,
+        "max": 1
+      },
+      "results": {
+        "prospecting:mercury_sulfide": 1
+      }
+    },
+    "generator": {
+      "type": "prospecting:near_lava",
+      "chance": 0.01
+    }
+  }
+]

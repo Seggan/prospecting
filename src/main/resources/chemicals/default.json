@@ -1,0 +1,143 @@
+[
+  // Slimefun metals and alloys
+  {
+    "key": "slimefun:iron",
+    "item": "slimefun:iron_dust",
+    "ingot": "minecraft:iron_ingot",
+    "melting_point": 1538
+  },
+  {
+    "key": "minecraft:gold",
+    "name": "gold (vanilla)",
+    "item": "slimefun:gold_dust",
+    "ingot": "minecraft:gold_ingot",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_4k",
+    "name": "gold (4-carat)",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_6k",
+    "name": "gold (6-carat)",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_8k",
+    "name": "gold (8-carat)",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_10k",
+    "name": "gold (10-carat)",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_12k",
+    "name": "gold (12-carat)",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_14k",
+    "name": "gold (14-carat)",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_16k",
+    "name": "gold (16-carat)",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_18k",
+    "name": "gold (18-carat)",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_20k",
+    "name": "gold (20-carat)",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_22k",
+    "name": "gold (22-carat)",
+    "melting_point": 1064
+  },
+  {
+    "item": "slimefun:gold_24k",
+    "name": "gold (24-carat)",
+    "melting_point": 1064
+  },
+  {
+    "key": "slimefun:copper",
+    "item": "slimefun:copper_dust",
+    "ingot": "slimefun:copper_ingot",
+    "melting_point": 1085
+  },
+  {
+    "key": "slimefun:tin",
+    "item": "slimefun:tin_dust",
+    "ingot": "slimefun:tin_ingot",
+    "melting_point": 231
+  },
+  {
+    "key": "slimefun:silver",
+    "item": "slimefun:silver_dust",
+    "ingot": "slimefun:silver_ingot",
+    "melting_point": 962
+  },
+  {
+    "key": "slimefun:lead",
+    "item": "slimefun:lead_dust",
+    "ingot": "slimefun:lead_ingot",
+    "melting_point": 327
+  },
+  {
+    "key": "slimefun:aluminum",
+    "item": "slimefun:aluminum_dust",
+    "ingot": "slimefun:aluminum_ingot",
+    "melting_point": 660
+  },
+  {
+    "key": "slimefun:zinc",
+    "item": "slimefun:zinc_dust",
+    "ingot": "slimefun:zinc_ingot",
+    "melting_point": 419
+  },
+  {
+    "key": "slimefun:nickel",
+    "item": "slimefun:nickel_ingot",
+    "melting_point": 1455
+  },
+  {
+    "key": "slimefun:cobalt",
+    "item": "slimefun:cobalt_ingot",
+    "melting_point": 1495
+  },
+  {
+    "key": "slimefun:bronze",
+    "item": "slimefun:bronze_ingot",
+    "melting_point": 950
+  },
+  {
+    "key": "slimefun:brass",
+    "item": "slimefun:brass_ingot",
+    "melting_point": 900
+  },
+  {
+    "key": "slimefun:steel",
+    "item": "slimefun:steel_ingot",
+    "melting_point": 1400
+  },
+  // Coal and coke
+  {
+    "item": "minecraft:coal"
+  },
+  {
+    "item": "minecraft:charcoal"
+  },
+  {
+    "key": "prospecting:coke",
+    "item": "prospecting:prospecting_coke"
+  }
+]

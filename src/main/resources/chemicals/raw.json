@@ -1,0 +1,51 @@
+[
+  // Raw materials
+  {
+    "item": {
+      "item": "red_dye",
+      "key": "prospecting:iron_oxide",
+      "name": "<red>Iron Oxide",
+      "formula": "FeO"
+    }
+  },
+  {
+    "item": {
+      "item": "white_dye",
+      "key": "prospecting:nickel_oxide",
+      "name": "<white>Nickel Oxide",
+      "formula": "NiO"
+    }
+  },
+  {
+    "item": {
+      "item": "cyan_dye",
+      "key": "prospecting:copper_carbonate",
+      "name": "<dark_aqua>Copper Carbonate",
+      "formula": "CuCO3"
+    }
+  },
+  {
+    "item": {
+      "item": "black_dye",
+      "key": "prospecting:copper_oxide",
+      "name": "<gray>Copper Oxide",
+      "formula": "CuO"
+    }
+  },
+  {
+    "item": {
+      "item": "black_dye",
+      "key": "prospecting:tin_oxide",
+      "name": "<gray>Tin Oxide",
+      "formula": "SnO"
+    }
+  },
+  {
+    "item": {
+      "item": "redstone",
+      "key": "prospecting:mercury_sulfide",
+      "name": "<red>Mercury Sulfide",
+      "formula": "HgS"
+    }
+  }
+]

@@ -69,10 +69,10 @@ val createResourceListingTask = tasks.register("createResourceListing") {
         .withPropertyName("output")
 
     doLast {
-        val relative = dirs
+        val relative = dirs.asSequence()
             .filter(File::exists)
             .flatMap { dir ->
-                dir.walk().map { it.relativeTo(dir) }
+                dir.walk().filter(File::isFile).map { it.relativeTo(dir) }
             }
             .map(File::toString)
             .filter(String::isNotBlank)

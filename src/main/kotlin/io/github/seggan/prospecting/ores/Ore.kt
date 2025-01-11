@@ -14,6 +14,9 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Randomized
 import io.github.thebusybiscuit.slimefun4.utils.ChatUtils
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import java.nio.file.Path
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.readText
 
 class Ore(
     val id: NamespacedKey,
@@ -71,16 +74,18 @@ class Ore(
 
         val associations = mutableMapOf<Ore, Set<Ore>>()
 
-        fun loadFromConfig(file: String) {
-            val configs = OreConfig.parse(file)
-            for (config in configs) {
-                val ore = config.toOre()
-                ore.register()
-            }
-            for (config in configs) {
-                val ore = getById(config.key)!!
-                val associations = config.associations.mapNotNull(::getById).toSet()
-                this.associations[ore] = associations
+        fun loadFromConfigs(configs: Path) {
+            for (config in configs.listDirectoryEntries("*.json")) {
+                val configs = OreConfig.parse(config.readText())
+                for (config in configs) {
+                    val ore = config.toOre()
+                    ore.register()
+                }
+                for (config in configs) {
+                    val ore = getById(config.key)!!
+                    val associations = config.associations.mapNotNull(::getById).toSet()
+                    this.associations[ore] = associations
+                }
             }
         }
     }

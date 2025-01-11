@@ -8,6 +8,9 @@ import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
+import java.nio.file.Path
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.readText
 
 @Serializable(with = SmeltableSerializer::class)
 class Chemical(
@@ -84,10 +87,12 @@ class Chemical(
             return registry.values.firstOrNull { it.ingot.isSimilar(item) || it.item.isSimilar(item) }
         }
 
-        fun loadFromConfig(config: String) {
-            val configs = ChemicalConfig.parse(config)
-            for (chemical in configs) {
-                register(chemical.toChemical())
+        fun loadFromConfigs(configs: Path) {
+            for (config in configs.listDirectoryEntries("*.json")) {
+                val configs = ChemicalConfig.parse(config.readText())
+                for (chemical in configs) {
+                    register(chemical.toChemical())
+                }
             }
         }
     }

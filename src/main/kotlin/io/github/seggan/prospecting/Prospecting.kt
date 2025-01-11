@@ -21,15 +21,23 @@ import org.bukkit.Bukkit
 import org.bukkit.WorldCreator
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
+import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
+import kotlin.io.path.outputStream
 
 class Prospecting : AbstractAddon(), Listener {
 
     private val generators = mutableListOf<OreSpawnerThingy>()
 
+    private lateinit var resourceList: Set<String>
+
     override suspend fun onLoadAsync() {
         BukkitSerializerRegistry.edit {
             contextual(ArrayDeque::class) { ArrayDequeSerializer(it.first()) }
         }
+
+        resourceList = Prospecting::class.java.getResource("/resources.txt")!!.readText().lines().toSet()
     }
 
     override suspend fun onEnableAsync() {
@@ -39,10 +47,10 @@ class Prospecting : AbstractAddon(), Listener {
 
         ProspectingItems.initExtra()
 
-        Chemical.loadFromConfig(getConfigOrCopy("chemicals.json"))
-        Ore.loadFromConfig(getConfigOrCopy("ores.json"))
+        Chemical.loadFromConfigs(copyConfig("chemicals"))
+        Ore.loadFromConfigs(copyConfig("ores"))
 
-        Crucible.initRecipes(getConfigOrCopy("smelting.json"))
+        Crucible.initRecipes(copyConfig("smelting"))
         Kiln.initFuels()
 
         for (ore in Ore.entries) {
@@ -80,6 +88,22 @@ class Prospecting : AbstractAddon(), Listener {
         instance_ = null
     }
 
+    private fun copyConfig(path: String): Path {
+        logger.info("Copying $path")
+        val dir = pluginInstance.dataFolder.toPath().resolve(path)
+        dir.createDirectories()
+        for (resource in resourceList) {
+            if (resource.startsWith("$path/")) {
+                val resUrl = Prospecting::class.java.getResource("/$resource")!!
+                val resPath = dir.resolve(resource.substringAfter('/'))
+                if (!resPath.exists()) {
+                    resUrl.openStream().use { it.copyTo(resPath.outputStream()) }
+                }
+            }
+        }
+        return dir
+    }
+
     override fun getJavaPlugin(): JavaPlugin = this
     override fun getBugTrackerURL(): String = "https://github.com/Seggan/Prospecting"
 
@@ -104,11 +128,3 @@ class Prospecting : AbstractAddon(), Listener {
 
 internal inline val pluginInstance: Prospecting
     get() = Prospecting.instance
-
-private fun getConfigOrCopy(path: String): String {
-    val file = pluginInstance.dataFolder.resolve(path)
-    if (!file.exists()) {
-        pluginInstance.saveResource(path, false)
-    }
-    return file.readText()
-}

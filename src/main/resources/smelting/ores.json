@@ -1,0 +1,39 @@
+[
+  {
+    "inputs": {
+      "prospecting:copper_carbonate": 1
+    },
+    "outputs": {
+      "prospecting:copper_oxide": 1
+    },
+    "temperature": 300
+  },
+  {
+    "inputs": {
+      "prospecting:copper_oxide": 1
+    },
+    "outputs": {
+      "slimefun:copper": 1
+    },
+    "temperature": 1200
+  },
+  {
+    "inputs": {
+      "minecraft:charcoal": 1,
+      "prospecting:tin_oxide": 1
+    },
+    "outputs": {
+      "slimefun:tin": 1
+    },
+    "temperature": 1200
+  },
+  {
+    "inputs": {
+      "prospecting:mercury_sulfide": 1
+    },
+    "outputs": {
+      "prospecting:mercury": 1
+    },
+    "temperature": 265
+  },
+]

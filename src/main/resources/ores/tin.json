@@ -1,0 +1,23 @@
+[
+  {
+    "key": "prospecting:cassiterite",
+    "pebble": null,
+    "ore_type": "coal_ore",
+    "formula": "SnO2",
+    "crushing": {
+      "yield": {
+        "min": 1,
+        "max": 2
+      },
+      "results": {
+        "prospecting:tin_oxide": 1
+      }
+    },
+    "generator": {
+      "type": "prospecting:placer",
+      "rarity": 0.01,
+      "depth": 40,
+      "density": 0.2
+    }
+  }
+]

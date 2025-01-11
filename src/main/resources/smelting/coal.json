@@ -1,0 +1,21 @@
+[
+  // Coal
+  {
+    "inputs": {
+      "minecraft:coal": 1
+    },
+    "outputs": {
+      "minecraft:charcoal": 1
+    },
+    "temperature": 670
+  },
+  {
+    "inputs": {
+      "minecraft:charcoal": 9
+    },
+    "outputs": {
+      "prospecting:coke": 1
+    },
+    "temperature": 1000
+  }
+]

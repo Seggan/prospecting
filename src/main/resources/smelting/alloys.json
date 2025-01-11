@@ -1,0 +1,13 @@
+[
+  // Alloys
+  {
+    "inputs": {
+      "slimefun:copper": 2,
+      "slimefun:tin": 1
+    },
+    "outputs": {
+      "slimefun:bronze": 3
+    },
+    "temperature": 850
+  }
+]
