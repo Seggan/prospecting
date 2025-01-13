@@ -1,4 +1,4 @@
-package io.github.seggan.prospecting.util
+package io.github.seggan.prospecting.util.sfb
 
 import io.github.seggan.sf4k.extensions.position
 import io.github.seggan.sf4k.serial.blockstorage.BlockStorageDecoder
@@ -12,8 +12,6 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockUseHandler
 import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition
 import kotlinx.serialization.KSerializer
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config
-import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker
 import me.mrCookieSlime.Slimefun.api.BlockStorage
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
@@ -24,6 +22,9 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.full.allSuperclasses
+import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.isSubclassOf
 
 abstract class SlimefunBlock(val block: Block) : AutoCloseable {
 
@@ -37,8 +38,6 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
     open fun onBreak(p: Player?, drops: MutableList<ItemStack>) {}
 
     open fun onInteract(e: PlayerRightClickEvent) {}
-
-    open fun tick() {}
 
     protected inline fun <reified T> blockStorage(noinline default: () -> T) =
         PropertyDelegateProvider<Any?, BlockStorageValue<T>> { _, prop ->
@@ -58,7 +57,7 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
             if (value == EMPTY) {
                 val encoded = BlockStorage.getLocationInfo(block.location, key)
                 value = if (!encoded.isNullOrEmpty()) {
-                    BlockStorageDecoder.decode(serializer, encoded, blockStorageSettings)
+                    BlockStorageDecoder.Companion.decode(serializer, encoded, blockStorageSettings)
                 } else {
                     default()
                 }
@@ -74,9 +73,10 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
         fun save() {
             if (value != EMPTY) {
                 @Suppress("UNCHECKED_CAST")
-                val encoded = BlockStorageEncoder.encode(serializer, value as T, blockStorageSettings)
+                val encoded = BlockStorageEncoder.Companion.encode(serializer, value as T, blockStorageSettings)
                 BlockStorage.addBlockInfo(block, key, encoded)
             }
+            // Forge GC
             value = EMPTY
         }
     }
@@ -90,8 +90,26 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
     override fun close() = saveData()
 
     companion object {
-        inline fun applyBlock(item: SlimefunItem, crossinline blockCons: (Block) -> SlimefunBlock) {
-            val blocks = mutableMapOf<BlockPosition, SlimefunBlock>()
+        inline fun <reified T : SlimefunBlock> applyBlock(
+            item: SlimefunItem,
+            crossinline blockCons: (Block) -> T
+        ) {
+            val blocks = mutableMapOf<BlockPosition, T>()
+            val createBlock = { block: Block -> blocks.getOrPut(block.position) { blockCons(block) } }
+
+            for (superType in T::class.allSuperclasses) {
+                if (
+                    superType.java.isInterface
+                    &&
+                    superType.isSubclassOf(SlimefunBlockModule.ProvidingInterface::class)
+                    &&
+                    superType != SlimefunBlockModule.ProvidingInterface::class
+                ) {
+                    val companion = superType.companionObjectInstance as SlimefunBlockModule
+                    companion.setUp(item, createBlock)
+                }
+            }
+
             item.addItemHandler(object : BlockPlaceHandler(false) {
                 override fun onPlayerPlace(e: BlockPlaceEvent) {
                     val block = e.blockPlaced
@@ -125,16 +143,6 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
                     sfBlock.onInteract(e)
                     sfBlock.saveData()
                 }
-            })
-
-            item.addItemHandler(object : BlockTicker() {
-                override fun tick(b: Block, item: SlimefunItem, data: Config) {
-                    val sfBlock = blocks.getOrPut(b.position) { blockCons(b) }
-                    sfBlock.tick()
-                    sfBlock.saveData()
-                }
-
-                override fun isSynchronized(): Boolean = true
             })
         }
     }

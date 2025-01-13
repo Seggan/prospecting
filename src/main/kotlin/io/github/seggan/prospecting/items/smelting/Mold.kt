@@ -1,8 +1,9 @@
 package io.github.seggan.prospecting.items.smelting
 
 import io.github.seggan.prospecting.core.Chemical
-import io.github.seggan.prospecting.util.SlimefunBlock
 import io.github.seggan.prospecting.util.secondsToSfTicks
+import io.github.seggan.prospecting.util.sfb.SlimefunBlock
+import io.github.seggan.prospecting.util.sfb.modules.Ticker
 import io.github.seggan.sf4k.extensions.plus
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
@@ -30,7 +31,7 @@ class Mold(
         SlimefunBlock.applyBlock(this, ::MoldBlock)
     }
 
-    private inner class MoldBlock(block: Block) : SlimefunBlock(block) {
+    private inner class MoldBlock(block: Block) : SlimefunBlock(block), Ticker {
 
         private var chemical: Chemical? by blockStorage { null }
         private var time: Int by blockStorage { 0 }

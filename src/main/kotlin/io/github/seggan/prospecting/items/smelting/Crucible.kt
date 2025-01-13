@@ -6,10 +6,11 @@ import io.github.seggan.prospecting.core.Chemical
 import io.github.seggan.prospecting.core.SmeltingRecipe
 import io.github.seggan.prospecting.items.LiquidChemicalHolder
 import io.github.seggan.prospecting.items.smelting.tools.Thermometer
-import io.github.seggan.prospecting.util.SlimefunBlock
 import io.github.seggan.prospecting.util.key
 import io.github.seggan.prospecting.util.miniMessage
 import io.github.seggan.prospecting.util.moveAsymptoticallyTo
+import io.github.seggan.prospecting.util.sfb.SlimefunBlock
+import io.github.seggan.prospecting.util.sfb.modules.Ticker
 import io.github.seggan.sf4k.extensions.plus
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
@@ -81,7 +82,7 @@ class Crucible(
         }
     }
 
-    inner class CrucibleBlock(block: Block) : SlimefunBlock(block) {
+    inner class CrucibleBlock(block: Block) : SlimefunBlock(block), Ticker {
 
         var contents: MutableMap<Chemical, Int> by blockStorage { mutableMapOf() }
         var temperature: Double by blockStorage { Chemical.ROOM_TEMPERATURE }
@@ -107,25 +108,12 @@ class Crucible(
 
             // Perform smelting
             for (recipe in recipes) {
-                if (
-                    temperature >= recipe.temperature
-                    &&
-                    recipe.inputs.all { (input, amount) -> contents.getOrDefault(input, 0) >= amount }
-                    &&
-                    (recipe.inputs.all { (input, _) -> input.getState(temperature) != Chemical.State.GAS }
-                            || recipe.inputs.size == 1)
-                ) {
-                    for ((input, amount) in recipe.inputs) {
-                        contents.merge(input, amount, Int::minus)
-                    }
-                    for ((output, amount) in recipe.outputs) {
-                        contents.merge(output, amount, Int::plus)
-                    }
-                }
+                recipe.performRecipe(temperature, contents)
             }
 
             contents = contents.filterValues { it > 0 }.toMutableMap()
 
+            // Handle gases
             if (!block.getRelative(BlockFace.UP).isSolid) {
                 val escaping = contents.filterKeys { it.getState(temperature) == Chemical.State.GAS }
                 for (chemical in escaping) {
@@ -159,6 +147,7 @@ class Crucible(
                 }
             }
 
+            // Cool down
             if (temperature > Chemical.ROOM_TEMPERATURE) {
                 var solid = -1 // -1 to account for the crucible itself
                 for (x in -1..1) {

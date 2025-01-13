@@ -1,10 +1,11 @@
 package io.github.seggan.prospecting.items.smelting
 
 import io.github.seggan.prospecting.registries.ProspectingItems
-import io.github.seggan.prospecting.util.SlimefunBlock
 import io.github.seggan.prospecting.util.miniMessage
 import io.github.seggan.prospecting.util.moveAsymptoticallyTo
 import io.github.seggan.prospecting.util.secondsToSfTicks
+import io.github.seggan.prospecting.util.sfb.SlimefunBlock
+import io.github.seggan.prospecting.util.sfb.modules.Ticker
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
@@ -56,7 +57,7 @@ class Kiln(
     @Serializable
     private data class Fuel(val maxTemp: Int, var burnTime: Int, var currentMax: Double = maxTemp.toDouble())
 
-    private inner class KilnBlock(block: Block) : SlimefunBlock(block) {
+    private inner class KilnBlock(block: Block) : SlimefunBlock(block), Ticker {
 
         val fuelQueue: ArrayDeque<Fuel> by blockStorage { ArrayDeque() }
         var currentFuel: Fuel? by blockStorage { null }
