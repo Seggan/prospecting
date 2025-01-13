@@ -1,15 +1,14 @@
 package io.github.seggan.prospecting.util.sfb
 
+import com.google.common.collect.Sets
 import io.github.seggan.sf4k.extensions.position
 import io.github.seggan.sf4k.serial.blockstorage.BlockStorageDecoder
 import io.github.seggan.sf4k.serial.blockstorage.BlockStorageEncoder
 import io.github.seggan.sf4k.serial.blockstorage.BlockStorageSettings
 import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
-import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler
-import io.github.thebusybiscuit.slimefun4.core.handlers.BlockUseHandler
 import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition
 import kotlinx.serialization.KSerializer
 import me.mrCookieSlime.Slimefun.api.BlockStorage
@@ -18,7 +17,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.inventory.ItemStack
-import kotlin.jvm.optionals.getOrNull
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -36,8 +34,6 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
     open fun onPlace(p: Player) {}
 
     open fun onBreak(p: Player?, drops: MutableList<ItemStack>) {}
-
-    open fun onInteract(e: PlayerRightClickEvent) {}
 
     protected inline fun <reified T> blockStorage(noinline default: () -> T) =
         PropertyDelegateProvider<Any?, BlockStorageValue<T>> { _, prop ->
@@ -94,9 +90,10 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
             item: SlimefunItem,
             crossinline blockCons: (Block) -> T
         ) {
-            val blocks = mutableMapOf<BlockPosition, T>()
-            val createBlock = { block: Block -> blocks.getOrPut(block.position) { blockCons(block) } }
+            val blocks = mutableMapOf<BlockPosition, SlimefunBlock>()
+            val getBlock = { b: Block -> blocks.getOrPut(b.position) { blockCons(b) } }
 
+            val alreadySetUp = Sets.newIdentityHashSet<SlimefunBlockModule>()
             for (superType in T::class.allSuperclasses) {
                 if (
                     superType.java.isInterface
@@ -105,8 +102,13 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
                     &&
                     superType != SlimefunBlockModule.ProvidingInterface::class
                 ) {
-                    val companion = superType.companionObjectInstance as SlimefunBlockModule
-                    companion.setUp(item, createBlock)
+                    val companion = superType.companionObjectInstance
+                    check(companion is SlimefunBlockModule) {
+                        "$superType companion object must implement SlimefunBlockModule"
+                    }
+                    if (alreadySetUp.add(companion)) {
+                        companion.setUp(item, getBlock)
+                    }
                 }
             }
 
@@ -133,15 +135,6 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
 
                 override fun onExplode(b: Block, drops: MutableList<ItemStack>) {
                     blocks.remove(b.position)?.onBreak(null, drops)
-                }
-            })
-
-            item.addItemHandler(object : BlockUseHandler {
-                override fun onRightClick(e: PlayerRightClickEvent) {
-                    val block = e.clickedBlock.getOrNull() ?: return
-                    val sfBlock = blocks.getOrPut(block.position) { blockCons(block) }
-                    sfBlock.onInteract(e)
-                    sfBlock.saveData()
                 }
             })
         }

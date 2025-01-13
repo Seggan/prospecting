@@ -11,6 +11,7 @@ import io.github.seggan.prospecting.util.miniMessage
 import io.github.seggan.prospecting.util.moveAsymptoticallyTo
 import io.github.seggan.prospecting.util.sfb.SlimefunBlock
 import io.github.seggan.prospecting.util.sfb.modules.Ticker
+import io.github.seggan.prospecting.util.sfb.modules.Useable
 import io.github.seggan.sf4k.extensions.plus
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
@@ -82,7 +83,7 @@ class Crucible(
         }
     }
 
-    inner class CrucibleBlock(block: Block) : SlimefunBlock(block), Ticker {
+    inner class CrucibleBlock(block: Block) : SlimefunBlock(block), Ticker, Useable {
 
         var contents: MutableMap<Chemical, Int> by blockStorage { mutableMapOf() }
         var temperature: Double by blockStorage { Chemical.ROOM_TEMPERATURE }
