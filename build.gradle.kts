@@ -19,6 +19,7 @@ repositories {
     maven("https://jitpack.io/")
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.aikar.co/content/groups/aikar/")
+    maven("https://repo.xenondevs.xyz/releases")
 }
 
 dependencies {
@@ -30,10 +31,13 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("com.github.Slimefun:Slimefun4:d12ae8580b")
 
-    implementation("io.github.seggan:sf4k:0.8.1")
+    implementation("io.github.seggan:sf4k:0.8.2")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
+
+    implementation("xyz.xenondevs.invui:invui:1.43")
+    implementation("xyz.xenondevs.invui:invui-kotlin:1.43")
 }
 
 idea {
@@ -99,6 +103,7 @@ tasks.shadowJar {
     doRelocate("org.bstats")
     doRelocate("co.aikar")
     doRelocate("io.github.seggan.sf4k")
+    doRelocate("xyz.xenondevs")
 
     dependencies {
         exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib"))

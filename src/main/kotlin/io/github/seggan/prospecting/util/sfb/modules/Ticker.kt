@@ -11,7 +11,7 @@ interface Ticker : SlimefunBlockModule.ProvidingInterface {
     fun tick()
 
     companion object : SlimefunBlockModule {
-        override fun setUp(sfi: SlimefunItem, getBlock: (Block) -> SlimefunBlock) {
+        override fun <I : SlimefunItem> setUp(sfi: I, getBlock: (Block) -> SlimefunBlock<I>) {
             sfi.addItemHandler(object : BlockTicker() {
                 override fun tick(b: Block, item: SlimefunItem, data: Config) {
                     val sfBlock = getBlock(b)

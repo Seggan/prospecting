@@ -72,7 +72,7 @@ class Crucible(
     }
 
     fun cast(block: Block): Chemical? {
-        CrucibleBlock(block).use { crucible ->
+        CrucibleBlock(block, this).use { crucible ->
             val top = crucible.sortedContents.find { (chemical, _) ->
                 chemical.getState(crucible.temperature) == Chemical.State.LIQUID &&
                         chemical.getState(Chemical.ROOM_TEMPERATURE) == Chemical.State.SOLID
@@ -83,7 +83,7 @@ class Crucible(
         }
     }
 
-    inner class CrucibleBlock(block: Block) : SlimefunBlock(block), Ticker, Useable {
+    class CrucibleBlock(block: Block, item: Crucible) : SlimefunBlock<Crucible>(block, item), Ticker, Useable {
 
         var contents: MutableMap<Chemical, Int> by blockStorage { mutableMapOf() }
         var temperature: Double by blockStorage { Chemical.ROOM_TEMPERATURE }
@@ -93,7 +93,7 @@ class Crucible(
             val items = block.world.getNearbyEntities(BoundingBox.of(block)).filterIsInstance<Item>()
             for (item in items) {
                 val stack = item.itemStack
-                val available = capacity - contents.values.sum()
+                val available = sfItemInstance.capacity - contents.values.sum()
                 val allowed = stack.amount.coerceAtMost(available)
                 if (allowed == 0) continue
                 val chemical = Chemical.getByIngotOrDust(stack) ?: continue

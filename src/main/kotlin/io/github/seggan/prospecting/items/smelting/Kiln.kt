@@ -49,7 +49,7 @@ class Kiln(
     }
 
     fun useBellowsOn(block: Block) {
-        val kiln = KilnBlock(block)
+        val kiln = KilnBlock(block, this)
         val currentFuel = kiln.currentFuel ?: return
         currentFuel.currentMax = currentFuel.maxTemp * 1.2
         kiln.saveData()
@@ -58,7 +58,7 @@ class Kiln(
     @Serializable
     private data class Fuel(val maxTemp: Int, var burnTime: Int, var currentMax: Double = maxTemp.toDouble())
 
-    private inner class KilnBlock(block: Block) : SlimefunBlock(block), Ticker, Useable {
+    private inner class KilnBlock(block: Block, item: Kiln) : SlimefunBlock<Kiln>(block, item), Ticker, Useable {
 
         val fuelQueue: ArrayDeque<Fuel> by blockStorage { ArrayDeque() }
         var currentFuel: Fuel? by blockStorage { null }
@@ -87,7 +87,7 @@ class Kiln(
 
             val blockAbove = block.getRelative(BlockFace.UP)
             val crucible = BlockStorage.check(blockAbove) as? Crucible ?: return
-            val crucibleBlock = crucible.CrucibleBlock(blockAbove)
+            val crucibleBlock = Crucible.CrucibleBlock(blockAbove, crucible)
             if (crucibleBlock.temperature < fuel.currentMax) {
                 val rate = 0.1 / (crucibleBlock.contents.values.sum() + 1)
                 crucibleBlock.temperature = crucibleBlock.temperature.moveAsymptoticallyTo(fuel.currentMax, rate)

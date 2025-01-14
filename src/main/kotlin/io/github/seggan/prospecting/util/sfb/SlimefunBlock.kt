@@ -24,7 +24,7 @@ import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.isSubclassOf
 
-abstract class SlimefunBlock(val block: Block) : AutoCloseable {
+abstract class SlimefunBlock<I : SlimefunItem>(val block: Block, val sfItemInstance: I) : AutoCloseable {
 
     @PublishedApi
     internal val bsValues = mutableListOf<BlockStorageValue<*>>()
@@ -86,12 +86,12 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
     override fun close() = saveData()
 
     companion object {
-        inline fun <reified T : SlimefunBlock> applyBlock(
-            item: SlimefunItem,
-            crossinline blockCons: (Block) -> T
+        inline fun <I : SlimefunItem, reified T : SlimefunBlock<I>> applyBlock(
+            item: I,
+            crossinline blockCons: (Block, I) -> T
         ) {
-            val blocks = mutableMapOf<BlockPosition, SlimefunBlock>()
-            val getBlock = { b: Block -> blocks.getOrPut(b.position) { blockCons(b) } }
+            val blocks = mutableMapOf<BlockPosition, SlimefunBlock<I>>()
+            val getBlock = { b: Block -> blocks.getOrPut(b.position) { blockCons(b, item) } }
 
             val alreadySetUp = Sets.newIdentityHashSet<SlimefunBlockModule>()
             for (superType in T::class.allSuperclasses) {
@@ -114,8 +114,7 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
 
             item.addItemHandler(object : BlockPlaceHandler(false) {
                 override fun onPlayerPlace(e: BlockPlaceEvent) {
-                    val block = e.blockPlaced
-                    val sfBlock = blocks.getOrPut(block.position) { blockCons(block) }
+                    val sfBlock = getBlock(e.blockPlaced)
                     sfBlock.onPlace(e.player)
                     sfBlock.saveData()
                 }
@@ -124,7 +123,7 @@ abstract class SlimefunBlock(val block: Block) : AutoCloseable {
             item.addItemHandler(object : BlockBreakHandler(false, true) {
                 override fun onPlayerBreak(e: BlockBreakEvent, item: ItemStack, drops: MutableList<ItemStack>) {
                     val block = e.block
-                    val sfBlock = blocks.getOrPut(block.position) { blockCons(block) }
+                    val sfBlock = getBlock(block)
                     sfBlock.onBreak(e.player, drops)
                     if (e.isCancelled) {
                         sfBlock.saveData()

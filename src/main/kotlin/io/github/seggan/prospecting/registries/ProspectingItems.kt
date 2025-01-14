@@ -6,6 +6,7 @@ import io.github.seggan.prospecting.items.smelting.Crucible
 import io.github.seggan.prospecting.items.smelting.Kiln
 import io.github.seggan.prospecting.items.smelting.Mold
 import io.github.seggan.prospecting.items.smelting.Slag
+import io.github.seggan.prospecting.items.smelting.forge.Forge
 import io.github.seggan.prospecting.items.smelting.tools.Bellows
 import io.github.seggan.prospecting.items.smelting.tools.Thermometer
 import io.github.seggan.prospecting.pluginInstance
@@ -139,6 +140,14 @@ object ProspectingItems : ItemRegistry(pluginInstance) {
         +""
         +"A byproduct of smelting ores"
         +"Crush it with a mallet to get the contents"
+    }
+
+    val FORGE by buildSlimefunItem<Forge>(112) {
+        category = ProspectingCategories.SMELTING
+        name = "Forge"
+        material = Material.BLAST_FURNACE.asMaterialType()
+        recipeType = RecipeType.NULL
+        recipe = emptyArray()
     }
 
     fun initExtra() {

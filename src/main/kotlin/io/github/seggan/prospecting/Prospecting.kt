@@ -10,6 +10,7 @@ import io.github.seggan.prospecting.ore.Ore
 import io.github.seggan.prospecting.ore.gen.OreSpawnerThingy
 import io.github.seggan.prospecting.registries.ProspectingItems
 import io.github.seggan.prospecting.util.ArrayDequeSerializer
+import io.github.seggan.prospecting.util.serial.InventorySerializer
 import io.github.seggan.sf4k.AbstractAddon
 import io.github.seggan.sf4k.extensions.plus
 import io.github.seggan.sf4k.serial.serializers.BukkitSerializerRegistry
@@ -20,6 +21,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.WorldCreator
 import org.bukkit.event.Listener
+import org.bukkit.inventory.Inventory
 import org.bukkit.plugin.java.JavaPlugin
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
@@ -35,6 +37,7 @@ class Prospecting : AbstractAddon(), Listener {
     override suspend fun onLoadAsync() {
         BukkitSerializerRegistry.edit {
             contextual(ArrayDeque::class) { ArrayDequeSerializer(it.first()) }
+            contextual(Inventory::class, InventorySerializer)
         }
 
         resourceList = Prospecting::class.java.getResource("/resources.txt")!!.readText().lines().toSet()

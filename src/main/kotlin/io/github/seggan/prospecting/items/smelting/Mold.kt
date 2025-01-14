@@ -32,7 +32,7 @@ class Mold(
         SlimefunBlock.applyBlock(this, ::MoldBlock)
     }
 
-    private inner class MoldBlock(block: Block) : SlimefunBlock(block), Ticker, Useable {
+    private class MoldBlock(block: Block, item: Mold) : SlimefunBlock<Mold>(block, item), Ticker, Useable {
 
         private var chemical: Chemical? by blockStorage { null }
         private var time: Int by blockStorage { 0 }

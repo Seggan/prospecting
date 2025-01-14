@@ -11,7 +11,7 @@ interface Useable : SlimefunBlockModule.ProvidingInterface {
     fun onInteract(e: PlayerRightClickEvent)
 
     companion object : SlimefunBlockModule {
-        override fun setUp(sfi: SlimefunItem, getBlock: (Block) -> SlimefunBlock) {
+        override fun <I : SlimefunItem> setUp(sfi: I, getBlock: (Block) -> SlimefunBlock<I>) {
             sfi.addItemHandler(object : BlockUseHandler {
                 override fun onRightClick(e: PlayerRightClickEvent) {
                     val block = getBlock(e.clickedBlock.get())

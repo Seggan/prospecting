@@ -7,5 +7,5 @@ interface SlimefunBlockModule {
 
     interface ProvidingInterface
 
-    fun setUp(sfi: SlimefunItem, getBlock: (Block) -> SlimefunBlock)
+    fun <I : SlimefunItem> setUp(sfi: I, getBlock: (Block) -> SlimefunBlock<I>)
 }
